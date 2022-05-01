@@ -2,6 +2,7 @@
 
 export("%>%")
 export(as_same)
+export(clustering)
 export(dots2list)
 export(ordination)
 export(rep_args)
