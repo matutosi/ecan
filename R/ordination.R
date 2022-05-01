@@ -6,10 +6,12 @@
 #' @param d_method A string of distance method.
 #' @param ...      other parameters for PCA.
 #' @return  Result of ordination.
-#'          $scores
-#'          $eig_val
-#'          $ordination_method
-#'          $distance_method
+#'          $st_scores:         scores for stand
+#'          $sp_scores:         scores for species
+#'          $eig_val:           eigen value for stand
+#'          $results_raw:       results of original ordination function
+#'          $ordination_method: o_method
+#'          $distance_method:   d_method
 #' @examples
 #' library(vegan)
 #' data(dune)
@@ -19,41 +21,61 @@
 ordination <- function(x, o_method, d_method = NULL, ...){
   res <- list()
   if(is.null(d_method)) d_method <- "bray"
-  if(o_method %in% c("pcoa", "nmds")) # compute dist when PCOA or nMDS
-    x <- vegan::vegdist(x, method = d_method)
   switch(o_method,
     "pca" = {
       ord <- labdsv::pca(x, dim=10, ...)
-      res$scores  <- ord$scores
+      res$st_scores  <- ord$scores
+      res$sp_scores  <- ord$loadings
       res$eig_val <- ord$sdev
       res$d_method <- NULL
+      res$results_raw <- ord
     },
     "ca" = {
       ord <- vegan::cca(x)
-      res$scores  <- ord$CA$u
+      res$st_scores  <- ord$CA$u
+      res$sp_scores  <- ord$CA$v
       res$eig_val <- ord$CA$eig
       res$d_method <- NULL
+      res$results_raw <- ord
     },
     "dca" = {
       ord <- vegan::decorana(x)
-      res$scores  <- ord$rproj
+      res$st_scores  <- ord$rproj
+      res$sp_scores  <- ord$cproj
       res$eig_val <- ord$evals
       res$d_method <- NULL
+      res$results_raw <- ord
     },
     "pcoa" = {
-      ord <- labdsv::pco(x)
-      res$scores  <- ord$points
+      x_st <- vegan::vegdist(x,    method = d_method) # st
+      ord <- labdsv::pco(x_st)
+      res$st_scores  <- ord$points
       res$eig_val <- ord$eig
-    },
-    "fspa" = {
-      ord <- dave::fspa(x, method = d_method, d.rev=0.5, n.groups=3)
-      res$scores  <- ord$newpoints
-      res$eig_val <- ord$eig
+      res$results_raw[[1]] <- ord
+      x_sp <- vegan::vegdist(t(x), method = d_method) # sp
+      ord <- labdsv::pco(x_sp)
+      res$sp_scores  <- ord$points
+      res$results_raw[[2]] <- ord
     },
     "nmds" = {
-      ord <- MASS::isoMDS(x)
-      res$scores  <- ord$points
+      x_st <- vegan::vegdist(x,    method = d_method) # st
+      ord <- MASS::isoMDS(x_st)
+      res$st_scores  <- ord$points
       res$eig_val <- NULL  # no eigen value
+      res$results_raw[[1]] <- ord
+      x_sp <- vegan::vegdist(t(x), method = d_method) # sp
+      ord <- labdsv::pco(x_sp)
+      res$sp_scores  <- ord$points
+      res$results_raw[[2]] <- ord
+    },
+    "fspa" = {
+      ord <- dave::fspa(x, method = d_method, d.rev=0.5, n.groups=3) # st
+      res$st_scores  <- ord$newpoints
+      res$eig_val <- ord$eig
+      res$results_raw[[1]] <- ord
+      ord <- dave::fspa(t(x), method = d_method, d.rev=0.5, n.groups=3) # sp
+      res$sp_scores  <- ord$newpoints
+      res$results_raw[[2]] <- ord
     }
   )
   res$ordination_method <- o_method
