@@ -10,7 +10,7 @@
 #'          $eig_val
 #'          $ordination_method
 #'          $distance_method
-#' @example
+#' @examples
 #' library(vegan)
 #' data(dune)
 #' ordination(dune, o_method = "dca")
