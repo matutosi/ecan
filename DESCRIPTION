@@ -1,11 +1,31 @@
 Package: ecan
-Type: Package
-Title: What the Package Does (Title Case)
+Title: Ecological Analysis and Visualization
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: 
+    person("Toshikazu", "Matsumura", , "matutosi@gmail.com", role = c("aut", "cre"))
+Description: Support ecological analyses such as ordinations and clusterings. 
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    dave,
+    dplyr,
+    ggplot2,
+    ggplotify,
+    labdsv,
+    magrittr,
+    MASS,
+    purrr,
+    rlang,
+    stringr,
+    tibble,
+    tidyr,
+    vegan,
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    tidyverse
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
