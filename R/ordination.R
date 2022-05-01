@@ -1,4 +1,22 @@
-ordination2 <- function(x, o_method, d_method = NULL, ...){
+#' Helper function for ordination methods
+#' 
+#' @param x        A community data matrix.
+#' @param o_method A string of ordination method. 
+#'                 "pca", "ca", "dca", "pcoa", "fspa", or "nmds".
+#' @param d_method A string of distance method.
+#' @param ...      other parameters for PCA.
+#' @return  Result of ordination.
+#'          $scores
+#'          $eig_val
+#'          $ordination_method
+#'          $distance_method
+#' @example
+#' library(vegan)
+#' data(dune)
+#' ordination(dune, o_method = "dca")
+#' 
+#' @export
+ordination <- function(x, o_method, d_method = NULL, ...){
   res <- list()
   if(is.null(d_method)) d_method <- "bray"
   if(o_method %in% c("pcoa", "nmds")) # compute dist when PCOA or nMDS
