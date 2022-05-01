@@ -1,9 +1,16 @@
 #' Helper function for ordination methods
 #' 
 #' @param x        A community data matrix.
+#'                 rownames: stands.
+#'                 colnames: species.
 #' @param o_method A string of ordination method. 
 #'                 "pca", "ca", "dca", "pcoa", "fspa", or "nmds".
 #' @param d_method A string of distance method.
+#'                 "correlation", "manhattan", "euclidean", "canberra", 
+#'                 "clark", "bray", "kulczynski", "jaccard", "gower", 
+#'                 "altGower", "morisita", "horn", "mountford", "raup", 
+#'                 "binomial", "chao", "cao", "mahalanobis", "chisq", 
+#'                 "chord", "aitchison", or "robust.aitchison".
 #' @param ...      other parameters for PCA.
 #' @return  Result of ordination.
 #'          $st_scores:         scores for stand

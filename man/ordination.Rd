@@ -7,7 +7,9 @@
 ordination(x, o_method, d_method = NULL, ...)
 }
 \arguments{
-\item{x}{A community data matrix.}
+\item{x}{A community data matrix.
+rownames: stands.
+colnames: species.}
 
 \item{o_method}{A string of ordination method.
 "pca", "ca", "dca", "pcoa", "fspa", or "nmds".}
@@ -18,10 +20,12 @@ ordination(x, o_method, d_method = NULL, ...)
 }
 \value{
 Result of ordination.
-$scores
-$eig_val
-$ordination_method
-$distance_method
+$st_scores:         scores for stand
+$sp_scores:         scores for species
+$eig_val:           eigen value for stand
+$results_raw:       results of original ordination function
+$ordination_method: o_method
+$distance_method:   d_method
 }
 \description{
 Helper function for ordination methods
