@@ -7,6 +7,7 @@ Description: Support ecological analyses such as ordinations and clusterings.
 License: MIT + file LICENSE
 LazyData: true
 Imports: 
+    cluster,
     dave,
     dplyr,
     ggplot2,
@@ -19,7 +20,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    vegan,
+    vegan
 Suggests: 
     knitr,
     rmarkdown,
