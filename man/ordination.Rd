@@ -14,7 +14,12 @@ colnames: species.}
 \item{o_method}{A string of ordination method.
 "pca", "ca", "dca", "pcoa", "fspa", or "nmds".}
 
-\item{d_method}{A string of distance method.}
+\item{d_method}{A string of distance method.
+"correlation", "manhattan", "euclidean", "canberra",
+"clark", "bray", "kulczynski", "jaccard", "gower",
+"altGower", "morisita", "horn", "mountford", "raup",
+"binomial", "chao", "cao", "mahalanobis", "chisq",
+"chord", "aitchison", or "robust.aitchison".}
 
 \item{...}{other parameters for PCA.}
 }
