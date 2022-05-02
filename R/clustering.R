@@ -27,15 +27,15 @@ clustering <- function(x, c_method, d_method){
   cl <- list()
     # distance
   if(d_method == "correlation"){
-    d <- as.dist( ( 1 - cor( t(x) ) ) / 2, diag = TRUE)
+    d <- stats::as.dist( ( 1 - stats::cor( t(x) ) ) / 2, diag = TRUE)
   } else {
     d <- vegan::vegdist(x, method = d_method, diag = TRUE)
   }
     # clustering
   if(c_method == "diana"){
-    cl <- as.hclust(cluster::diana(d, diss = TRUE))
+    cl <- stats::as.hclust(cluster::diana(d, diss = TRUE))
   } else {
-    cl <- hclust(d, method = c_method)
+    cl <- stats::hclust(d, method = c_method)
   }
     # methods
   cl$clustering_method <- c_method
