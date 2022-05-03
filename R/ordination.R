@@ -13,12 +13,12 @@
 #'                 "chord", "aitchison", or "robust.aitchison".
 #' @param ...      other parameters for PCA.
 #' @return  Result of ordination.
-#'          $st_scores:         scores for stand
-#'          $sp_scores:         scores for species
-#'          $eig_val:           eigen value for stand
-#'          $results_raw:       results of original ordination function
-#'          $ordination_method: o_method
-#'          $distance_method:   d_method
+#'          $st_scores:         scores for stand. 
+#'          $sp_scores:         scores for species. 
+#'          $eig_val:           eigen value for stand. 
+#'          $results_raw:       results of original ordination function. 
+#'          $ordination_method: o_method. 
+#'          $distance_method:   d_method. 
 #' @examples
 #' library(vegan)
 #' data(dune)
@@ -88,4 +88,27 @@ ordination <- function(x, o_method, d_method = NULL, ...){
   res$ordination_method <- o_method
   res$distance_method <- d_method
   return(res)
+}
+
+#' Helper function for ordination methods
+#' 
+#' @param ord    A result of ordination().
+#' @param score  A string to specify score for plot.
+#'               "st_scores" means stands and "sp_scores" species. 
+#' @param x,y    A column number for x and y axis. 
+#' @examples
+#' library(vegan)
+#' data(dune)
+#' ordination(dune, o_method = "dca") %>%
+#'   ord_plot()
+#' 
+#' @export
+ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
+  scores <- as.data.frame(ord[[score]])
+  x <- colnames(scores)[x]
+  y <- colnames(scores)[y]
+  scores %>%
+    ggplot(aes(.data[[x]], .data[[y]], label = rownames(scores))) +
+    geom_text() + 
+    theme_bw()
 }
