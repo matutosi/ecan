@@ -24,7 +24,7 @@
 #' 
 #' @export
 clustering <- function(x, c_method, d_method){
-  cl <- list()
+  cls <- list()
     # distance
   if(d_method == "correlation"){
     d <- stats::as.dist( ( 1 - stats::cor( t(x) ) ) / 2, diag = TRUE)
@@ -33,13 +33,23 @@ clustering <- function(x, c_method, d_method){
   }
     # clustering
   if(c_method == "diana"){
-    cl <- stats::as.hclust(cluster::diana(d, diss = TRUE))
+    cls <- stats::as.hclust(cluster::diana(d, diss = TRUE))
   } else {
-    cl <- stats::hclust(d, method = c_method)
+    cls <- stats::hclust(d, method = c_method)
   }
     # methods
-  cl$clustering_method <- c_method
-  cl$distance_method <- d_method
+  cls$clustering_method <- c_method
+  cls$distance_method <- d_method
     # result
-  return(cl)
+  return(cls)
+}
+
+#' Transfer when true
+#' 
+#' @param x        A community data matrix.
+#' @param cond     A logical.
+#' 
+#' @export
+t_if_true <- function(x, cond){
+  if(cond) t(x) else x
 }
