@@ -97,6 +97,7 @@ ordination <- function(x, o_method, d_method = NULL, ...){
 #'               "st_scores" means stands and "sp_scores" species. 
 #' @param x,y    A column number for x and y axis. 
 #' @examples
+#' library(ggplot2)
 #' library(vegan)
 #' data(dune)
 #' ordination(dune, o_method = "dca") %>%
@@ -108,7 +109,7 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
   x <- colnames(scores)[x]
   y <- colnames(scores)[y]
   scores %>%
-    ggplot(aes(.data[[x]], .data[[y]], label = rownames(scores))) +
-    geom_text() + 
-    theme_bw()
+    ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], label = rownames(scores))) +
+    ggplot2::geom_text() + 
+    ggplot2::theme_bw()
 }

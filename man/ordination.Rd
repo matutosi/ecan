@@ -25,12 +25,12 @@ colnames: species.}
 }
 \value{
 Result of ordination.
-$st_scores:         scores for stand
-$sp_scores:         scores for species
-$eig_val:           eigen value for stand
-$results_raw:       results of original ordination function
-$ordination_method: o_method
-$distance_method:   d_method
+$st_scores:         scores for stand.
+$sp_scores:         scores for species.
+$eig_val:           eigen value for stand.
+$results_raw:       results of original ordination function.
+$ordination_method: o_method.
+$distance_method:   d_method.
 }
 \description{
 Helper function for ordination methods
