@@ -9,12 +9,18 @@
 #' @examples
 #' library(vegan)
 #' data(dune)
+#' tibble::tibble(st=rep(1:2, 2), sp=rep(1:2, each=2), ab=runif(4)) %>%
+#'   dplyr::bind_rows(., .) %>%
+#'   df2table("st", "sp", "ab")
 #' 
 #' @export
 df2table <- function(df, st = "stand", sp = "species", ab = "abundonce"){
+  stopifnot(is.numeric(df$ab))
   df %>%
     dplyr::select(dplyr::all_of(c(st, sp, ab))) %>%
-    tidyr::pivot_wider(names_from = sp, values_from = ab, values_fill = 0) %>%
+    tidyr::pivot_wider(
+      names_from = sp, values_from = ab, 
+      values_fill = 0, values_fn = sum) %>%
     tibble::column_to_rownames(var = st)
 }
 
