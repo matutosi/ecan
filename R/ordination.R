@@ -31,14 +31,14 @@ ordination <- function(x, o_method, d_method = NULL, ...){
   switch(o_method,
     "pca" = {
       ord <- labdsv::pca(x, dim=10, ...)
-      res$st_scores  <- ord$scores
+      res$st_scores  <- ord$scores                                         # "pca", "scores", "loadings", "sdev", NULL
       res$sp_scores  <- ord$loadings
       res$eig_val <- ord$sdev
       res$d_method <- NULL
       res$results_raw <- ord
     },
     "ca" = {
-      ord <- vegan::cca(x)
+      ord <- vegan::cca(x)                                                 # "ca", "CA$u", "CA$v", "eig", NULL
       res$st_scores  <- ord$CA$u
       res$sp_scores  <- ord$CA$v
       res$eig_val <- ord$CA$eig
@@ -47,7 +47,7 @@ ordination <- function(x, o_method, d_method = NULL, ...){
     },
     "dca" = {
       ord <- vegan::decorana(x)
-      res$st_scores  <- ord$rproj
+      res$st_scores  <- ord$rproj                                         # "rproj", "cproj", "evals", NULL
       res$sp_scores  <- ord$cproj
       res$eig_val <- ord$evals
       res$d_method <- NULL
@@ -56,7 +56,7 @@ ordination <- function(x, o_method, d_method = NULL, ...){
     "pcoa" = {
       x_st <- vegan::vegdist(x,    method = d_method) # st
       ord <- labdsv::pco(x_st)
-      res$st_scores  <- ord$points
+      res$st_scores  <- ord$                                         # "points", "points", "eng", d_method
       res$eig_val <- ord$eig
       res$results_raw[[1]] <- ord
       x_sp <- vegan::vegdist(t(x), method = d_method) # sp
@@ -68,7 +68,7 @@ ordination <- function(x, o_method, d_method = NULL, ...){
       x_st <- vegan::vegdist(x,    method = d_method) # st
       ord <- MASS::isoMDS(x_st)
       res$st_scores  <- ord$points
-      res$eig_val <- NULL  # no eigen value
+      res$eig_val <- NULL           # no eigen value
       res$results_raw[[1]] <- ord
       x_sp <- vegan::vegdist(t(x), method = d_method) # sp
       ord <- labdsv::pco(x_sp)
