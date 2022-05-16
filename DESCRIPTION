@@ -11,7 +11,6 @@ Imports:
     dave,
     dplyr,
     ggplot2,
-    ggplotify,
     labdsv,
     magrittr,
     MASS,
