@@ -15,7 +15,7 @@
 #' 
 #' @export
 df2table <- function(df, st = "stand", sp = "species", ab = "abundance"){
-  stopifnot(is.numeric(df$ab))
+  stopifnot(is.numeric(df[[ab]]))
   df %>%
     dplyr::select(dplyr::all_of(c(st, sp, ab))) %>%
     tidyr::pivot_wider(
