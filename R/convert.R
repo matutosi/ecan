@@ -14,7 +14,7 @@
 #'   df2table("st", "sp", "ab")
 #' 
 #' @export
-df2table <- function(df, st = "stand", sp = "species", ab = "abundonce"){
+df2table <- function(df, st = "stand", sp = "species", ab = "abundance"){
   stopifnot(is.numeric(df$ab))
   df %>%
     dplyr::select(dplyr::all_of(c(st, sp, ab))) %>%
@@ -26,7 +26,7 @@ df2table <- function(df, st = "stand", sp = "species", ab = "abundonce"){
 
 #' @rdname df2table
 #' @export
-table2df <- function(tbl, st = "stand", sp = "species", ab = "abundonce"){
+table2df <- function(tbl, st = "stand", sp = "species", ab = "abundance"){
   tbl %>%
     tibble::rownames_to_column(st) %>%
     tidyr::pivot_longer(-!!st, names_to = sp, values_to = ab) %>%
