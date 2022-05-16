@@ -3,8 +3,7 @@
 #' Calculating diversity indices such as species richness (s), 
 #' Shannon's H' (h), Simpson' D (d), Simpson's inverse D (i). 
 #' @param df       A data.frame, which has three cols: stand, species, abundance.
-#'                 
-#'                 Community matrix can be converted using table2df().
+#'                 Community matrix should be converted using table2df().
 #' @param stand,species,abundance 
 #'                 A text to specify each column.
 #'                 If NULL, 1st, 2nd, 3rd column will be used.

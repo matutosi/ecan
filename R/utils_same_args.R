@@ -1,5 +1,5 @@
 #' Same Argument Manipulation to Evaluate
-#'
+#' 
 #' @param fun A function.
 #' @param ... Vectors or a list.
 #' @export
