@@ -5,12 +5,14 @@
 
 * Todo
     * Deprecate `mecab()` and `mecab_all()`.
-    * Add `method` argument in `mecab()` and `mecab_all()` 
-      to be able to use "sudachi"
+    * Add `method` argument in `mecab()` and `mecab_all()` to be able to use "sudachi"
+    * in moranajp_all()
+          Add dplyr::mutate(`:=`("text_col", stringr::str_str_replace_all(text_col, "&", "")))
 * Done
 
 # moranajp 0.9.4
 
+* 2022-03-30
 * Can apply over 8000 length strings.
     * `make_groups()`
     * `make_groups_sub()`
@@ -19,6 +21,7 @@
 
 # moranajp 0.9.3
 
+* 2022-03-30
 * Improve functions.
     * `moranajp_all()` <- `mecab_all()`
     * `moranajp()` <- `mecab()`
