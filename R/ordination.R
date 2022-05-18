@@ -11,18 +11,41 @@
 #'                 "altGower", "morisita", "horn", "mountford", "raup", 
 #'                 "binomial", "chao", "cao", "mahalanobis", "chisq", 
 #'                 "chord", "aitchison", or "robust.aitchison".
-#' @param ...      other parameters for PCA.
-#' @return  Result of ordination.
+#' @param ...      Other parameters for PCA.
+#' @param ord      A result of ordination().
+#' @param score    A string to specify score for plot.
+#'                 "st_scores" means stands and "sp_scores" species. 
+#' @param x,y      A column number for x and y axis. 
+#' @param df       A data.frame to be added into ord scores
+#' @param single,group 
+#'                 A string to specify single or group column in df.
+#' @return  ordination() returns result of ordination.
 #'          $st_scores:         scores for stand. 
 #'          $sp_scores:         scores for species. 
 #'          $eig_val:           eigen value for stand. 
 #'          $results_raw:       results of original ordination function. 
 #'          $ordination_method: o_method. 
 #'          $distance_method:   d_method. 
+#'          ord_plot() returns ggplot2 object. 
+#'          ord_extract_score() extracts stand or species scores 
+#'          from ordination result. 
+#'          ord_add_group() adds group data.frame into ordination scores.
 #' @examples
+#' library(ggplot2)
 #' library(vegan)
 #' data(dune)
+#' ord <- ordination(dune, o_method = "dca")
+#' ord_plot(ord)
+#' 
+#' data(dune.env)
+#' df <- 
+#'   table2df(dune) %>%
+#'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+#' score <- "st_scores"
+#' single <- "stand"
+#' group <- "Use"
 #' ordination(dune, o_method = "dca")
+#' 
 #' 
 #' @export
 ordination <- function(x, o_method, d_method = NULL, ...){
@@ -90,29 +113,31 @@ ordination <- function(x, o_method, d_method = NULL, ...){
   return(res)
 }
 
-#' Helper function for ordination methods
-#' 
-#' @param ord    A result of ordination().
-#' @param score  A string to specify score for plot.
-#'               "st_scores" means stands and "sp_scores" species. 
-#' @param x,y    A column number for x and y axis. 
-#' @examples
-#' library(ggplot2)
-#' library(vegan)
-#' data(dune)
-#' ordination(dune, o_method = "dca") %>%
-#'   ord_plot()
-#' 
+#' @rdname ordination
 #' @export
-ord_plot <- function(ord, score = "st_scores", x = 1, y = 2, col = NULL){
-  scores <- as.data.frame(ord[[score]])
+ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
+  ord_scores <- extract_score(ord, score)
   x <- colnames(scores)[x]
   y <- colnames(scores)[y]
   scores %>%
-    ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], 
-      label = rownames(scores), 
-      col = if(is.null(col)) col else .data[[col]]
-    )) +
+    ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], label = rownames(scores))) +
     ggplot2::geom_text() + 
     ggplot2::theme_bw()
+}
+
+#' @rdname ordination
+#' @export
+ord_add_group <- function(ord, score = "st_scores", df, single, group){
+  single_group <- dplyr::distinct(df, .data[[single]], .data[[group]])
+  ord_extract_score(ord, score) %>%
+    tibble::rownames_to_column(single) %>%
+    dplyr::left_join(single_group) %>%
+    dplyr::relocate(c(.data[[single]], .data[[group]]), .after = last_col())
+}
+
+#' @rdname ordination
+#' @export
+ord_extract_score <- function(ord, score = "st_scores"){
+  ord[[score]] %>% # needs "[[" not "["
+    as.data.frame()
 }
