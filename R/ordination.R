@@ -33,7 +33,6 @@
 #' @examples
 #' library(ggplot2)
 #' library(vegan)
-#' library(ecan)
 #' data(dune)
 #' ord <- ordination(dune, o_method = "dca")
 #' ord_plot(ord)
@@ -120,7 +119,7 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
   ord_scores <- ord_extract_score(ord, score)
   x <- colnames(scores)[x]
   y <- colnames(scores)[y]
-  scores %>%
+  ord_scores %>%
     ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], label = rownames(scores))) +
     ggplot2::geom_text() + 
     ggplot2::theme_bw()
