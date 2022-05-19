@@ -33,6 +33,7 @@
 #' @examples
 #' library(ggplot2)
 #' library(vegan)
+#' library(ecan)
 #' data(dune)
 #' ord <- ordination(dune, o_method = "dca")
 #' ord_plot(ord)
@@ -116,7 +117,7 @@ ordination <- function(x, o_method, d_method = NULL, ...){
 #' @rdname ordination
 #' @export
 ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
-  ord_scores <- extract_score(ord, score)
+  ord_scores <- ord_extract_score(ord, score)
   x <- colnames(scores)[x]
   y <- colnames(scores)[y]
   scores %>%
