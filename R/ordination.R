@@ -117,10 +117,10 @@ ordination <- function(x, o_method, d_method = NULL, ...){
 #' @export
 ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
   ord_scores <- ord_extract_score(ord, score)
-  x <- colnames(scores)[x]
-  y <- colnames(scores)[y]
+  x <- colnames(ord_scores)[x]
+  y <- colnames(ord_scores)[y]
   ord_scores %>%
-    ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], label = rownames(scores))) +
+    ggplot2::ggplot(ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
     ggplot2::geom_text() + 
     ggplot2::theme_bw()
 }
