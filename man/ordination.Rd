@@ -2,9 +2,18 @@
 % Please edit documentation in R/ordination.R
 \name{ordination}
 \alias{ordination}
+\alias{ord_plot}
+\alias{ord_add_group}
+\alias{ord_extract_score}
 \title{Helper function for ordination methods}
 \usage{
 ordination(x, o_method, d_method = NULL, ...)
+
+ord_plot(ord, score = "st_scores", x = 1, y = 2)
+
+ord_add_group(ord, score = "st_scores", df, single, group)
+
+ord_extract_score(ord, score = "st_scores")
 }
 \arguments{
 \item{x}{A community data matrix.
@@ -21,23 +30,50 @@ colnames: species.}
 "binomial", "chao", "cao", "mahalanobis", "chisq",
 "chord", "aitchison", or "robust.aitchison".}
 
-\item{...}{other parameters for PCA.}
+\item{...}{Other parameters for PCA.}
+
+\item{ord}{A result of ordination().}
+
+\item{score}{A string to specify score for plot.
+"st_scores" means stands and "sp_scores" species.}
+
+\item{df}{A data.frame to be added into ord scores}
+
+\item{single, group}{A string to specify single or group column in df.}
+
+\item{x, y}{A column number for x and y axis.}
 }
 \value{
-Result of ordination.
+ordination() returns result of ordination.
 $st_scores:         scores for stand.
 $sp_scores:         scores for species.
 $eig_val:           eigen value for stand.
 $results_raw:       results of original ordination function.
 $ordination_method: o_method.
 $distance_method:   d_method.
+ord_plot() returns ggplot2 object.
+ord_extract_score() extracts stand or species scores
+from ordination result.
+ord_add_group() adds group data.frame into ordination scores.
 }
 \description{
 Helper function for ordination methods
 }
 \examples{
+library(ggplot2)
 library(vegan)
 data(dune)
+ord <- ordination(dune, o_method = "dca")
+ord_plot(ord)
+
+data(dune.env)
+df <- 
+  table2df(dune) \%>\%
+  dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+score <- "st_scores"
+single <- "stand"
+group <- "Use"
 ordination(dune, o_method = "dca")
+
 
 }

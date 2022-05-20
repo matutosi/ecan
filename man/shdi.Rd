@@ -7,8 +7,8 @@
 shdi(df, stand = NULL, species = NULL, abundance = NULL)
 }
 \arguments{
-\item{df}{A data.frame, which has three cols: stand, species, abundance.\preformatted{            Community matrix can be converted using table2df().
-}}
+\item{df}{A data.frame, which has three cols: stand, species, abundance.
+Community matrix should be converted using table2df().}
 
 \item{stand, species, abundance}{A text to specify each column.
 If NULL, 1st, 2nd, 3rd column will be used.}
@@ -27,6 +27,5 @@ library(vegan)
 data(dune)
 df <- table2df(dune)
 shdi(df)
-
 
 }
