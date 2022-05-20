@@ -34,18 +34,32 @@
 #' library(ggplot2)
 #' library(vegan)
 #' data(dune)
-#' ord <- ordination(dune, o_method = "dca")
-#' ord_plot(ord)
-#' 
 #' data(dune.env)
+#' 
 #' df <- 
 #'   table2df(dune) %>%
 #'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
-#' score <- "st_scores"
-#' single <- "stand"
-#' group <- "Use"
-#' ordination(dune, o_method = "dca")
+#' sp_dammy <- 
+#'  tibble::tibble("species" = colnames(dune), 
+#'                 "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
+#'                 "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
+#' df <- 
+#'   df %>%
+#'   dplyr::left_join(sp_dammy)
 #' 
+#' ord_dca <- ordination(dune, o_method = "dca")
+#' ord_pca <- 
+#'   df %>%
+#'   df2table() %>%
+#'   ordination(o_method = "pca")
+#' 
+#' ord_dca_st <- 
+#'   ord_extract_score(ord_dca, score = "st_scores")
+#' ord_pca_sp <- 
+#'   ord_add_group(ord_pca, 
+#'   score = "st_scores", df, single = "species", group = "dammy_1")
+#' 
+#' # ord_plot(ord)
 #' 
 #' @export
 ordination <- function(x, o_method, d_method = NULL, ...){
@@ -128,17 +142,17 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
 #' @rdname ordination
 #' @export
 ord_add_group <- function(ord, score = "st_scores", df, single, group){
-  cols <- c(single, cols_one2multi(df, single))
-  df_sub <- 
-    dplyr::select(df, any_of(cols)) %>%
+  cols_add <- cols_one2multi(df, single)
+  df_add <- 
+    dplyr::select(df, any_of(cols_add)) %>%
     dplyr::distinct()
-  res <- 
+  df_grouped <- 
     ord_extract_score(ord, score) %>%
     tibble::rownames_to_column(single) %>%
-    dplyr::left_join(df_sub) %>%
-    dplyr::relocate(any_of(cols), .after = last_col())
-  rownames(res) <- res[[single]]
-  res
+    dplyr::left_join(df_add) %>%
+    dplyr::relocate(any_of(cols_add), .after = last_col())
+  rownames(df_grouped) <- df_grouped[[single]]
+  df_grouped
 }
 
 #' @rdname ordination

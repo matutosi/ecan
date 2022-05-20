@@ -2,6 +2,8 @@
 #' 
 #' @param df                A data.frame
 #' @param col,col_1,col_2   A string to specify a colname.
+#' @param inculde_self      A logical. 
+#'                          If TRUE, return value including input col.
 #' 
 #' @return is_one2multi() and is_one2one() return a logical.
 #'         cols_one2multi() returns strings of colnames 
@@ -14,7 +16,6 @@
 #' is_one2multi(example, "stand", "Use")
 #' is_one2one(example, "stand", "Use")
 #' is_one2one(DF, "A", "B")
-#' 
 #' 
 #' 
 #' @export
@@ -41,8 +42,10 @@ is_one2one <- function(df, col_1, col_2){
 
 #' @rdname is_one2multi
 #' @export
-cols_one2multi <- function(df, col){
+cols_one2multi <- function(df, col, inculde_self = TRUE){
   cols <- setdiff(colnames(df), col)
   vars <- tibble::tibble(col_1 = col, col_2 = cols)
-  cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
+  cols <- cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
+  if(inculde_self) cols <- c(col, cols)
+  return(cols)
 }
