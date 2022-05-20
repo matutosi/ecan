@@ -128,20 +128,17 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
 #' @rdname ordination
 #' @export
 ord_add_group <- function(ord, score = "st_scores", df, single, group){
-  single_group <- dplyr::distinct(df, .data[[single]], .data[[group]])
-  ord_scores <- 
+  cols <- c(single, cols_one2multi(df, single))
+  df_sub <- 
+    dplyr::select(df, any_of(cols)) %>%
+    dplyr::distinct()
+  res <- 
     ord_extract_score(ord, score) %>%
     tibble::rownames_to_column(single) %>%
-    dplyr::left_join(single_group) %>%
-    dplyr::relocate(c(.data[[single]], .data[[group]]), .after = last_col())
-  no_na <-    # on of NA: means group do not matche data.
-    dplyr::select(ord_scores, all_of(group)) %>%
-    is.na() %>%
-    sum()
-  if(no_na > 0)
-    return(ord_extract_score(ord, score)) # adding group
-  else
-    return(ord_scores)                    # do not add group: only ordination data
+    dplyr::left_join(df_sub) %>%
+    dplyr::relocate(any_of(cols), .after = last_col())
+  rownames(res) <- res[[single]]
+  res
 }
 
 #' @rdname ordination
