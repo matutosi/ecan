@@ -20,12 +20,14 @@
 #' @export
 is_one2multi <- function(df, col_1, col_2){
   res <- 
-    df %>%
-    dplyr::distinct(.data[[col_1]], .data[[col_2]]) %>%
-    dplyr::group_by(.data[[col_1]]) %>%
-    dplyr::tally() %>%
-    dplyr::summarise(max(.data[["n"]])) %>%
-    as.numeric()
+  #   try(silent = TRUE, {
+      df %>%
+      dplyr::distinct(.data[[col_1]], .data[[col_2]]) %>%
+      dplyr::group_by(.data[[col_1]]) %>%
+      dplyr::tally() %>%
+      dplyr::summarise(max(.data[["n"]])) %>%
+      as.numeric()
+  #   })
   return(res == 1)
 }
 
