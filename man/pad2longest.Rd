@@ -16,3 +16,8 @@ pad2longest(string, side = "right", pad = " ")
 \description{
 Pad a string to the longest width of the strings.
 }
+\examples{
+x <- c("a", "ab", "abc")
+pad2longest(x, side = "right", pad = " ")
+
+}

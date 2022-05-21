@@ -4,9 +4,9 @@
 #' @param side     Side on which padding character is added (left, right or both).
 #' @param pad      Single padding character (default is a space).
 #' 
-#' @example
+#' @examples
 #' x <- c("a", "ab", "abc")
-#' pad2longest(x, side = "right", pad = " "){
+#' pad2longest(x, side = "right", pad = " ")
 #' 
 #' @export
 pad2longest <- function(string, side = "right", pad = " "){
