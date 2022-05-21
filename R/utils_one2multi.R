@@ -10,12 +10,27 @@
 #'         that has one2multi relation to input col.
 #' 
 #' @examples
-#' cols_one2multi(example, "stand")
-#' cols_one2multi(example, "species")
-#' df <- example; col <- "stand"
-#' is_one2multi(example, "stand", "Use")
-#' is_one2one(example, "stand", "Use")
-#' is_one2one(DF, "A", "B")
+#' library(vegan)
+#' data(dune)
+#' data(dune.env)
+#' 
+#' df <- 
+#'   table2df(dune) %>%
+#'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+#' sp_dammy <- 
+#'  tibble::tibble("species" = colnames(dune), 
+#'                 "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
+#'                 "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
+#' df <- 
+#'   df %>%
+#'   dplyr::left_join(sp_dammy)
+#' 
+#' is_one2one(df, "stand", "Use")
+#' is_one2multi(df, "stand", "Use")
+#' cols_one2multi(df, "stand")
+#' cols_one2multi(df, "species")
+#' select_one2multi(df, "stand")
+#' select_one2multi(df, "species")
 #' 
 #' 
 #' @export
@@ -48,4 +63,11 @@ cols_one2multi <- function(df, col, inculde_self = TRUE){
   cols <- cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
   if(inculde_self) cols <- c(col, cols)
   return(cols)
+}
+
+#' @rdname is_one2multi
+#' @export
+select_one2multi <- function(df, col, inculde_self = TRUE){
+  cols <- cols_one2multi(df, col, inculde_self)
+  dplyr::select(df, all_of(cols))
 }
