@@ -10,12 +10,15 @@ is_one2multi(df, col_1, col_2)
 
 is_one2one(df, col_1, col_2)
 
-cols_one2multi(df, col)
+cols_one2multi(df, col, inculde_self = TRUE)
 }
 \arguments{
 \item{df}{A data.frame}
 
 \item{col, col_1, col_2}{A string to specify a colname.}
+
+\item{inculde_self}{A logical.
+If TRUE, return value including input col.}
 }
 \value{
 is_one2multi() and is_one2one() return a logical.
@@ -32,7 +35,6 @@ df <- example; col <- "stand"
 is_one2multi(example, "stand", "Use")
 is_one2one(example, "stand", "Use")
 is_one2one(DF, "A", "B")
-
 
 
 }
