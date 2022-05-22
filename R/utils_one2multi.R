@@ -69,5 +69,7 @@ cols_one2multi <- function(df, col, inculde_self = TRUE){
 #' @export
 select_one2multi <- function(df, col, inculde_self = TRUE){
   cols <- cols_one2multi(df, col, inculde_self)
-  dplyr::select(df, all_of(cols))
+  df %>%
+    dplyr::select(all_of(cols)) %>%
+    dplyr::distinct()
 }
