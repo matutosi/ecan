@@ -144,7 +144,9 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
 ord_add_group <- function(ord, score = "st_scores", df, single, group){
   cols_add <- cols_one2multi(df, single)
   df_add <- 
-    dplyr::select(df, any_of(cols_add)) %>%
+    df %>%
+    dplyr::select(any_of(cols_add)) %>%
+    dplyr::mutate({{single}} := as.character(.data[[single]])) %>%
     dplyr::distinct()
   df_grouped <- 
     ord_extract_score(ord, score) %>%
