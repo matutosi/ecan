@@ -4,6 +4,7 @@
 \alias{is_one2multi}
 \alias{is_one2one}
 \alias{cols_one2multi}
+\alias{select_one2multi}
 \title{Check cols one-to-one, or one-to-multi in data.frame}
 \usage{
 is_one2multi(df, col_1, col_2)
@@ -11,6 +12,8 @@ is_one2multi(df, col_1, col_2)
 is_one2one(df, col_1, col_2)
 
 cols_one2multi(df, col, inculde_self = TRUE)
+
+select_one2multi(df, col, inculde_self = TRUE)
 }
 \arguments{
 \item{df}{A data.frame}
@@ -29,12 +32,27 @@ that has one2multi relation to input col.
 Check cols one-to-one, or one-to-multi in data.frame
 }
 \examples{
-cols_one2multi(example, "stand")
-cols_one2multi(example, "species")
-df <- example; col <- "stand"
-is_one2multi(example, "stand", "Use")
-is_one2one(example, "stand", "Use")
-is_one2one(DF, "A", "B")
+library(vegan)
+data(dune)
+data(dune.env)
+
+df <- 
+  table2df(dune) \%>\%
+  dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+sp_dammy <- 
+ tibble::tibble("species" = colnames(dune), 
+                "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
+                "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
+df <- 
+  df \%>\%
+  dplyr::left_join(sp_dammy)
+
+is_one2one(df, "stand", "Use")
+is_one2multi(df, "stand", "Use")
+cols_one2multi(df, "stand")
+cols_one2multi(df, "species")
+select_one2multi(df, "stand")
+select_one2multi(df, "species")
 
 
 }

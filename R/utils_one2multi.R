@@ -70,6 +70,6 @@ cols_one2multi <- function(df, col, inculde_self = TRUE){
 select_one2multi <- function(df, col, inculde_self = TRUE){
   cols <- cols_one2multi(df, col, inculde_self)
   df %>%
-    dplyr::select(all_of(cols)) %>%
+    dplyr::select(dplyr::all_of(cols)) %>%
     dplyr::distinct()
 }

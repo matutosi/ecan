@@ -25,6 +25,6 @@ pad2longest <- function(string, side = "right", pad = " "){
 #' 
 #' @export
 cut_conti <- function(x){
-  brks <- hist(x, plot = FALSE)$breaks
+  brks <- graphics::hist(x, plot = FALSE)$breaks
   cut(x, brks)
 }

@@ -7,16 +7,16 @@
 \alias{ord_extract_score}
 \title{Helper function for ordination methods}
 \usage{
-ordination(x, o_method, d_method = NULL, ...)
+ordination(tbl, o_method, d_method = NULL, ...)
 
 ord_plot(ord, score = "st_scores", x = 1, y = 2)
 
-ord_add_group(ord, score = "st_scores", df, single, group)
+ord_add_group(ord, score = "st_scores", df, indiv, group)
 
 ord_extract_score(ord, score = "st_scores")
 }
 \arguments{
-\item{x}{A community data matrix.
+\item{tbl}{A community data matrix.
 rownames: stands.
 colnames: species.}
 
@@ -37,11 +37,11 @@ colnames: species.}
 \item{score}{A string to specify score for plot.
 "st_scores" means stands and "sp_scores" species.}
 
+\item{x, y}{A column number for x and y axis.}
+
 \item{df}{A data.frame to be added into ord scores}
 
-\item{single, group}{A string to specify single or group column in df.}
-
-\item{x, y}{A column number for x and y axis.}
+\item{indiv, group}{A string to specify indiv or group column in df.}
 }
 \value{
 ordination() returns result of ordination.
@@ -86,7 +86,7 @@ ord_dca_st <-
   ord_extract_score(ord_dca, score = "st_scores")
 ord_pca_sp <- 
   ord_add_group(ord_pca, 
-  score = "st_scores", df, single = "species", group = "dammy_1")
+  score = "st_scores", df, indiv = "species", group = "dammy_1")
 
 # ord_plot(ord)
 

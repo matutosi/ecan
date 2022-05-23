@@ -7,13 +7,15 @@ Description: Support ecological analyses such as ordinations and clusterings.
 License: MIT + file LICENSE
 LazyData: true
 Imports: 
+    MASS,
     cluster,
     dave,
     dplyr,
+    ggdendro,
     ggplot2,
+    graphics,
     labdsv,
     magrittr,
-    MASS,
     purrr,
     rlang,
     stringr,

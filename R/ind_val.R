@@ -1,7 +1,9 @@
 #' Helper function for Indicator Species Analysis
 #' 
 #' @inherit      shdi
-#' @param group  A text to specify group column.
+#' @param     group    A text to specify group column.
+#' @param     row_data A logical. 
+#'                     TRUE: return row result data of labdsv::indval(). 
 #' @return    A data.frame.
 #' 
 #' @examples
@@ -49,7 +51,7 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
         "ind.val"   := res$indcls, 
         "p.value"   := res$pval
       ) %>%
-      dplyr::arrange(.data[[group]], desc(res$ind.val), desc(res$p.value))
+      dplyr::arrange(.data[[group]], dplyr::desc(res$ind.val), dplyr::desc(res$p.value))
   }
   return(res)
 }

@@ -7,7 +7,7 @@
 \usage{
 cluster(x, c_method, d_method)
 
-cls_add_group(cls, df, single, group)
+cls_add_group(cls, df, indiv, group)
 }
 \arguments{
 \item{x}{A community data matrix.
@@ -31,7 +31,9 @@ colnames: species.}
 
 \item{df}{A data.frame to be added into ord scores}
 
-\item{single, group}{A string to specify single or group column in df.}
+\item{indiv}{A string to specify indiv or group column in df.}
+
+\item{group}{A string to specify indiv or group column in df.}
 }
 \value{
 Result of clustering.
@@ -64,7 +66,7 @@ cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 ggdendrogram(cls)
 
 cls$labels <- 
-  cls_add_group(cls, df, single = "stand", group = "Use")
+  cls_add_group(cls, df, indiv = "stand", group = "Use")
 ggdendrogram(cls)
 
 

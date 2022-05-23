@@ -38,7 +38,7 @@
 #' ggdendrogram(cls)
 #' 
 #' cls$labels <- 
-#'   cls_add_group(cls, df, single = "stand", group = "Use")
+#'   cls_add_group(cls, df, indiv = "stand", group = "Use")
 #' ggdendrogram(cls)
 #' 
 #' 
@@ -83,12 +83,12 @@ t_if_true <- function(x, cond){
 #' @inheritParams  ordination
 #' @rdname         cluster
 #' @export
-cls_add_group <- function(cls, df, single, group){
-  single_group <- 
-    tibble::tibble(`:=`({{single}}, cls$labels)) %>%
-    dplyr::left_join(dplyr::distinct(df, .data[[single]], .data[[group]]))
+cls_add_group <- function(cls, df, indiv, group){
+  indiv_group <- 
+    tibble::tibble(`:=`({{indiv}}, cls$labels)) %>%
+    dplyr::left_join(dplyr::distinct(df, .data[[indiv]], .data[[group]]))
   lab_1 <- 
-    single_group[[group]] %>%
+    indiv_group[[group]] %>%
     pad2longest(side = "right", pad = "_")
   lab_2 <- pad2longest(cls$labels, side = "left", pad = "_")
   new_lab <- stringr::str_c(lab_1 , "-", lab_2)
