@@ -17,8 +17,8 @@
 #'                 "st_scores" means stands and "sp_scores" species. 
 #' @param x,y      A column number for x and y axis. 
 #' @param df       A data.frame to be added into ord scores
-#' @param single,group 
-#'                 A string to specify single or group column in df.
+#' @param indiv,group 
+#'                 A string to specify indiv or group column in df.
 #' @return  ordination() returns result of ordination.
 #'          $st_scores:         scores for stand. 
 #'          $sp_scores:         scores for species. 
@@ -57,7 +57,7 @@
 #'   ord_extract_score(ord_dca, score = "st_scores")
 #' ord_pca_sp <- 
 #'   ord_add_group(ord_pca, 
-#'   score = "st_scores", df, single = "species", group = "dammy_1")
+#'   score = "st_scores", df, indiv = "species", group = "dammy_1")
 #' 
 #' # ord_plot(ord)
 #' 
@@ -141,19 +141,19 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
 
 #' @rdname ordination
 #' @export
-ord_add_group <- function(ord, score = "st_scores", df, single, group){
-  cols_add <- cols_one2multi(df, single)
+ord_add_group <- function(ord, score = "st_scores", df, indiv, group){
+  cols_add <- cols_one2multi(df, indiv)
   df_add <- 
     df %>%
     dplyr::select(any_of(cols_add)) %>%
-    dplyr::mutate({{single}} := as.character(.data[[single]])) %>%
+    dplyr::mutate({{indiv}} := as.character(.data[[indiv]])) %>%
     dplyr::distinct()
   df_grouped <- 
     ord_extract_score(ord, score) %>%
-    tibble::rownames_to_column(single) %>%
+    tibble::rownames_to_column(indiv) %>%
     dplyr::left_join(df_add) %>%
     dplyr::relocate(any_of(cols_add), .after = last_col())
-  rownames(df_grouped) <- df_grouped[[single]]
+  rownames(df_grouped) <- df_grouped[[indiv]]
   df_grouped
 }
 
