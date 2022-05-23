@@ -85,12 +85,7 @@ t_if_true <- function(x, cond){
 #' @export
 cls_add_group <- function(cls, df, indiv, group){
   indiv_group <- 
-    tibble::tibble(`:=`({{indiv}}, cls$labels)) %>%
+    tibble::tibble(!!indiv := cls$labels) %>%
     dplyr::left_join(dplyr::distinct(df, .data[[indiv]], .data[[group]]))
-  lab_1 <- 
-    indiv_group[[group]] %>%
-    pad2longest(side = "right", pad = "_")
-  lab_2 <- pad2longest(cls$labels, side = "left", pad = "_")
-  new_lab <- stringr::str_c(lab_1 , "-", lab_2)
-  return(new_lab)
+  stringr::str_c(indiv_group[[group]] , " __ ", cls$labels)
 }
