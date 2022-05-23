@@ -18,7 +18,7 @@
 #'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
 #' ind_val(df, abundance = "cover", group = "Moisture", row_data = TRUE)
 #' ind_val(df, abundance = "cover", group = "Management")
-#' ind_val(df, abundance = "cover", group = "Use", row_data = TRUE)
+#' ind_val(df, abundance = "cover", group = "Use")
 #' ind_val(df, abundance = "cover", group = "Manure")
 #' 
 #' @export
@@ -30,6 +30,11 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
   if(is.null(abundance)) abundance <- colnames(df)[3]
   stopifnot(is.numeric(df[[abundance]]))
   if(is.null(group))     stop('Needs "group" input')
+
+  # column setting
+  indval <- "ind.val"
+  pvalue <-  "p.value"
+
   # table
   tbl <- df2table(df, st = stand, sp = species, ab = abundance)
   # group
@@ -46,12 +51,19 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
   if(!row_data){
     res <- 
       tibble::tibble(
-        {{species}} := names(res$maxcls), 
-        {{group}}   := res$maxcls, 
-        "ind.val"   := res$indcls, 
-        "p.value"   := res$pval
+        {{species}}  := names(res$maxcls), 
+        {{group_no}} := res$maxcls, 
+        {{indval}}   := res$indcls, 
+        {{pvalue}}   := res$pval
       ) %>%
-      dplyr::arrange(.data[[group]], dplyr::desc(res$ind.val), dplyr::desc(res$p.value))
+      dplyr::arrange(.data[[group_no]], dplyr::desc(res$ind.val), dplyr::desc(res$p.value))
+      gr <- 
+        gr %>%
+        dplyr::select(!all_of(stand)) %>%
+        dplyr::distinct()
+      res <- 
+        dplyr::left_join(res, gr) %>%
+        dplyr::select(all_of(c(group, species, indval, pvalue)))
   }
   return(res)
 }
