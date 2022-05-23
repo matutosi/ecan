@@ -58,10 +58,15 @@ is_one2one <- function(df, col_1, col_2){
 #' @rdname is_one2multi
 #' @export
 cols_one2multi <- function(df, col, inculde_self = TRUE){
-  cols <- setdiff(colnames(df), col)
-  vars <- tibble::tibble(col_1 = col, col_2 = cols)
-  cols <- cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
-  if(inculde_self) cols <- c(col, cols)
+  cols <- try({
+    cols <- setdiff(colnames(df), col)
+    vars <- tibble::tibble(col_1 = col, col_2 = cols)
+    cols <- cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
+    if(inculde_self) cols <- c(col, cols)
+    cols
+  })
+  if(class(cols) == "try-error")
+    cols <- character(0)
   return(cols)
 }
 
