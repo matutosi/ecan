@@ -42,7 +42,7 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
   gr <- 
     tibble::tibble(`:=`({{stand}}, rownames(tbl))) %>%
     dplyr::left_join(
-      dplyr::distinct(df, .data[[stand]], .data[[group]]), by = stand
+      dplyr::distinct(df, {{stand}} := as.character(.data[[stand]]), .data[[group]]), by = stand
     ) %>%
     dplyr::left_join(
       tibble::tibble({{group}} := unique(df[[group]]), {{group_no}} := seq_along(unique(df[[group]]))), by = group

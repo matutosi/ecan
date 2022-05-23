@@ -41,9 +41,6 @@
 #'   cls_add_group(cls, df, indiv = "stand", group = "Use")
 #' ggdendrogram(cls)
 #' 
-#' 
-#' 
-#' 
 #' @export
 cluster <- function(x, c_method, d_method){
   cls <- list()
@@ -86,6 +83,6 @@ t_if_true <- function(x, cond){
 cls_add_group <- function(cls, df, indiv, group){
   indiv_group <- 
     tibble::tibble(!!indiv := cls$labels) %>%
-    dplyr::left_join(dplyr::distinct(df, .data[[indiv]], .data[[group]]))
+    dplyr::left_join(dplyr::distinct(df, {{indiv}} := as.character(.data[[indiv]]), .data[[group]]))
   stringr::str_c(indiv_group[[group]] , " __ ", cls$labels)
 }
