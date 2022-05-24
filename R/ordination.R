@@ -149,17 +149,22 @@ ord_add_group <- function(ord, score = "st_scores", df, indiv, group){
     dplyr::mutate({{indiv}} := as.character(.data[[indiv]])) %>%
     dplyr::distinct()
   df_grouped <- 
-    ord_extract_score(ord, score) %>%
-    tibble::rownames_to_column(indiv) %>%
+    ord_extract_score(ord, score, indiv) %>%
     dplyr::left_join(df_add) %>%
     dplyr::relocate(dplyr::any_of(cols_add), .after = dplyr::last_col())
   rownames(df_grouped) <- df_grouped[[indiv]]
-  df_grouped
+  return(df_grouped)
 }
 
 #' @rdname ordination
 #' @export
-ord_extract_score <- function(ord, score = "st_scores"){
-  ord[[score]] %>% # needs "[[" not "["
-    as.data.frame()
+ord_extract_score <- function(ord, score = "st_scores", row_name = NULL){
+  if(is.null(row_name)) row_name <- "rowname"
+  df <- 
+    ord[[score]] %>% # needs "[[" not "["
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = row_name) %>%
+    dplyr::relocate(dplyr::any_of(row_name), .after = dplyr::last_col())
+  rownames(df) <- df[[row_name]]
+  return(df)
 }
