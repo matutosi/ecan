@@ -26,15 +26,112 @@ devtools::install_github("matutosi/ecan")
 
 ## Example
 
+### Prepare adn convert data
+
 ``` r
 library(ecan)
+library(vegan)
 library(tidyverse)
-library(magrittr)
+data(dune)
+data(dune.env)
 
+df <- 
+  table2df(dune) %>%
+  dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+
+sp_dammy <- 
+ tibble::tibble("species" = colnames(dune), 
+                "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
+                "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
+
+df <- 
+  df %>%
+  dplyr::left_join(sp_dammy)
+
+df
 ```
 
+
+### Diversity index
+
+``` r
+div <- 
+  shdi(df) %>%
+  dplyr::left_join(select_one2multi(df, "stand"))
+
+group <- "Management"
+div_index <- "s"
+div %>%
+  ggplot(aes(x = .data[[group]], y = .data[[div_index]])) + 
+    geom_boxplot(outlier.shape = NA) +  # do not show outer point
+    geom_jitter(height = 0, width = 0.1)
+```
+
+### Indicator Species Analysis (ISA, ind val)
+
+``` r
+ind_val(df, group = "Moisture", row_data = TRUE)
+ind_val(df, group = "Management")
+ind_val(df, group = "Use")
+ind_val(df, group = "Manure")
+```
+
+### Cluster analysis
+
+``` r
+library(ggdendro)
+library(dendextend)
+
+cls <- cluster(dune, c_method = "average", d_method = "euclidean")
+ggdendro::ggdendrogram(cls)
+
+indiv <- "stand"
+group <- "Use"
+
+ggdendro::ggdendrogram(cls_add_group(cls, df, indiv, group))
+
+col <- cls_color(cls, df, indiv, group)
+cls <- 
+  cls_add_group(cls, df, indiv, group) %>%
+  stats::as.dendrogram()
+labels_colors(cls) <- gray(0)
+
+plot(cls)
+dendextend::colored_bars(colors = col, cls, group, y_shift = 0,  y_scale = 3)
+par(new = TRUE)
+plot(cls)
+```
+
+### Ordination
+
+
+``` r
+ord_dca <- ordination(dune, o_method = "dca")
+ord_pca <-
+  df %>%
+  df2table() %>%
+  ordination(o_method = "pca")
+
+ord_dca_st <- 
+  ord_extract_score(ord_dca, score = "st_scores")
+
+ord_dca_st %>%
+  ggplot(aes(DCA1, DCA2, label = rownames(.))) +
+  geom_text()
+
+
+indiv <- "species"
+group <- "dammy_1"
+ord_pca_sp <- 
+  ord_add_group(ord_pca, score = "sp_scores", df, indiv, group)
+
+ord_pca_sp %>%
+  ggplot(aes(PC1, PC2, label = rownames(.))) +
+  geom_point(aes(col = .data[[group]]), alpha = 0.4, size = 7) +
+  geom_text() +
+  theme_bw()
+```
 
 ## Citation
 
 Toshikazu Matsumura (2022) Ecological analysis tools with R. https://github.com/matutosi/ecan/.
-
