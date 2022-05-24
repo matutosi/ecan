@@ -37,7 +37,7 @@
 #' cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 #' ggdendrogram(cls)
 #' 
-#' cls$labels <- cls_add_group(cls, df, indiv = "stand", group = "Use")
+#' cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
 #' ggdendrogram(cls)
 #' 
 #' @export
