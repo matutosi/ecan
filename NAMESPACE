@@ -3,6 +3,7 @@
 export("%>%")
 export(as_same)
 export(cls_add_group)
+export(cls_color)
 export(cluster)
 export(cols_one2multi)
 export(cut_conti)

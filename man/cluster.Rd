@@ -3,11 +3,14 @@
 \name{cluster}
 \alias{cluster}
 \alias{cls_add_group}
+\alias{cls_color}
 \title{Helper function for clustering methods}
 \usage{
 cluster(x, c_method, d_method)
 
 cls_add_group(cls, df, indiv, group)
+
+cls_color(cls, df, indiv, group)
 }
 \arguments{
 \item{x}{A community data matrix.
@@ -27,7 +30,7 @@ colnames: species.}
 "binomial", "chao", "cao", "mahalanobis", "chisq",
 "chord", "aitchison", or "robust.aitchison".}
 
-\item{cls}{A result of cluster analysis.}
+\item{cls}{A result of cluster or dendrogram.}
 
 \item{df}{A data.frame to be added into ord scores}
 
@@ -39,11 +42,17 @@ colnames: species.}
 Result of clustering.
 $clustering_method: c_method
 $distance_method:   d_method
+
+\preformatted{    Inputing cls return a color vector, 
+            inputing dend return a dend with color.
+}
 }
 \description{
 Helper function for clustering methods
 
-Transfer when true
+Add group names to hclust labels.
+
+Add colors to dendrogram
 }
 \examples{
 library(vegan)
@@ -65,11 +74,7 @@ df <-
 cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 ggdendrogram(cls)
 
-cls$labels <- 
-  cls_add_group(cls, df, indiv = "stand", group = "Use")
+cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
 ggdendrogram(cls)
-
-
-
 
 }
