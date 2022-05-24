@@ -37,8 +37,7 @@
 #' cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 #' ggdendrogram(cls)
 #' 
-#' cls$labels <- 
-#'   cls_add_group(cls, df, indiv = "stand", group = "Use")
+#' cls$labels <- cls_add_group(cls, df, indiv = "stand", group = "Use")
 #' ggdendrogram(cls)
 #' 
 #' @export
@@ -74,15 +73,54 @@ t_if_true <- function(x, cond){
 }
 
 
-#' Transfer when true
+#' Add group names to hclust labels.
 #' 
-#' @param cls      A result of cluster analysis.
+#' @param cls      A result of cluster analysis (hclust).
 #' @inheritParams  ordination
 #' @rdname         cluster
 #' @export
 cls_add_group <- function(cls, df, indiv, group){
-  indiv_group <- 
+  labs_group <- 
+    df %>%
+    dplyr::distinct(!!indiv := as.character(.data[[indiv]]), .data[[group]]) 
+  labs_group <- 
     tibble::tibble(!!indiv := cls$labels) %>%
-    dplyr::left_join(dplyr::distinct(df, {{indiv}} := as.character(.data[[indiv]]), .data[[group]]))
-  stringr::str_c(indiv_group[[group]] , " __ ", cls$labels)
+    dplyr::left_join(labs_group)
+  cls$labels <- stringr::str_c(labs_group[[group]] , "_", cls$labels)
+  return(cls)
+}
+
+#' Add colors to dendrogram
+#' 
+#' @param cls      A result of cluster or dendrogram.
+#' @inheritParams  ordination
+#' @rdname         cluster
+#' @return         Inputing cls return a color vector, 
+#'                 inputing dend return a dend with color.
+#' @export
+cls_color <- function(cls, df, indiv, group){
+  color <- "color"
+  labs_group <- 
+    df %>%
+    dplyr::distinct(!!indiv := as.character(.data[[indiv]]), .data[[group]]) 
+  col <- 
+    tibble(!!group :=                    unique(labs_group[[group]]), 
+           !!color := seq_along(unique(labs_group[[group]])) + 1)
+  labs <- 
+    if(is.hclust(cls)){
+      cls$labels
+    } else if(is.dendrogram(cls)) {
+      labels(cls)
+    }
+  lab_col <- 
+    tibble::tibble(!!indiv := labs) %>%
+    dplyr::left_join(labs_group) %>%
+    dplyr::left_join(col)
+  col <- lab_col[[color]]
+  if(is.hclust(cls)){
+    return(col)
+  } else if(is.dendrogram(cls)) {
+    labels_colors(cls) <- lab_col[[color]]
+    return(cls)
+  }
 }
