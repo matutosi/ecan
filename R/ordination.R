@@ -17,8 +17,8 @@
 #'                 "st_scores" means stands and "sp_scores" species. 
 #' @param x,y      A column number for x and y axis. 
 #' @param df       A data.frame to be added into ord scores
-#' @param indiv,group 
-#'                 A string to specify indiv or group column in df.
+#' @param indiv,group,row_name
+#'                 A string to specify indiv, group, row_name column in df.
 #' @return  ordination() returns result of ordination.
 #'          $st_scores:         scores for stand. 
 #'          $sp_scores:         scores for species. 

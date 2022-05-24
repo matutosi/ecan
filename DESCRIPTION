@@ -9,9 +9,9 @@ LazyData: true
 Imports: 
     MASS,
     cluster,
+    dendextend,
     dave,
     dplyr,
-    ggdendro,
     ggplot2,
     graphics,
     labdsv,
@@ -23,6 +23,7 @@ Imports:
     tidyr,
     vegan
 Suggests: 
+    ggdendro,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),

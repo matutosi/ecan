@@ -59,11 +59,11 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
       dplyr::arrange(.data[[group_no]], dplyr::desc(res$ind.val), dplyr::desc(res$p.value))
       gr <- 
         gr %>%
-        dplyr::select(!all_of(stand)) %>%
+        dplyr::select(! dplyr::all_of(stand)) %>%
         dplyr::distinct()
       res <- 
         dplyr::left_join(res, gr) %>%
-        dplyr::select(all_of(c(group, species, indval, pvalue)))
+        dplyr::select(dplyr::all_of(c(group, species, indval, pvalue)))
   }
   return(res)
 }

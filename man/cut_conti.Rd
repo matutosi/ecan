@@ -10,8 +10,8 @@ cut_conti(x)
 \item{x}{A numeric vector.}
 }
 \value{
-\preformatted{    A factor vector.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{    A factor vector.
+}\if{html}{\out{</div>}}
 }
 \description{
 Pad a string to the longest width of the strings.

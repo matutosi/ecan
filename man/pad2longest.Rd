@@ -14,8 +14,8 @@ pad2longest(string, side = "right", pad = " ")
 \item{pad}{Single padding character (default is a space).}
 }
 \value{
-\preformatted{    Strings.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{    Strings.
+}\if{html}{\out{</div>}}
 }
 \description{
 Pad a string to the longest width of the strings.

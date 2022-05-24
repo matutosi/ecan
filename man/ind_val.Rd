@@ -17,13 +17,7 @@ ind_val(
 \item{df}{A data.frame, which has three cols: stand, species, abundance.
 Community matrix should be converted using table2df().}
 
-\item{stand}{A text to specify each column.
-If NULL, 1st, 2nd, 3rd column will be used.}
-
-\item{species}{A text to specify each column.
-If NULL, 1st, 2nd, 3rd column will be used.}
-
-\item{abundance}{A text to specify each column.
+\item{stand, species, abundance}{A text to specify each column.
 If NULL, 1st, 2nd, 3rd column will be used.}
 
 \item{group}{A text to specify group column.}

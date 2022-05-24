@@ -33,19 +33,15 @@ colnames: species.}
 \item{cls}{A result of cluster or dendrogram.}
 
 \item{df}{A data.frame to be added into ord scores}
-
-\item{indiv}{A string to specify indiv or group column in df.}
-
-\item{group}{A string to specify indiv or group column in df.}
 }
 \value{
 Result of clustering.
 $clustering_method: c_method
 $distance_method:   d_method
 
-\preformatted{    Inputing cls return a color vector, 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{    Inputing cls return a color vector, 
             inputing dend return a dend with color.
-}
+}\if{html}{\out{</div>}}
 }
 \description{
 Helper function for clustering methods
@@ -72,9 +68,9 @@ df <-
   dplyr::left_join(sp_dammy)
 
 cls <- cluster(dune, c_method = "average", d_method = "euclidean")
-ggdendrogram(cls)
+ggdendro::ggdendrogram(cls)
 
 cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
-ggdendrogram(cls)
+ggdendro::ggdendrogram(cls)
 
 }

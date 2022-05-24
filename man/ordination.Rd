@@ -13,7 +13,7 @@ ord_plot(ord, score = "st_scores", x = 1, y = 2)
 
 ord_add_group(ord, score = "st_scores", df, indiv, group)
 
-ord_extract_score(ord, score = "st_scores")
+ord_extract_score(ord, score = "st_scores", row_name = NULL)
 }
 \arguments{
 \item{tbl}{A community data matrix.
@@ -41,7 +41,7 @@ colnames: species.}
 
 \item{df}{A data.frame to be added into ord scores}
 
-\item{indiv, group}{A string to specify indiv or group column in df.}
+\item{indiv, group, row_name}{A string to specify indiv, group, row_name column in df.}
 }
 \value{
 ordination() returns result of ordination.

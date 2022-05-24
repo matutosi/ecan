@@ -65,7 +65,7 @@ cols_one2multi <- function(df, col, inculde_self = TRUE){
     if(inculde_self) cols <- c(col, cols)
     cols
   })
-  if(class(cols) == "try-error")
+  if(inherits(cols, "try-error"))
     cols <- character(0)
   return(cols)
 }

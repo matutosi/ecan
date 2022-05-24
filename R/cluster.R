@@ -14,6 +14,8 @@
 #'                 "altGower", "morisita", "horn", "mountford", "raup", 
 #'                 "binomial", "chao", "cao", "mahalanobis", "chisq", 
 #'                 "chord", "aitchison", or "robust.aitchison".
+#' @param indiv,group
+#'                 A string to specify indiv, group, row_name column in df.
 #' @return  Result of clustering.
 #'          $clustering_method: c_method
 #'          $distance_method:   d_method
@@ -35,10 +37,10 @@
 #'   dplyr::left_join(sp_dammy)
 #' 
 #' cls <- cluster(dune, c_method = "average", d_method = "euclidean")
-#' ggdendrogram(cls)
+#' ggdendro::ggdendrogram(cls)
 #' 
 #' cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
-#' ggdendrogram(cls)
+#' ggdendro::ggdendrogram(cls)
 #' 
 #' @export
 cluster <- function(x, c_method, d_method){
@@ -104,12 +106,12 @@ cls_color <- function(cls, df, indiv, group){
     df %>%
     dplyr::distinct(!!indiv := as.character(.data[[indiv]]), .data[[group]]) 
   col <- 
-    tibble(!!group :=                    unique(labs_group[[group]]), 
+    tibble::tibble(!!group :=                    unique(labs_group[[group]]), 
            !!color := seq_along(unique(labs_group[[group]])) + 1)
   labs <- 
-    if(is.hclust(cls)){
+    if(dendextend::is.hclust(cls)){
       cls$labels
-    } else if(is.dendrogram(cls)) {
+    } else if(dendextend::is.dendrogram(cls)) {
       labels(cls)
     }
   lab_col <- 
@@ -117,10 +119,10 @@ cls_color <- function(cls, df, indiv, group){
     dplyr::left_join(labs_group) %>%
     dplyr::left_join(col)
   col <- lab_col[[color]]
-  if(is.hclust(cls)){
+  if(dendextend::is.hclust(cls)){
     return(col)
-  } else if(is.dendrogram(cls)) {
-    labels_colors(cls) <- lab_col[[color]]
+  } else if(dendextend::is.dendrogram(cls)) {
+    dendextend::labels_colors(cls) <- lab_col[[color]]
     return(cls)
   }
 }
