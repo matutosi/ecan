@@ -33,6 +33,8 @@ colnames: species.}
 \item{cls}{A result of cluster or dendrogram.}
 
 \item{df}{A data.frame to be added into ord scores}
+
+\item{indiv, group}{A string to specify indiv, group, row_name column in df.}
 }
 \value{
 Result of clustering.
