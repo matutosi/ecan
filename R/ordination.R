@@ -57,9 +57,8 @@
 #'   ord_extract_score(ord_dca, score = "st_scores")
 #' ord_pca_sp <- 
 #'   ord_add_group(ord_pca, 
-#'   score = "st_scores", df, indiv = "species", group = "dammy_1")
+#'   score = "sp_scores", df, indiv = "species", group = "dammy_1")
 #' 
-#' # ord_plot(ord)
 #' 
 #' @export
 ordination <- function(tbl, o_method, d_method = NULL, ...){
