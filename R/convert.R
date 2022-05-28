@@ -17,7 +17,7 @@
 df2table <- function(df, st = "stand", sp = "species", ab = "abundance"){
   if(!is.numeric(df[[ab]])){
     df[[ab]] <- 1
-    message(paste0("non-numeric ", ab, " was converted into 1 in df2table()"))
+    message(paste0('non-numeric "', ab, '" was converted into 1 in df2table()'))
   }
   df %>%
     dplyr::select(dplyr::all_of(c(st, sp, ab))) %>%
