@@ -1,0 +1,594 @@
+  # D:/matu/work/stat/R/veg.r
+  # 不要なものは削除している
+
+## ジニ係数を計算する関数(ローレンツ曲線は描かない)
+	# http://aoki2.si.gunma-u.ac.jp/R/Gini-index.html の部分関数
+Gini.index.2 <- function(y){
+    stopifnot(y >= 0)
+    n <- length(y <- sort(y))
+    y <- c(0, (y <- cumsum(y))/y[n])
+    x <- seq(0, 1, length=n+1)
+    2*sum(x-y)/n
+}
+## 地点ごとのGini係数を計算する関数
+gini.per.stand <- function(df){
+	table <- tapply(df$cover, list(df$stand, df$species), sum)	# テーブルを作成
+	table[is.na(table)] <- 0
+	g <- numeric()
+	for (i in 1:nrow(table)){	# 地点ごとに繰り返し
+		table.sub <- table[i,]
+		g <- c(g, Gini.index.2(table.sub[table.sub>0]))	# http://aoki2.si.gunma-u.ac.jp/R/Gini-index.html
+	}
+	names(g) <- rownames(table)	# 地点名を追加
+	round(g,4)	# 丸める
+}
+## 地点ごとのLorenz Asymmetry Coefficientを計算する関数
+lorenz.asym.per.stand <- function(df){
+	table <- tapply(df$cover, list(df$stand, df$species), sum)	# テーブルを作成
+	table[is.na(table)] <- 0
+	asym <- numeric()
+	for (i in 1:nrow(table)){	# 地点ごとに繰り返し
+		table.sub <- table[i,]
+		asym <- c(asym, mean(lorenz(table.sub[table.sub>0])$asymmetry.coefficient))
+	}
+	names(asym) <- rownames(table)	# 地点名を追加
+	round(asym, 4)	# 丸める
+}
+
+## 種の出現の有無を散布図で表示
+plot.present <- function(df, title=T, sort=T, ... ){	# df: data1(環境経度), data2(環境経度), label(種名), title:ラベルの表題の表示, sort:ラベルの出現回数順ソート(T)か名前順ソート(F)
+	#	label <- factor(names(sort(table(df[[3]]), decreasing=T)))	# 多い順にソートしたラベル
+	if(sort==T){
+		label <- factor(names(sort(table(df[[3]]), decreasing=T)))	# 多い順にソートしたラベル
+	} else {
+		label <- sort(unique(df[[3]]))	# 名前順でソート
+	}
+	for(i in 1:length(label)){	# ラベルごとに散布図を描画
+		sub.df <- subset(df, df[[3]]==label[i])
+		df.plot <- unique(df[1:2])
+		plot(df.plot, ...)
+		points(sub.df[[1]], sub.df[[2]], pch=16, ...)
+		if(title==T) title(as.character(label[i]))	# 表題を描画
+	}
+}
+
+## クラスター分析の結果から地点をクラスターに分割する
+cut.cluster <- function(agnes, div=2, c.name=paste("cluster",as.character(1:div),sep="")){
+	# 入力
+		# agnes：library(cluster) の関数 agness() で解析した結果
+		# div：分割数
+		# c.name：クラスターの名称
+	# 使用例
+		# library(vegan)
+		# library(cluster)
+		# data(dune)
+		# cluster <- agnes(dune)
+		# div.cluster(cluster)
+	if(div!=length(c.name)) return("分割数とクラスターの名称数が異なります")	# エラーチェック
+	c.point <- agnes$height	# 結合点
+	stand <- agnes$order	# 地点名
+		# 1つに分割の場合：全部同ラスター
+	if(div==1) return(data.frame(stand=stand, cluster=rep(c.name[1], length(c.point)+1)))
+		# 要素数以上に分割：全部違うクラスター
+	if(div>=length(c.point)) return(data.frame(stand=stand, cluster=paste("cluster",as.character(1:(length(c.point)+1)),sep="")))
+	thres <- sort(c.point, decreasing=T)[div]	# 閾値を設定
+	j <- 1
+	cluster <- c.name[j]
+	for(i in 1:length(c.point)){
+		if(c.point[i]>thres) j <- j+1	# 次のクラスター
+		cluster <- c(cluster, c.name[j])
+	}
+	data.frame(stand=stand, cluster=cluster)
+}
+
+## twinspan
+
+  # twinspan パッケージでmodified twinspanも実行できるらしい(詳細は不明)
+  # https://github.com/jarioksa/twinspan
+  #     modified twinspan: https://github.com/zdealveindy/twinspanR
+  #   library (twinspanR)
+  library (twinspan)
+  library (vegan)
+  data(dune)
+  tw <- twinspan::twinspan(dune)
+
+
+
+## 類似度指数
+similarity <- function(x, y, method="cc"){
+	x <- as.character(x[[1]])
+	y <- as.character(y[[1]])
+	a <- length(intersect(x,y))
+	b <- length(setdiff(x,y))
+	c <- length(setdiff(y,x))
+	if(method=="cc"){
+		a / (a + b + c)	# Jaccard(1901)の群集係数(CC: coefficient of community)
+	} else {	# 
+		2 * a / (2 * a + b + c)	# Sorensen(1948の類似商(QS: quotient of similarity)
+	}
+}
+## 類似度指数(a,b,c,dの分割表)：a：共通の出現地点, b：sp1のみの地点，c：sp2のみの地点，d：不出現の地点(sp1・sp2とも)
+	# jaccardの類似度指数
+sim.jaccard <- function(a,b,c,d){
+	# pl.jc <- round(freq$pl.com     / (freq$pl.com + freq$pl.sp1 + freq$pl.sp2)                        , 2)
+}
+	# simpsonの類似度指数
+sim.simpson <- function(a,b,c,d){
+	# pl.sm <- round(freq$pl.com     / apply(cbind(c(freq$pl.com + freq$pl.sp1), c(freq$pl.com + freq$pl.sp2)), 1, min), 2)
+}
+	# diceの類似度指数
+sim.dice    <- function(a,b,c,d){
+	# pl.dc <- round(2 * freq$pl.com / (freq$pl.com + freq$pl.sp1 + freq$pl.com + freq$pl.sp2)          , 2)
+}
+	# cohenのKappa係数(一致率)
+sim.cohen <- function(a,b,c,d){
+	# http://www.mizumot.com/stats/kappa.htm
+	# https://en.wikipedia.org/wiki/Cohen%27s_kappa
+	po <- (a+d) / (a+b+c+d)
+	pe <- ((a+b)*(a+c) + (b+d)*(c+d)) / (a+b+c+d)^2
+	(po - pe) / (1 - pe)
+}
+
+
+## 階層別・種群ごとの最大と最小の高さと被度を計算(階層構造図作成用)
+convert.c.h <- function(tb){	# 入力：stand, layer, sp.group, cover, height
+	tb.tmp <- cbind(tb[1,], c.min=0, c.max=tb[1,]$cover, h.min=0, h.max=tb[1,]$height)
+	for(i in 2:nrow(tb)){
+		if(tb$layer[i]==tb$layer[i-1]){
+			tb.tmp <- rbind(tb.tmp, 
+				cbind(tb[i,], 
+					c.min=tb.tmp[i-1,]$c.max, c.max=tb.tmp[i-1,]$c.max+tb[i,]$cover, 
+					h.min=tb.tmp[i-1,]$h.min, h.max=tb.tmp[i-1,]$h.max))
+		}else{
+			tb.tmp <- rbind(tb.tmp, 
+				cbind(tb[i,], 
+					c.min=0, c.max=tb[i,]$cover, 
+					h.min=tb.tmp[i-1,]$h.max, h.max=tb[i,]$height))
+		}
+	}
+	tb.tmp	# 出力：元の行列 + c.min, h.min, c.max, h.max, sp.group
+}
+## 地点情報から階層の被度をデータベース形式で取り出す(階層構造図作成用)
+st.layer.cover <- function(st){
+	st.layer.cover <- st[,grep("cover", colnames(st))]	# 高さの列
+	name.layer <- unlist(strsplit(colnames(st.layer.cover), "\\."))	# "."で分解
+	name.layer <- name.layer[seq(from=1, to=length(st.layer.cover)*2, by=2)]	# 階層名
+	colnames(st.layer.cover) <- name.layer
+	rownames(st.layer.cover) <- st$stand	# 地点名
+	st.layer.cover <- as.data.frame.table(as.matrix(st.layer.cover))	# DB形式に変更
+	colnames(st.layer.cover) <- c("stand", "layer", "layer.cover")	# 列名の変更
+	st.layer.cover[st.layer.cover$layer.cover>0,]	# 0を削除
+}
+## 地点情報から"cover"を含む列を除去(階層構造図作成用)
+st.omit.layer.cover <- function(st){
+	st[,-grep("\\.cover", colnames(st))]	# ".cover"に引っかかる列を除去
+}
+## 地点情報から階層の高さをデータベース形式で取り出す(階層構造図作成用)
+st.layer.height <- function(st){
+	st.layer.height <- st[,grep("height", colnames(st))]	# 高さの列
+	name.layer <- unlist(strsplit(colnames(st.layer.height), "\\."))	# "."で分解
+	name.layer <- name.layer[seq(from=1, to=length(st.layer.height)*2, by=2)]	# 階層名
+	colnames(st.layer.height) <- name.layer
+	rownames(st.layer.height) <- st$stand	# 地点名
+	st.layer.height <- as.data.frame.table(as.matrix(st.layer.height))	# DB形式に変更
+	colnames(st.layer.height) <- c("stand", "layer", "height")	# 列名の変更
+	st.layer.height[st.layer.height$height>0,]	# 0を削除
+}
+## 地点情報から"height"を含む列を除去(階層構造図作成用)
+st.omit.layer.height <- function(st){
+	st[,-grep("height", colnames(st))]	# "height"に引っかかる列を除去
+}
+## dfから階層構造図用のdfを作成する(階層構造図作成用)
+df.2.str.df <- function(df, stand="stand", layer="layer", cover="cover", layer.cover="layer.cover", sp.group="growth", sp.g.levels=NULL){
+		# 階層の植被率
+	layer.cover <- 
+		unique(data.frame(stand=df[,stand], layer=df[,layer], layer.cover=df[,layer.cover]))
+	layer.cover <- tapply(layer.cover$layer.cover, list(layer.cover$stand, layer.cover$layer), sum)
+		# 階層の種ごとの被度の合計
+	sum.cover <- 
+		apply(tapply(df[,cover], list(df[,stand], df[,layer], df[,sp.group]), sum), c(1,2), sum, na.rm=T)
+	mod.cover <- layer.cover / sum.cover	# 被度の修正係数
+	table <- sum.cover.group(df, sp.group=sp.group)
+	for(i in 1:length(dimnames(table)[[3]])) table[,,i] <- table[,,i] * mod.cover
+	table <- as.data.frame.table(table)
+	table <- na.omit(table)
+	colnames(table) <- c("stand", "layer", sp.group, "cover")
+	table$cover <- round(table$cover, 1)
+	table$layer <- ordered(table$layer, levels=c("k","s2","s1","b2","b1"))	# 階層に順位を与える
+	if(!is.null(sp.g.levels)){	# 種群の順位が指定されていれば
+		table[,sp.group] <- ordered(table[,sp.group], 	# 種群に順位をあたえる(順番は逆順)
+			levels=sp.g.levels[length(sp.g.levels):1])	# (指定順と描画順を合わせるため)
+	}
+	merge(table, unique(subset2(df, select=c(stand, layer, height))))
+}
+## 階層構造図を描画
+plot.str <- function(df.str, sp.group="life", ang=NULL, dns=NULL, xlim=NULL, ylim=NULL, legend=F){
+	ang.null <- is.null(ang)	# NULLかどうかを保存
+	dns.null <- is.null(dns)	# NULLかどうかを保存
+	st <- unique(df.str$stand)	# 地点名
+	group <- levels(df.str[,sp.group])	# 種群名
+	if(is.null(ang)) ang <- seq(from=-20, by=45, length=length(group))	# 作図要素：線の傾き
+	if(is.null(dns)) dns <- seq(from=0, by=10, length=length(group))	# 作図要素：線の密度
+	if(is.null(xlim)) xlim <- c(0, if(legend) 120 else 100)	# 作図要素：x軸の範囲
+	if(is.null(ylim)) ylim <- c(0, max(df.str$height))	# 作図要素：y軸の範囲
+	for(i in 1:length(st)){
+		df.tmp <- df.str[df.str$stand==st[i],]
+		df.tmp <- rm.level(df.tmp)	# 不要な要素を除去
+		df.tmp <- df.tmp[order(df.tmp$layer, df.tmp[,sp.group]),]	# 階層と種群で並べ替え
+		df.tmp <- convert.c.h(df.tmp)	# 階層別・種群ごとの最大と最小の高さと被度を計算
+		df.tmp <- df.tmp[,-c(1,2,4,5)][c(2,4,3,5,1)]	# 必要な列を抽出
+		plot(0, xlim=xlim, ylim=ylim, type="n", axes=F, ann=F)
+		for(j in 1:nrow(df.tmp)){
+			leg.n <- c(1:length(group))[group==df.tmp[,sp.group][j]]
+			rect(df.tmp[j,1], df.tmp[j,2], df.tmp[j,3], df.tmp[j,4], lwd=2)	# 外枠を描画
+			rect(df.tmp[j,1], df.tmp[j,2], df.tmp[j,3], df.tmp[j,4], border=NA, 	# 中の線を描画
+				angle=ang[leg.n], density=dns[leg.n])
+			axis(side=1, pos=0, xaxp=c(0, 100, 5))
+			axis(side=1, pos=0, xaxp=c(0, 100, 20), tck=-0.012, label=F)
+			axis(side=2, pos=0)
+			axis(side=2, pos=0, yaxp=c(0,50,50), tck=-0.012, label=F)	# xaxp(範囲1,範囲2,区切数)
+			mtext(text="Coverage(%)", side=1, line=2, outer=F)
+			mtext(text="height(m)", side=2, line=2, outer=F)
+	# 
+		# 軸ラベルを入れる
+		}
+	if(legend) legend(x=102, y=ylim[2]*0.8, legend=group[length(group):1], angle=ang, density=dns)
+	}
+}
+	# tmp <- function(){
+	# source("d:/matu/work/stat/r/matu.r")
+	# read.veg.data()$species
+	# }
+
+## 最小面積とSα
+Sa <- function(c, z) c*(1/(c*z))^(z/(z-1))	# Sαを求める関数
+Aa <- function(c, z) (1/(c*z))^(1/(z-1))	# Aαを求める関数
+sp.area <- function(sp){	# sp：veganのspecaccumの結果データ(面積と種数)
+	# https://www.naro.affrc.go.jp/project/results/laboratory/nilgs/2009/nilgs09-30.html
+	# 種数-面積関係：S=cA^z
+	# 対数変換した式：log10(S) = z*log(A) + log(c)
+	coef <- coef(glm(log10(sp$richness) ~ log10(sp$sites)))
+	z <- coef[2]	# 係数(z)
+	c <- 10^coef[1]	# 切片(c, Intercept)は対数変換したので，もとに戻す
+	sa <- Sa(c=c, z=z)
+	aa <- Aa(c=c, z=z)
+	return(list(c=c, z=z, sa=sa, aa=aa))
+	# c1 * sp1$sites^z1
+	# sp1$richness
+	# plot(c1 * sp1$sites^z1)  # モデルで計算したデータ
+	# points(sp1$richness, col="red")  # 実際のデータの平均値
+	# 以下の3行は，対数変換後の確認用
+	# z1 * log10(sp1$sites) + log10(c1)
+	# log10(sp1$richness)
+	# plot(z1 * log10(sp1$sites) + log10(c1) , log10(sp1$richness))
+}
+
+
+## NODFで使用する関数
+n.paired <- function(Ni, Nj){
+	n.p <- sum((Ni+Nj)==2)  / sum(Nj) *100
+	if(sum(Ni) <= sum(Nj)) n.p <- 0
+	return(n.p)
+}
+## NODF(入れ子状構造解析)
+nodf <- function(mt, nest="matrix"){
+	mt[mt>0] <- 1	# 在・不在に変換
+	mt <- mt[, order(colSums(mt), decreasing=T)]	# 頻度の降順
+	mt <- mt[order(rowSums(mt), decreasing=T), ]
+	nc <- ncol(mt)
+	nr <- nrow(mt)
+	n.p.col <- 0
+	n.p.row <- 0
+	for(Ni in 1:(nc-1)){ # 列の繰り返し
+		for(Nj in (Ni+1):nc){
+			# print(paste("Ni:", Ni, "  Nj:", Nj, sep="")) # 内容確認用
+			# print(n.paired(mt[,Ni], mt[,Nj]))
+			n.p.col <- n.p.col + n.paired(mt[,Ni], mt[,Nj])
+		}
+	}
+	for(Nk in 1:(nr-1)){	# 行の繰り返し
+		for(Nl in (Nk+1):nr){
+			n.p.row <- n.p.row + n.paired(mt[Nk,], mt[Nl,])
+		}
+	}
+	if(nest=="matrix"){ # 行列のnestedness
+		return((n.p.col + n.p.row) / (nc*(nc-1)/2 + nr*(nr-1)/2))
+	} else if(nest=="col"){ # 列のnestedness
+		return(n.p.col / nc*(nc-1)/2)
+	} else if(nest=="row"){ # 行のnestedness
+		return(n.p.row / nr*(nr-1)/2)
+	}
+}
+## NODFの検定用ランダム配置
+rand.mt <- function(mt, method="cr"){
+  if(method=="cr"){ # 行・列の確率の平均
+    m.row <- matrix(rep(rowSums(mt)/ncol(mt), times=ncol(mt)), byrow=F, ncol=ncol(mt))
+    m.col <- matrix(rep(colSums(mt)/nrow(mt), times=nrow(mt)), byrow=T, ncol=ncol(mt))
+    m.cr <- (m.row+m.col)/2
+    mt <- matrix(mapply(rbinom, n=1, size=1, prob=m.cr), byrow=F, ncol=ncol(mt))
+  } else if(method=="all"){	# 全体を無作為に配置
+    mt <- matrix(sample(x=as.vector(mt), size=length(mt)), ncol=ncol(mt))
+    # matrix(rbinom(n=length(mt), size=1, prob=mean(mt)), ncol=ncol(mt))
+  }else if(method=="col"){ # 
+    for(Ci in 1:ncol(mt)) mt[,Ci] <- sample(x=mt[,Ci], size=nrow(mt))
+  }else if(method=="row"){	# 行で無作為に配置
+    for(Ri in 1:nrow(mt)) mt[Ri,] <- sample(x=mt[Ri,], size=ncol(mt))
+  }
+  return(mt)
+}
+## NODFを使った検定
+test.nodf <- function(mt, method="cr", times=1000){
+  rnd <- c()
+		# 1回目
+  for(i in 1:times) rnd <- c(rnd, nodf(rand.mt(mt, method=method)))
+  rnd <- rnd[!is.na(rnd)]
+  times2 <- length(rnd)
+  times <- (times-times2) * times/times2 * 1.5
+		# 2回目で不足分を補う
+  for(i in 1:times) rnd <- c(rnd, nodf(rand.mt(mt, method=method)))
+  rnd <- rnd[!is.na(rnd)]
+  times <- length(rnd)
+		# 結果のまとめ
+  p <- sum(rnd > nodf(mt)) / times
+  list(values=rnd, matrix=mt, nodf=nodf(mt), p=p, times=times)
+}
+## make sub-web from complecated lfood web(d:/matu/OneDrive/reference/id/03528.pdf)
+fw.sub <- function(df){	# $resorce, $consumer，複雑な食物網でのnestednessの計算用
+	cons <- unique(df$consumer)	# 1 consumerの種一覧
+	n.consumer <- length(cons)	# 1 consumerの種数
+	con.sample <- sample(cons, size=sample(x=1:n.consumer, size=1), replace=F)	# 2 consumerから抽出
+	con.sample <- subset(df, df$consumer %in% con.sample)	# 3 consumerの該当のsubwebを抽出
+	both <- intersect(con.sample$resorce, con.sample$consumer)	# 4 consumerかつresorceの種(both)
+	res <- subset(con.sample, !(con.sample$resorce %in% both))	# 5 bothがresorceの種を除去
+	res
+}
+
+
+## PodaniさんのS, D, R指数の基本的な計算
+sdr <- function(mt, i, j){
+	# d:/matu/OneDrive/reference/id/03377.pdf
+	a <- sum(mt[,i] + mt[,j] ==  2)	# 共通種
+	b <- sum(mt[,i] - mt[,j] == -1)	# 片方だけの種
+	c <- sum(mt[,j] - mt[,i] == -1)	# 片方だけの種
+	n <- sum(mt[,j] + mt[,i] >   0)	# 両方を結合した種数
+	Sjac <- a / n
+	# Brel <- (b+c)/n 
+	Drel <- abs(b-c)/n
+	# Arel <- (a+2*min(b,c))/n
+	Rrel <- 2*min(b,c)/n
+	# Nrel <- if(a>0) (a + abs(b-c))/n else 0
+	c(Sjac, Drel, Rrel)
+}
+## PodaniさんのD, S, R指数のペアごとの計算
+sdr.pair <- function(mt){
+	# d:/matu/OneDrive/reference/id/03377.pdf
+	m <- ncol(mt)	# 地点数
+	mt[mt>0] <- 1	# 有無に変換
+	st1 <- rep(1:(m-1), (m-1):1)	# 繰り返しの設定
+	st2 <- unlist(mapply(":", 2:m, m))	# 繰り返しの設定
+	# cbind(st1, st2)
+	res <- matrix(0, ncol=3)	# 答えの入れ物
+	colnames(res) <- c("Sjac", "Drel", "Rrel")
+	for(Si in 1:length(st1)) res <- rbind(res, sdr(mt, st1[Si], st2[Si]))
+	res <- as.data.frame(res[-1,])
+	res
+}
+	# 以下はテストデータ
+	# test <- matrix(ncol=19, byrow=T, 
+	# c(
+	# 1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
+	# 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1
+	# ))
+	# triangle.plot(sdr.pair(test), scale=F, show.position=F)
+## PodaniさんのD, S, Rの平均値
+sdr.mean <- function(sdr){
+	sdr.mean <- apply(sdr, 2, mean)
+	sdr.mean <- matrix(c(sdr.mean, 1 - sdr.mean), ncol=6)
+	colnames(sdr.mean) <- c("Sjac", "Drel", "Rrel", "Brel",  "Arel",  "Nrel")
+	as.data.frame(sdr.mean)
+}
+## Baselga(2012)の1つの個別計算
+basel.base <- function(mt, i, j, stand=F){
+	# d:/matu/OneDrive/reference/id/03381.pdf
+	a <- sum(mt[,i] + mt[,j] ==  2)	# 共通種
+	b <- sum(mt[,i] - mt[,j] == -1)	# 片方だけの種
+	c <- sum(mt[,j] - mt[,i] == -1)	# 片方だけの種
+	n <- a + b + c	# 両方を結合した種数
+	Bjac <- (b+c) / n
+	Bjtu <- 2 * min(b,c) / (a + 2 * min(b,c))
+	Bjne <- ((max(b,c) - min(b,c)) / (a + b + c)) * (a / (a + 2 * min(b,c)))
+	if(stand==T) c(Bjac, Bjtu, Bjne, i, j) else c(Bjac, Bjtu, Bjne)	# 地点情報の有無
+}
+## Baselga(2012)
+basel <- function(mt, stand=F){
+	# d:/matu/OneDrive/reference/id/03381.pdf
+	m <- ncol(mt)	# 地点数
+	mt[mt>0] <- 1	# 有無に変換
+	st1 <- rep(1:(m-1), (m-1):1)	# 繰り返しの設定
+	st2 <- unlist(mapply(":", 2:m, m))	# 繰り返しの設定
+	# cbind(st1, st2)
+	nc <- if(stand==T) 5 else 3	# 地点情報の有無
+	res <- matrix(0, ncol=nc)	# 答えの入れ物
+	colnames(res) <- c("Bjac", "Bjtu", "Bjne", "st1", "st2")[1:nc]	# 地点情報の有無
+	for(Si in 1:length(st1)) res <- rbind(res, basel.base(mt, st1[Si], st2[Si], stand=stand))
+	res <- as.data.frame(res[-1,])
+	res
+}
+basel2 <- function(mt, stand=T, divide=10000){
+	# d:/matu/OneDrive/reference/id/03381.pdf
+	m <- ncol(mt)	# 地点数
+	mt[mt>0] <- 1	# 有無に変換
+	st1 <- rep(1:(m-1), (m-1):1)	# 繰り返しの設定
+	st2 <- unlist(mapply(":", 2:m, m))	# 繰り返しの設定
+	nc <- if(stand==T) 5 else 3	# 地点情報の有無
+	# divideよりも組み合わせが多かったら，分割して実行
+	dev <- ceiling(length(st1) / divide)	# 区切り数
+	for(Di in 1:dev){
+		bgn <- (Di-1) * divide + 1	# 該当回の最初
+		end <- min(Di * divide, length(st1))	# 該当回の最後(全体の最終：length(st1))
+		res <- matrix(0, ncol=nc)	# 答えの入れ物
+		for(Si in bgn:end) res <- 
+			rbind(res, basel.base(mt, st1[Si], st2[Si], stand=stand))
+		res <- as.data.frame(res[-1,])
+		fn <- paste("d:/tmp", Di, ".txt", sep="")
+		write.table(res, file=fn, quote=F, row.names=F, col.names=F, sep="\t")
+	}
+	res <- matrix(0, ncol=nc)	# 答えの入れ物
+	for(Di in 1:dev){
+		fn <- paste("d:/tmp", Di, ".txt", sep="")
+		res <- rbind(res, read.table(file=fn, sep="\t", header=F))
+	}
+	res <- as.data.frame(res[-1,])
+	colnames(res) <- c("Bjac", "Bjtu", "Bjne", "st1", "st2")[1:nc]	# 地点情報の有無
+	res
+}
+## Baselga(2012) C言語バージョン
+baselgaC <- function(mt){
+	# Cに渡す引数
+	mt <- as.matrix(mt)	# 行列に変換
+	mt[mt>0] <- 1	# 有無に変換
+	nr <- nrow(mt)	# 種数
+	nc <- ncol(mt)	# 地点数
+	nn <- nc * (nc -1) / 2	# 組み合わせ数
+	# Cによる計算
+	bas <- .C("baselga",
+		mt = as.integer(mt),	# 引数(行列)
+		nr = as.integer(nr),	# 引数(種数)
+		nc = as.integer(nc),	# 引数(地点数)
+		bjac = double(nn),	# 返り値(Jaccardの類似度)
+		bjtu = double(nn),	# 返り値(TurnOver)
+		bjne = double(nn)	# 返り値(Nestedness)
+	)
+	# 計算後の処理
+	stn <- if(is.null(colnames(mt))) 1:length(mt) else colnames(mt)	# 地点名
+	st1 <- rep(1:(nc-1), (nc-1):1)	# 繰り返しの設定
+	st2 <- unlist(mapply(":", 2:nc, nc))	# 繰り返しの設定
+	bas <- cbind(as.data.frame(cbind(bas$bjac, bas$bjtu, bas$bjne)), 
+		as.data.frame(cbind(stn[st1], stn[st2])))
+	colnames(bas) <- c("Bjac", "Bjtu", "Bjne", "st1", "st2")
+	return(bas)
+}
+	# dyn.load("D:/matu/work/stat/R/c/matutosi.dll")
+	# dyn.unload("D:/matu/work/stat/R/c/matutosi.dll")
+	# 以下はCのソースコード
+	# #include <stdio.h>
+	# // Baselga 2012の指数
+	# void baselga(int *mt, int *nr, int *nc, 	// 引数
+	# 	double *bjac, double *bjtu, double *bjne)	// 返り値
+	# {
+	# 	double a, b, c, d, e;	// あとでbjtuと合わせるので，doubleで設定
+	# 	int i=0, j=0, k=0, m=0;
+	# 	for(i=0; i < *nc; i++){
+	# 		for(j=i+1; j < *nc; j++){
+	# 				a=0; b=0; c=0; d=0; e=0;	// d：max(b,c)，e：min(b,c)
+	# 				for(k=0; k < *nr; k++){
+	# 				if(mt[(i * *nr + k)] + mt[(j * *nr + k)] ==  2) a++;
+	# 				if(mt[(i * *nr + k)] - mt[(j * *nr + k)] == -1) b++;
+	# 				if(mt[(j * *nr + k)] - mt[(i * *nr + k)] == -1) c++;
+	# 			}
+	# 			if(b>c) {d=b;} else {d=c;}	//max(b,c)
+	# 			if(b<c) {e=b;} else {e=c;}	// min(b,c)
+	# 			bjac[m] = (b + c) / (a + b + c);	// 類似度(Jaccard)
+	# 			bjtu[m] = (2 * e) / (a + 2 * e);	// 入れ替わり(TurnOver)
+	# 			bjne[m] = ((d - e) / (a + b + c)) * (a / (a + 2 * e));	// 入れ子(Nestedness)
+	# 			m++;
+	# 	// d:/matu/OneDrive/reference/id/03381.pdf
+	# 		}
+	# 	}
+	# }
+	# // D:/matu/work/stat/R/c/c.bat
+## 三角プロット(https://staff.aist.go.jp/a.noda/programs/ternary/ternary.plot から)
+	# Ternary.plot
+	# Drawing ternary plot of compositional data
+	# (modified from triangle.plot in ade4)
+	#
+	# Noda Atsushi
+	# Last updated: 2008/09/17 16:27:46.
+	# 0.1.2: axes. 軸（三角形の辺）を描くかどうかを選択できるようにした．
+	# 0.1.1: プロットされる点の型 (pch) と色(col) と大きさ (cex) を選択できるようにした．
+	# 0.1: just beggining.
+ternary.plot <- function (dat, label=rownames(dat), axes=TRUE, clabel=0, cpoint=1, cline=0, lwd=1, addline = TRUE, label.vertices=TRUE, cline.col="black", pch=par("pch"), col=par("col"), cex=par("cex"), cex.text=1.5, seg.col=seg.col) {
+    par.orig <- par(mar = par("mar"))
+    on.exit(par(par.orig))
+    dat <- dat[c(3,2,1)]	# triangle.plotと合わせるために並べ替え(by matsut)
+    nam <- colnames(dat)
+    dat <- dat/apply(dat,1,sum)
+    xy <- matrix(NA,nrow=nrow(dat),ncol=2)
+    xy[,1] <- (dat[,1]+2*dat[,3])/2
+    xy[,2] <- sqrt(3)*dat[,1]/2
+    X <- c(1/2,sqrt(3)/2)
+    Y <- c(0,0)
+    Z <- c(1,0)
+	#   plot(0, 0, type="n", xlim=c(0, 1), ylim=c(-0.1, 1), xlab = "", ylab = "", xaxt = "n", yaxt = "n", asp = 1, frame.plot=FALSE)
+			plot(0, 0, type="n", xlim=c(0, 1), ylim=c(-0.1, 1), xlab = "", ylab = "", xaxt = "n", yaxt = "n", asp = 1, frame.plot=FALSE)
+    if (addline) {
+      int <- 10
+      x.add <- matrix(NA,nrow=(int-1),ncol=2)
+      y.add <- matrix(NA,nrow=(int-1),ncol=2)
+      z.add <- matrix(NA,nrow=(int-1),ncol=2)
+        for (i in 1:nrow(x.add)) {
+            x.add[i,] <- Z + (i/10) * (X-Z)
+            y.add[i,] <- X - (i/10) * (X-Y)
+            z.add[i,] <- Y + (i/10) * (Z-Y)
+          }
+      for (i in 1:nrow(x.add)) {
+        segments(x.add[i,1], x.add[i,2], z.add[int-i,1], z.add[int-i,2], col = "lightgrey")
+        segments(y.add[i,1], y.add[i,2], z.add[int-i,1], z.add[int-i,2], col = "lightgrey")
+        segments(x.add[i,1], x.add[i,2], y.add[int-i,1], y.add[int-i,2], col = "lightgrey")
+      }
+    }
+    if (axes) {
+      segments(X[1],X[2],Y[1],Y[2],lwd=2)
+      segments(Y[1],Y[2],Z[1],Z[2],lwd=2)
+      segments(Z[1],Z[2],X[1],X[2],lwd=2)
+    }
+    if (label.vertices) {
+	#         text(X[1], X[2], labels = nam[1], cex = 1.5, pos = 3)
+	#         text(Y[1], Y[2], labels = nam[2], cex = 1.5, pos = 1)
+	#         text(Z[1], Z[2], labels = nam[3], cex = 1.5, pos = 1)
+			text(X[1], X[2], labels = nam[1], cex=cex.text, pos = 3)	# 文字サイズの変更
+			text(Y[1], Y[2], labels = nam[2], cex=cex.text, pos = 1)	# 
+			text(Z[1], Z[2], labels = nam[3], cex=cex.text, pos = 1)	# 
+      }
+    if (cpoint > 0) 
+	#   points(xy, pch=pch, cex=cex*cpoint, col=col)
+			par(new=T)	# sunflowerplot用
+			sunflowerplot(xy, cex=cex*cpoint, col=col, seg.col=seg.col,	# 重複点を示す
+				size=0.05, seg.lwd=0.5, xlim = c(-0.1, 1.1), ylim = c(-0.1, 1), xlab = "", ylab = "", xaxt = "n", yaxt = "n", asp = 1, frame.plot=FALSE)
+	#  bty="n"
+    if (cline > 0) 
+        lines(xy,lwd=1,col=cline.col)
+    if (clabel > 0) 
+        text(xy[, 1], xy[, 2], label, clabel)
+    return(invisible(xy))
+}
+## PodaniさんのDSRを三角プロット(ternary.plotは上で定義)で表示
+tp2 <- function(sdr, sdr.m, col=1, pch=16, cex=4, cex.text=1.5, seg.col=2){
+	# https://staff.aist.go.jp/a.noda/programs/ternary/ternary.html#R
+	ternary.plot(sdr.m[1:3], col=col, pch=pch, cex=cex, cex.text=cex.text, seg.col=seg.col)	# 平均値
+	par(new=T)
+	ternary.plot(sdr, cex.text=cex.text, seg.col=seg.col)	# 個々の点
+	# 計算結果の表示
+	tex.x <- c( 0.00,       1.00,      0.50,     0.50,     0.50,    0.85,     0.85,     0.15,      0.15)
+	tex.y <- c(-0.11,      -0.11,      0.99,    -0.05,    -0.11,    0.45,     0.52,     0.45,      0.52)
+	sdr.m <- round(sdr.m, 2)
+	tex   <- c(sdr.m[1], sdr.m[2], sdr.m[3],   "Nrel", sdr.m[6],  "Arel", sdr.m[4],  "Brel ", sdr.m[5])
+	# tex   <- c("左下",  "右下",   "上",      "下",       "下",  "右辺",  "左辺",  "右辺",  "左辺")
+	text(x=tex.x, y=tex.y, tex, cex=cex.text, font=2)
+}
