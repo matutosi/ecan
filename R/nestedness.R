@@ -1,25 +1,27 @@
-#' Helper function for Indicator Species Analysis
+#' Compute nestedness 
 #' 
+#' Almeida-Neto et. al. 2007. 
+#'   On nestedness analyses: rethinking matrix temperature and anti-nestedness.
+#'   Oikos, 116, 716-722.
 #' 
-#' 
-#' 
-#' 
-#' 
-#' 
-#' Almeida-Neto and and Ulrich. 2011. 
-#'   A straightforward computational approach for 
-#'   measuring nestedness using quantitative matrices.
-#'   Environmental Modelling & Software, 26, 173-178
-#' 
-#' 
-#' 
-#' @param     group    A text to specify group column.
-#' @param     row_data A logical. 
-#'                     TRUE: return row result data of labdsv::indval(). 
+#' @param mt       A matrix. 
+#' @param nest     A string. "matrix", "col", or "row"
+#' @param Ni,Nj    A integer.
+#' @param method   A string. "all", "col_row", "col", or "row"
+#' @param times    A integer.
 #' @return    A data.frame.
 #' 
-  ## NODF (nestedness)
-nodf <- function(mt, nest="matrix"){
+#' @examples
+#' library (tidyverse)
+#' library(vegan)
+#' data(dune)
+#' nodf(dune)
+#' nodf(dune, nest = "col")
+#' nodf(dune, nest = "row")
+#' 
+#' 
+#' @export
+nodf <- function(mt, nest = "matrix"){
   mt[mt > 0] <- 1  # convert to presence / absense
   mt <- mt[, order(colSums(mt), decreasing=T)]  # desc order of frequency
   mt <- mt[order(rowSums(mt), decreasing=T), ]
@@ -48,50 +50,49 @@ nodf <- function(mt, nest="matrix"){
   }
 }
 
+#' Internal function in nodf
 #' @rdname nodf
 #' @export
-#' internal function in nodf
 n_paired <- function(Ni, Nj){
   if( sum(Ni ) <= sum(Nj) ) return(0)
   sum( (Ni + Nj) == 2 )  / sum(Nj) * 100
 }
 
-  ## randomization for test of
-  # NODFの検定用ランダム配置
+#' Generate random matrix for NODF test
 #' @rdname nodf
 #' @export
-rand_mt <- function(mt, method="cr"){
-  if(method == "cr"){ # 行・列の確率の平均
+rand_mt <- function(mt, method = "col_row"){
+  if(method == "col_row"){          # based on the ratio in columns and rows
     m_row <- matrix(rep(rowSums(mt) / ncol(mt), times = ncol(mt)), byrow = F, ncol = ncol(mt))
     m_col <- matrix(rep(colSums(mt) / nrow(mt), times = nrow(mt)), byrow = T, ncol = ncol(mt))
     m_cr <- (m_row + m_col) / 2
     mt <- matrix(mapply(rbinom, n = 1, size = 1, prob = m_cr), byrow = F, ncol = ncol(mt))
-  } else if(method == "all"){  # 全体を無作為に配置
+  } else if(method == "all"){  # based on the all ratio in matrix
     mt <- matrix(sample(x = as_vector(mt), size = length(mt)), ncol = ncol(mt))
     # matrix(rbinom(n=length(mt), size=1, prob=mean(mt)), ncol=ncol(mt))
-  }else if(method == "col"){ # 
+  }else if(method == "col"){   # based on the ratio in columns 
     for(Ci in 1:ncol(mt)) mt[,Ci] <- sample(x=mt[,Ci], size=nrow(mt))
-  }else if(method == "row"){  # 行で無作為に配置
+  }else if(method == "row"){   # based on the ratio in columns 
     for(Ri in 1:nrow(mt)) mt[Ri,] <- sample(x=mt[Ri,], size=ncol(mt))
   }
   return(mt)
 }
 
-  ## NODFを使った検定
+#' NODF test
 #' @rdname nodf
 #' @export
-test_nodf <- function(mt, method="cr", times=1000){
+test_nodf <- function(mt, method = "col_row", times = 1000){
   rnd <- c()
-    # 1回目
+    # 1st
   for(i in 1:times) rnd <- c(rnd, nodf(rand_mt(mt, method = method)))
   rnd <- rnd[!is.na(rnd)]
   times2 <- length(rnd)
   times <- (times - times2) * times / times2 * 1.5
-    # 2回目で不足分を補う
+    # compensate
   for(i in 1:times) rnd <- c(rnd, nodf(rand_mt(mt, method = method)))
   rnd <- rnd[!is.na(rnd)]
   times <- length(rnd)
-    # 結果のまとめ
+    # result
   p <- sum(rnd > nodf(mt)) / times
   list(values = rnd, matrix = mt, nodf = nodf(mt), p=p, times = times)
 }
