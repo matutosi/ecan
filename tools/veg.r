@@ -130,115 +130,6 @@ sim.cohen <- function(a,b,c,d){
 }
 
 
-## 階層別・種群ごとの最大と最小の高さと被度を計算(階層構造図作成用)
-convert.c.h <- function(tb){	# 入力：stand, layer, sp.group, cover, height
-	tb.tmp <- cbind(tb[1,], c.min=0, c.max=tb[1,]$cover, h.min=0, h.max=tb[1,]$height)
-	for(i in 2:nrow(tb)){
-		if(tb$layer[i]==tb$layer[i-1]){
-			tb.tmp <- rbind(tb.tmp, 
-				cbind(tb[i,], 
-					c.min=tb.tmp[i-1,]$c.max, c.max=tb.tmp[i-1,]$c.max+tb[i,]$cover, 
-					h.min=tb.tmp[i-1,]$h.min, h.max=tb.tmp[i-1,]$h.max))
-		}else{
-			tb.tmp <- rbind(tb.tmp, 
-				cbind(tb[i,], 
-					c.min=0, c.max=tb[i,]$cover, 
-					h.min=tb.tmp[i-1,]$h.max, h.max=tb[i,]$height))
-		}
-	}
-	tb.tmp	# 出力：元の行列 + c.min, h.min, c.max, h.max, sp.group
-}
-## 地点情報から階層の被度をデータベース形式で取り出す(階層構造図作成用)
-st.layer.cover <- function(st){
-	st.layer.cover <- st[,grep("cover", colnames(st))]	# 高さの列
-	name.layer <- unlist(strsplit(colnames(st.layer.cover), "\\."))	# "."で分解
-	name.layer <- name.layer[seq(from=1, to=length(st.layer.cover)*2, by=2)]	# 階層名
-	colnames(st.layer.cover) <- name.layer
-	rownames(st.layer.cover) <- st$stand	# 地点名
-	st.layer.cover <- as.data.frame.table(as.matrix(st.layer.cover))	# DB形式に変更
-	colnames(st.layer.cover) <- c("stand", "layer", "layer.cover")	# 列名の変更
-	st.layer.cover[st.layer.cover$layer.cover>0,]	# 0を削除
-}
-## 地点情報から"cover"を含む列を除去(階層構造図作成用)
-st.omit.layer.cover <- function(st){
-	st[,-grep("\\.cover", colnames(st))]	# ".cover"に引っかかる列を除去
-}
-## 地点情報から階層の高さをデータベース形式で取り出す(階層構造図作成用)
-st.layer.height <- function(st){
-	st.layer.height <- st[,grep("height", colnames(st))]	# 高さの列
-	name.layer <- unlist(strsplit(colnames(st.layer.height), "\\."))	# "."で分解
-	name.layer <- name.layer[seq(from=1, to=length(st.layer.height)*2, by=2)]	# 階層名
-	colnames(st.layer.height) <- name.layer
-	rownames(st.layer.height) <- st$stand	# 地点名
-	st.layer.height <- as.data.frame.table(as.matrix(st.layer.height))	# DB形式に変更
-	colnames(st.layer.height) <- c("stand", "layer", "height")	# 列名の変更
-	st.layer.height[st.layer.height$height>0,]	# 0を削除
-}
-## 地点情報から"height"を含む列を除去(階層構造図作成用)
-st.omit.layer.height <- function(st){
-	st[,-grep("height", colnames(st))]	# "height"に引っかかる列を除去
-}
-## dfから階層構造図用のdfを作成する(階層構造図作成用)
-df.2.str.df <- function(df, stand="stand", layer="layer", cover="cover", layer.cover="layer.cover", sp.group="growth", sp.g.levels=NULL){
-		# 階層の植被率
-	layer.cover <- 
-		unique(data.frame(stand=df[,stand], layer=df[,layer], layer.cover=df[,layer.cover]))
-	layer.cover <- tapply(layer.cover$layer.cover, list(layer.cover$stand, layer.cover$layer), sum)
-		# 階層の種ごとの被度の合計
-	sum.cover <- 
-		apply(tapply(df[,cover], list(df[,stand], df[,layer], df[,sp.group]), sum), c(1,2), sum, na.rm=T)
-	mod.cover <- layer.cover / sum.cover	# 被度の修正係数
-	table <- sum.cover.group(df, sp.group=sp.group)
-	for(i in 1:length(dimnames(table)[[3]])) table[,,i] <- table[,,i] * mod.cover
-	table <- as.data.frame.table(table)
-	table <- na.omit(table)
-	colnames(table) <- c("stand", "layer", sp.group, "cover")
-	table$cover <- round(table$cover, 1)
-	table$layer <- ordered(table$layer, levels=c("k","s2","s1","b2","b1"))	# 階層に順位を与える
-	if(!is.null(sp.g.levels)){	# 種群の順位が指定されていれば
-		table[,sp.group] <- ordered(table[,sp.group], 	# 種群に順位をあたえる(順番は逆順)
-			levels=sp.g.levels[length(sp.g.levels):1])	# (指定順と描画順を合わせるため)
-	}
-	merge(table, unique(subset2(df, select=c(stand, layer, height))))
-}
-## 階層構造図を描画
-plot.str <- function(df.str, sp.group="life", ang=NULL, dns=NULL, xlim=NULL, ylim=NULL, legend=F){
-	ang.null <- is.null(ang)	# NULLかどうかを保存
-	dns.null <- is.null(dns)	# NULLかどうかを保存
-	st <- unique(df.str$stand)	# 地点名
-	group <- levels(df.str[,sp.group])	# 種群名
-	if(is.null(ang)) ang <- seq(from=-20, by=45, length=length(group))	# 作図要素：線の傾き
-	if(is.null(dns)) dns <- seq(from=0, by=10, length=length(group))	# 作図要素：線の密度
-	if(is.null(xlim)) xlim <- c(0, if(legend) 120 else 100)	# 作図要素：x軸の範囲
-	if(is.null(ylim)) ylim <- c(0, max(df.str$height))	# 作図要素：y軸の範囲
-	for(i in 1:length(st)){
-		df.tmp <- df.str[df.str$stand==st[i],]
-		df.tmp <- rm.level(df.tmp)	# 不要な要素を除去
-		df.tmp <- df.tmp[order(df.tmp$layer, df.tmp[,sp.group]),]	# 階層と種群で並べ替え
-		df.tmp <- convert.c.h(df.tmp)	# 階層別・種群ごとの最大と最小の高さと被度を計算
-		df.tmp <- df.tmp[,-c(1,2,4,5)][c(2,4,3,5,1)]	# 必要な列を抽出
-		plot(0, xlim=xlim, ylim=ylim, type="n", axes=F, ann=F)
-		for(j in 1:nrow(df.tmp)){
-			leg.n <- c(1:length(group))[group==df.tmp[,sp.group][j]]
-			rect(df.tmp[j,1], df.tmp[j,2], df.tmp[j,3], df.tmp[j,4], lwd=2)	# 外枠を描画
-			rect(df.tmp[j,1], df.tmp[j,2], df.tmp[j,3], df.tmp[j,4], border=NA, 	# 中の線を描画
-				angle=ang[leg.n], density=dns[leg.n])
-			axis(side=1, pos=0, xaxp=c(0, 100, 5))
-			axis(side=1, pos=0, xaxp=c(0, 100, 20), tck=-0.012, label=F)
-			axis(side=2, pos=0)
-			axis(side=2, pos=0, yaxp=c(0,50,50), tck=-0.012, label=F)	# xaxp(範囲1,範囲2,区切数)
-			mtext(text="Coverage(%)", side=1, line=2, outer=F)
-			mtext(text="height(m)", side=2, line=2, outer=F)
-	# 
-		# 軸ラベルを入れる
-		}
-	if(legend) legend(x=102, y=ylim[2]*0.8, legend=group[length(group):1], angle=ang, density=dns)
-	}
-}
-	# tmp <- function(){
-	# source("d:/matu/work/stat/r/matu.r")
-	# read.veg.data()$species
-	# }
 
 ## 最小面積とSα
 Sa <- function(c, z) c*(1/(c*z))^(z/(z-1))	# Sαを求める関数
@@ -335,6 +226,7 @@ sdr.mean <- function(sdr){
 	colnames(sdr.mean) <- c("Sjac", "Drel", "Rrel", "Brel",  "Arel",  "Nrel")
 	as.data.frame(sdr.mean)
 }
+
 ## Baselga(2012)の1つの個別計算
 basel.base <- function(mt, i, j, stand=F){
 	# d:/matu/OneDrive/reference/id/03381.pdf
@@ -445,6 +337,7 @@ baselgaC <- function(mt){
 	# 	}
 	# }
 	# // D:/matu/work/stat/R/c/c.bat
+
 ## 三角プロット(https://staff.aist.go.jp/a.noda/programs/ternary/ternary.plot から)
 	# Ternary.plot
 	# Drawing ternary plot of compositional data
@@ -510,6 +403,7 @@ ternary.plot <- function (dat, label=rownames(dat), axes=TRUE, clabel=0, cpoint=
         text(xy[, 1], xy[, 2], label, clabel)
     return(invisible(xy))
 }
+
 ## PodaniさんのDSRを三角プロット(ternary.plotは上で定義)で表示
 tp2 <- function(sdr, sdr.m, col=1, pch=16, cex=4, cex.text=1.5, seg.col=2){
 	# https://staff.aist.go.jp/a.noda/programs/ternary/ternary.html#R
