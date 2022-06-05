@@ -1,4 +1,4 @@
-test_that("pca results match", {
+test_that("mid point and bin width can be caluculated", {
   height    <- c(2, 4, 8, 20)
   mid_point <- c(1, 3, 6, 14)
   bin_width <- c(2, 2, 4, 12)
