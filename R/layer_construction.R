@@ -1,4 +1,28 @@
-
+#' Draw layer construction plot
+#' 
+#' @param df    A dataframe including columns: stand, layer height and cover.
+#'              Optional column: stand group.
+#' @param stand,height,cover,group
+#'              A string to specify stand, height, cover, group column.
+#' @param ...   Extra arguments for geom_bar().
+#' @param x     A numeric vector.
+#' @return  draw_layer_construction() returns gg object, 
+#'          add_mid_p_bin_w() returns dataframe including mid_point and 
+#'          bin_width columns. 
+#'          mid_point() and bin_width() return a numeric vector.
+#' 
+#' @examples
+#' library(tidyverse)
+#' 
+#' # select stand and summarise by sp_group
+#' # df %>%
+#' #   dplyr::filter(df, stand == "C") %>%
+#' #   dplyr::group_by(height, sp_group) %>%
+#' #   dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
+#' #   draw_layer_construction()
+#' 
+#' 
+#' @export
 draw_layer_construction <- function(df, 
                                     stand    = "stand", 
                                     height   = "height", 
@@ -6,31 +30,22 @@ draw_layer_construction <- function(df,
                                     group    = "",
                                     ...){
   gg <- 
-  add_mid_p_bin_w(df, height) %>%
-  ggplot(aes(x = .data[[cover]], y = .data[["mid_point"]], 
-         width = .data[["bin_width"]], 
-         group = if(group == "") "" else .data[[group]], 
-         fill  = if(group == "") "" else .data[[group]]
-         )) +
-    geom_bar(stat="identity", 
+    add_mid_p_bin_w(df, height) %>%
+    ggplot2::ggplot(ggplot2::aes(
+                    x = .data[[cover]], y = .data[["mid_point"]], 
+                    width = .data[["bin_width"]], 
+                    group = if(group == "") "" else .data[[group]], 
+                    fill  = if(group == "") "" else .data[[group]])) +
+    ggplot2::geom_bar(stat = "identity", 
              position = "stack", 
              orientation = "y", ...)
-  gg
+  return(gg)
 }
 
-  # select a stand
-df %>%
-  dplyr::filter(stand == "C") %>%
-  dplyr::group_by(height, sp_group) %>%
-  dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
-  draw_layer_construction()
-
-
-
-#' Compute mid point and width from height of layers. 
-#' height: c(2, 4, 8, 20)
-#' mid_point: c(1, 3, 6, 14)
-#' bin_width: c(2, 2, 4, 12)
+#' Add mid point and bin width of layer heights.
+#' 
+#' @rdname draw_layer_construction 
+#' @export
 add_mid_p_bin_w <- function(df, height = "height"){
   h     <- sort(unique(df[[height]]))
   tibble::tibble(height = h, 
@@ -39,47 +54,19 @@ add_mid_p_bin_w <- function(df, height = "height"){
     dplyr::left_join(df)
 }
 
+#' Compute mid point of layer heights.
+#' 
+#' @rdname draw_layer_construction 
+#' @export
 mid_point <- function(x){
   purrr::map2(x, dplyr::lag(x, default = 0), c) %>%
   purrr::map_dbl(mean)
 }
 
+#' Compute bin width of layer heights.
+#' 
+#' @rdname draw_layer_construction 
+#' @export
 bin_width <- function(x){
   purrr::map2_dbl(x, dplyr::lag(x, default = 0), function(.x, .y) .x - .y)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-df_c %>%
-  dplyr::group_by(stand, height, sp_group) %>%
-  dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
-  draw_layer_construction()
-
-
-
-
-
-df_c %>%
-  dplyr::group_by(stand, height, species_group) %>%
-  dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
-  dplyr::distinct(height) %>%
-  dplyr::mutate(
-    min = dplyr::lag(height, default = 0),
-    max = height,
-    mid_point = (min + max) / 2, 
-    width = max - min) %>%
-  dplyr::select(height, mid_point, width) %>%
-  left_join(df_c) %>%
-  print(n = nrow(.)) %>%
-  ggplot(aes(x = cover, y = mid_point, width = width, group = species_group, fill = species_group)) +
-    geom_bar(stat="identity", position = "stack", orientation = "y", colour = "black")
-
