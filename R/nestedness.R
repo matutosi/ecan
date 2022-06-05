@@ -53,10 +53,10 @@ nodf <- function(mt, nest = "matrix"){
 #' Internal function in nodf
 #' @rdname nodf
 #' @export
-n_paired <- function(Ni, Nj){
-  if( sum(Ni ) <= sum(Nj) ) return(0)
-  sum( (Ni + Nj) == 2 )  / sum(Nj) * 100
-}
+  # n_paired <- function(Ni, Nj){
+  #   if( sum(Ni ) <= sum(Nj) ) return(0)
+  #   sum( (Ni + Nj) == 2 )  / sum(Nj) * 100
+  # }
 
 #' Generate random matrix for NODF test
 #' @rdname nodf
