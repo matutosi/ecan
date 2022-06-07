@@ -49,13 +49,27 @@ Compute bin width of layer heights.
 }
 \examples{
 library(tidyverse)
+n <- 100
+height_max <- 20
+ly_list    <- c("B1", "B2", "S1", "S2", "K")
+st_list    <- LETTERS[1:3]
+sp_list    <- letters[1:9]
+st_group   <- NULL
+sp_group   <- rep(letters[24:26], 3)
+cover_list <- 2^(0:6)
+df <- 
+  gen_example(n = n, use_layer = TRUE,
+              height_max = height_max, ly_list = ly_list, 
+              st_list  = st_list,  sp_list  = sp_list,
+              st_group = st_group, sp_group = sp_group,
+              cover_list = cover_list)
 
 # select stand and summarise by sp_group
-# df \%>\%
-#   dplyr::filter(df, stand == "C") \%>\%
-#   dplyr::group_by(height, sp_group) \%>\%
-#   dplyr::summarise(cover = sum(cover), .groups = "drop") \%>\%
-#   draw_layer_construction()
-
+df \%>\%
+  dplyr::filter(stand == "A") \%>\%
+  dplyr::group_by(height, sp_group) \%>\%
+  dplyr::summarise(cover = sum(cover), .groups = "drop") \%>\%
+  draw_layer_construction(group = "sp_group", colour = "white") + 
+    theme_bw()
 
 }

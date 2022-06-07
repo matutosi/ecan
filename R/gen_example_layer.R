@@ -10,8 +10,8 @@
 #' @param ly_list,st_list,sp_list,st_group,sp_group
 #'                     A string vector. 
 #'                     st_group and sp_group are optional (default is NULL).
-#'                     Lenght of st_list and st_group should be the same.
-#'                     Lenght of sp_list and sp_group should be the same.
+#'                     Lenght of st_list and sp_list should be the same 
+#'                     as st_group and sp_group, respectively. 
 #' @param cover_list   A numeric vector.
 #' 
 #' @return  A dataframe with columns: stand, layer, species, cover, 
@@ -26,22 +26,22 @@
 #' st_group   <- rep(LETTERS[24:26], 3)
 #' sp_group   <- rep(letters[24:26], 3)
 #' cover_list <- 2^(0:6)
-#' gen_example_layer(n = n, use_layer = TRUE,
-#'                   height_max = height_max, ly_list = ly_list, 
-#'                   st_list  = st_list,  sp_list  = sp_list,
-#'                   st_group = st_group, sp_group = sp_group,
-#'                   cover_list = cover_list)
+#' gen_example(n = n, use_layer = TRUE,
+#'             height_max = height_max, ly_list = ly_list, 
+#'             st_list  = st_list,  sp_list  = sp_list,
+#'             st_group = st_group, sp_group = sp_group,
+#'             cover_list = cover_list)
 #' 
 #' @export
-gen_example_layer <- function(n = 300, 
-                              use_layer  = TRUE,
-                              height_max = 20,
-                              ly_list    = "",
-                              st_list    = LETTERS[1:9],
-                              sp_list    = letters[1:9],
-                              st_group   = NULL,
-                              sp_group   = NULL,
-                              cover_list = 2^(0:6)){
+gen_example <- function(n = 300, 
+                        use_layer  = TRUE,
+                        height_max = 20,
+                        ly_list    = "",
+                        st_list    = LETTERS[1:9],
+                        sp_list    = letters[1:9],
+                        st_group   = NULL,
+                        sp_group   = NULL,
+                        cover_list = 2^(0:6)){
   # basic info
   comp <- 
     tibble::tibble(
@@ -51,7 +51,7 @@ gen_example_layer <- function(n = 300,
       cover   = sample(cover_list, size = n, replace = TRUE, 
                        prob = log(2^(length(cover_list):1)))) %>%
     dplyr::group_by(stand, layer, species) %>%
-    dplyr::summarise(cover = mean(cover), .groups = "drop")
+    dplyr::summarise(cover = mean(.data[["cover"]]), .groups = "drop")
   # additional info
   species <- tibble::tibble(species = sp_list, sp_group)
   stand <- tibble::tibble(stand = st_list, st_group)
@@ -70,7 +70,7 @@ gen_example_layer <- function(n = 300,
     dplyr::left_join(stand) %>%
     dplyr::left_join(layer)  %>%
     dplyr::left_join(species) %>%
-    dplyr::arrange(stand, layer, desc(cover))
+    dplyr::arrange(stand, layer, dplyr::desc(.data[["cover"]]))
   if( !use_layer ) df <- dplyr::select(df, -c("layer", "height"))
   return(df)
 }

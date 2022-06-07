@@ -13,14 +13,28 @@
 #' 
 #' @examples
 #' library(tidyverse)
+#' n <- 100
+#' height_max <- 20
+#' ly_list    <- c("B1", "B2", "S1", "S2", "K")
+#' st_list    <- LETTERS[1:3]
+#' sp_list    <- letters[1:9]
+#' st_group   <- NULL
+#' sp_group   <- rep(letters[24:26], 3)
+#' cover_list <- 2^(0:6)
+#' df <- 
+#'   gen_example(n = n, use_layer = TRUE,
+#'               height_max = height_max, ly_list = ly_list, 
+#'               st_list  = st_list,  sp_list  = sp_list,
+#'               st_group = st_group, sp_group = sp_group,
+#'               cover_list = cover_list)
 #' 
 #' # select stand and summarise by sp_group
-#' # df %>%
-#' #   dplyr::filter(df, stand == "C") %>%
-#' #   dplyr::group_by(height, sp_group) %>%
-#' #   dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
-#' #   draw_layer_construction()
-#' 
+#' df %>%
+#'   dplyr::filter(stand == "A") %>%
+#'   dplyr::group_by(height, sp_group) %>%
+#'   dplyr::summarise(cover = sum(cover), .groups = "drop") %>%
+#'   draw_layer_construction(group = "sp_group", colour = "white") + 
+#'     theme_bw()
 #' 
 #' @export
 draw_layer_construction <- function(df, 
@@ -44,7 +58,7 @@ draw_layer_construction <- function(df,
 
 #' Add mid point and bin width of layer heights.
 #' 
-#' @rdname draw_layer_construction 
+#' @rdname draw_layer_construction
 #' @export
 add_mid_p_bin_w <- function(df, height = "height"){
   h     <- sort(unique(df[[height]]))
@@ -56,7 +70,7 @@ add_mid_p_bin_w <- function(df, height = "height"){
 
 #' Compute mid point of layer heights.
 #' 
-#' @rdname draw_layer_construction 
+#' @rdname draw_layer_construction
 #' @export
 mid_point <- function(x){
   purrr::map2(x, dplyr::lag(x, default = 0), c) %>%
@@ -65,7 +79,7 @@ mid_point <- function(x){
 
 #' Compute bin width of layer heights.
 #' 
-#' @rdname draw_layer_construction 
+#' @rdname draw_layer_construction
 #' @export
 bin_width <- function(x){
   purrr::map2_dbl(x, dplyr::lag(x, default = 0), function(.x, .y) .x - .y)
