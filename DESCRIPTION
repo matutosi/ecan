@@ -14,6 +14,7 @@ Imports:
     dplyr,
     ggplot2,
     graphics,
+    jsonlite,
     labdsv,
     magrittr,
     purrr,
