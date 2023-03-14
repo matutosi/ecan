@@ -15,3 +15,9 @@ NULL
 
 #' @importFrom magrittr set_colnames
 NULL
+
+#' @importFrom rlang :=
+NULL
+
+#' @importFrom rlang .data
+NULL
