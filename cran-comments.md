@@ -11,7 +11,12 @@
 
 ## R CMD check results
 
-There were 0 ERRORs, 0 WARNINGs, and 2 NOTEs.
+There were 0 ERRORs, 0 WARNINGs, and 3 NOTEs.
+
+* checking CRAN incoming feasibility ... NOTE
+  Maintainer: 'Toshikazu Matsumura <matutosi@gmail.com>'
+
+  New submission
 
 * checking for detritus in the temp directory ... NOTE   
   Found the following files/directories:   
