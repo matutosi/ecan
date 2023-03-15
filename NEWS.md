@@ -1,8 +1,11 @@
 # ecan release news
 
-#  ecan 0.1.0.9000
+#  ecan 0.2.0
 
-* TODOs
+* 2023-03-
+
+* 
+    * 
 
 #  ecan 0.1.0
 
