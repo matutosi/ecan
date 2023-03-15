@@ -13,23 +13,24 @@
 #' @retrun  A data frame
 #' 
 #' @examples
-#' library(tidyverse)
-#' library(jsonlite)
 #' # path <- "set file path"
-#' path <- "D:/matu/work/ToDo/biodiv/R/input_occ_example_2022_07_07_20_04_11.txt"
+#' path <- "https://raw.githubusercontent.com/matutosi/biodiv/main/man/example.json"
 #' read_bis(path)
 #' 
+#' df %>% separate(.data[["x"]], c("A", "B"))
+#' 
 #' @export
-read_bis <- function(path, convert = TRUE){
+read_biss <- function(path, convert = TRUE){
   input_name <- c("c_names", "c_types", "selects", "data")
+  tmp_c_name <- "input"
   occ <- 
-    readr::read_tsv(path, col_names = "input", show_col_types = FALSE) %>%
-    tidyr::separate(input, into = input_name, sep=";")
+    readr::read_csv(path, col_names = tmp_c_name, show_col_types = FALSE) %>%
+    tidyr::separate(.data[[tmp_c_name]], into = input_name, sep=";")
   occ <- 
     c("c_names", "c_types" , "selects", "data") %>%
-    map(~`[`(occ, .)) %>%
-    map(~`[[`(., 1)) %>%
-    map(jsonlite::fromJSON)
+    purrr::map(~`[`(occ, .)) %>%
+    purrr::map(~`[[`(., 1)) %>%
+    purrr::map(jsonlite::fromJSON)
   c_names <- occ[[1]][[1]]
   c_types <- occ[[2]][[1]]
   #   occ[[3]][[1]]  # not for use
