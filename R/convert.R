@@ -42,12 +42,13 @@ table2df <- function(tbl, st = "stand", sp = "species", ab = "abundance"){
 #' @rdname df2table
 #' @export
 dist2df <- function(dist){
+  dist_col <- "dist"
   tbl <- 
     as.matrix(dist) %>%
     tibble::as_tibble()
   tbl %>%
     dplyr::mutate("plot_1" := colnames(tbl)) %>%
-    tidyr::pivot_longer(-dplyr::all_of("plot_1"), names_to = "plot_2", values_to = "dist") %>%
+    tidyr::pivot_longer(-dplyr::all_of("plot_1"), names_to = "plot_2", values_to = dist_col) %>%
     dplyr::distinct() %>%
-    dplyr::filter(dist != 0)
+    dplyr::filter(.data[[dist_col]] != 0)
 }
