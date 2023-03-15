@@ -16,7 +16,7 @@
 #'                 "chord", "aitchison", or "robust.aitchison".
 #' @param indiv,group
 #'                 A string to specify indiv, group, row_name column in df.
-#' @return  Result of clustering.
+#' @return  cluster() returns result of clustering.
 #'          $clustering_method: c_method
 #'          $distance_method:   d_method
 #' @examples
@@ -46,11 +46,7 @@
 cluster <- function(x, c_method, d_method){
   cls <- list()
     # distance
-  if(d_method == "correlation"){
-    d <- stats::as.dist( ( 1 - stats::cor( t(x) ) ) / 2, diag = TRUE)
-  } else {
-    d <- vegan::vegdist(x, method = d_method, diag = TRUE)
-  }
+  d <- distance(x, d_method)
     # clustering
   if(c_method == "diana"){
     cls <- stats::as.hclust(cluster::diana(d, diss = TRUE))
@@ -62,6 +58,20 @@ cluster <- function(x, c_method, d_method){
   cls$distance_method <- d_method
     # result
   return(cls)
+}
+
+#' Helper function for calculate distance
+#' 
+#' @rdname cluster
+#' @return  distance() returns distance matrix.
+#' @export
+distance <- function(x, d_method){
+  if(d_method == "correlation"){
+    d <- stats::as.dist( ( 1 - stats::cor( t(x) ) ) / 2, diag = TRUE)
+  } else {
+    d <- vegan::vegdist(x, method = d_method, diag = TRUE)
+  }
+  return(d)
 }
 
 #' Transfer when true
