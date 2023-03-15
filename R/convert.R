@@ -5,7 +5,10 @@
 #'                 rownames: stands.
 #'                 colnames: species.
 #' @param st,sp,ab A string.
-#' @return  df2table() return table, table2df return data.frame.
+#' @return
+#'     df2table() return table, 
+#'     table2df() return data.frame,
+#'     dist2df() return data.frame.
 #' @examples
 #' library(vegan)
 #' data(dune)
@@ -34,4 +37,17 @@ table2df <- function(tbl, st = "stand", sp = "species", ab = "abundance"){
     tibble::rownames_to_column(st) %>%
     tidyr::pivot_longer(-!!st, names_to = sp, values_to = ab) %>%
     dplyr::filter(.data[[ab]] != 0)
+}
+
+#' @rdname df2table
+#' @export
+dist2df <- function(dist){
+  tbl <- 
+    as.matrix(dist) %>%
+    tibble::as_tibble()
+  tbl %>%
+    dplyr::mutate("plot_1" := colnames(tbl)) %>%
+    tidyr::pivot_longer(-all_of("plot_1"), names_to = "plot_2", values_to = "dist") %>%
+    dplyr::distinct() %>%
+    dplyr::filter(dist != 0)
 }
