@@ -2,11 +2,14 @@
 % Please edit documentation in R/cluster.R
 \name{cluster}
 \alias{cluster}
+\alias{distance}
 \alias{cls_add_group}
 \alias{cls_color}
 \title{Helper function for clustering methods}
 \usage{
 cluster(x, c_method, d_method)
+
+distance(x, d_method)
 
 cls_add_group(cls, df, indiv, group)
 
@@ -37,9 +40,11 @@ colnames: species.}
 \item{indiv, group}{A string to specify indiv, group, row_name column in df.}
 }
 \value{
-Result of clustering.
+cluster() returns result of clustering.
 $clustering_method: c_method
 $distance_method:   d_method
+
+distance() returns distance matrix.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{    Inputing cls return a color vector, 
             inputing dend return a dend with color.
@@ -47,6 +52,8 @@ $distance_method:   d_method
 }
 \description{
 Helper function for clustering methods
+
+Helper function for calculate distance
 
 Add group names to hclust labels.
 

@@ -3,11 +3,14 @@
 \name{df2table}
 \alias{df2table}
 \alias{table2df}
+\alias{dist2df}
 \title{Convert data.frame and table to each other.}
 \usage{
 df2table(df, st = "stand", sp = "species", ab = "abundance")
 
 table2df(tbl, st = "stand", sp = "species", ab = "abundance")
+
+dist2df(dist)
 }
 \arguments{
 \item{df}{A data.frame.}
@@ -19,7 +22,10 @@ rownames: stands.
 colnames: species.}
 }
 \value{
-df2table() return table, table2df return data.frame.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{df2table() return table, 
+table2df() return data.frame,
+dist2df() return data.frame.
+}\if{html}{\out{</div>}}
 }
 \description{
 Convert data.frame and table to each other.
