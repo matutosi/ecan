@@ -33,8 +33,8 @@ Calculating diversity indices such as species richness (s),
 Shannon's H' (h), Simpson' D (d), Simpson's inverse D (i).
 }
 \examples{
-library(tidyverse)
-library(magrittr)
+library(dplyr)
+library(tibble)
 library(vegan)
 data(dune)
 data(dune.env)

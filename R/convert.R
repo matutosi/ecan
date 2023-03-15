@@ -4,6 +4,7 @@
 #' @param tbl      A table. community matrix.
 #'                 rownames: stands.
 #'                 colnames: species.
+#' @param dist     A distance table.
 #' @param st,sp,ab A string.
 #' @return
 #'     df2table() return table, 

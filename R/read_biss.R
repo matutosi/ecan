@@ -2,19 +2,19 @@
 #' 
 #' BiSS data is formatted as JSON. 
 #' 
-#' @paramas path   A string to specify the data.
-#' @paramas join   A logical. TRUE: join plot and occurrence, FALSE: do not join.
+#' @param txt    A JSON string, URL or file.
+#' @param join   A logical. TRUE: join plot and occurrence, FALSE: do not join.
 #' @retrun  A data frame
 #' 
 #' @examples
 #' library(dplyr)
 #' # path <- "set file path"
 #' path <- "https://raw.githubusercontent.com/matutosi/biodiv/main/man/example.json"
-#' read_bis(path)
+#' read_biss(path)
 #' 
 #' @export
-read_biss <- function(json, join = TRUE){
-  biss <- jsonlite::fromJSON(json)
+read_biss <- function(txt, join = TRUE){
+  biss <- jsonlite::fromJSON(txt)
   plot <- data.frame(biss$plot)
   occ  <- data.frame(biss$occ)
   if(join){

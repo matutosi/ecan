@@ -1,10 +1,17 @@
 Package: ecan
 Title: Ecological Analysis and Visualization
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Toshikazu", "Matsumura", , "matutosi@gmail.com", role = c("aut", "cre"))
 Description: Support ecological analyses such as ordinations and clusterings. 
 License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.5.0)
+URL: https://github.com/matutosi/ecan
+     https://github.com/matutosi/ecan/tree/develop (devel)
 LazyData: true
 Imports: 
     MASS,
@@ -16,10 +23,8 @@ Imports:
     graphics,
     jsonlite,
     labdsv,
-    lubridate,
     magrittr,
     purrr,
-    readr,
     rlang,
     stringr,
     tibble,
@@ -30,6 +35,6 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3

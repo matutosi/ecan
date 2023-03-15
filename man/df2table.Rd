@@ -20,6 +20,8 @@ dist2df(dist)
 \item{tbl}{A table. community matrix.
 rownames: stands.
 colnames: species.}
+
+\item{dist}{A distance table.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{df2table() return table, 

@@ -48,7 +48,8 @@ Compute mid point of layer heights.
 Compute bin width of layer heights.
 }
 \examples{
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 n <- 100
 height_max <- 20
 ly_list    <- c("B1", "B2", "S1", "S2", "K")
@@ -70,6 +71,6 @@ df \%>\%
   dplyr::group_by(height, sp_group) \%>\%
   dplyr::summarise(cover = sum(cover), .groups = "drop") \%>\%
   draw_layer_construction(group = "sp_group", colour = "white") + 
-    theme_bw()
+    ggplot2::theme_bw()
 
 }

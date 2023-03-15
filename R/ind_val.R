@@ -9,6 +9,7 @@
 #' @examples
 #' library(dplyr)
 #' library(tibble)
+#' library(vegan)
 #' data(dune)
 #' data(dune.env)
 #' df <- 
