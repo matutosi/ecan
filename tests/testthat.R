@@ -1,6 +1,7 @@
 library(testthat)
-library(tidyverse)
 library(ecan)
+library(dplyr)
+library(labdsv)
 library(vegan)
 data(dune)
 

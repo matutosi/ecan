@@ -12,7 +12,7 @@
 #'          mid_point() and bin_width() return a numeric vector.
 #' 
 #' @examples
-#' library(tidyverse)
+#' library(dplyr)
 #' n <- 100
 #' height_max <- 20
 #' ly_list    <- c("B1", "B2", "S1", "S2", "K")

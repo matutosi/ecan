@@ -7,9 +7,8 @@
 #' @return    A data.frame.
 #' 
 #' @examples
-#' library(tidyverse)
-#' library(magrittr)
-#' library(vegan)
+#' library(dplyr)
+#' library(tibble)
 #' data(dune)
 #' data(dune.env)
 #' df <- 
