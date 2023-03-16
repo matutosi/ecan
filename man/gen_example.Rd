@@ -17,7 +17,7 @@ gen_example(
 )
 }
 \arguments{
-\item{n}{A numeric to generate no of occurances.}
+\item{n}{A numeric to generate no of occurrences.}
 
 \item{use_layer}{A logical. If FALSE, height_max and ly_list
 will be omitted.}
@@ -26,7 +26,7 @@ will be omitted.}
 
 \item{ly_list, st_list, sp_list, st_group, sp_group}{A string vector.
 st_group and sp_group are optional (default is NULL).
-Lenght of st_list and sp_list should be the same
+Length of st_list and sp_list should be the same
 as st_group and sp_group, respectively.}
 
 \item{cover_list}{A numeric vector.}

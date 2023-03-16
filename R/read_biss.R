@@ -1,4 +1,4 @@
-#' Read data from BiSS (Biodiversity Investigaraion Support System) to data frame.
+#' Read data from BiSS (Biodiversity Investigation Support System) to data frame.
 #' 
 #' BiSS data is formatted as JSON. 
 #' 

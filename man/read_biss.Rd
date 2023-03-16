@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_biss.R
 \name{read_biss}
 \alias{read_biss}
-\title{Read data from BiSS (Biodiversity Investigaraion Support System) to data frame.}
+\title{Read data from BiSS (Biodiversity Investigation Support System) to data frame.}
 \usage{
 read_biss(txt, join = TRUE)
 }

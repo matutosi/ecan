@@ -3,14 +3,14 @@
 #' Stand, species, and cover are basic. 
 #' Layer, height, st_group, are sp_group optional. 
 #' 
-#' @param n            A numeric to generate no of occurances.
+#' @param n            A numeric to generate no of occurrences.
 #' @param use_layer    A logical. If FALSE, height_max and ly_list 
 #'                     will be omitted.
 #' @param height_max   A numeric. The highest layer of samples.
 #' @param ly_list,st_list,sp_list,st_group,sp_group
 #'                     A string vector. 
 #'                     st_group and sp_group are optional (default is NULL).
-#'                     Lenght of st_list and sp_list should be the same 
+#'                     Length of st_list and sp_list should be the same 
 #'                     as st_group and sp_group, respectively. 
 #' @param cover_list   A numeric vector.
 #' 
