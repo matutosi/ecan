@@ -23,12 +23,12 @@
 #' df <- 
 #'   tibble::tibble(
 #'   stand = paste0("ST_", c("A", "A", "A", "B", "B", "C", "C", "C", "C")),
-#'   species = paste0("sp_", c("a", "e", "d", "e", "b", "e", "d", "b", "a")),
+#' species = paste0("sp_", c("a", "e", "d", "e", "b", "e", "d", "b", "a")),
 #'   abundance = c(3, 3, 1, 9, 5, 4, 3, 3, 1))
 #' cls <- 
 #'   df2table(df) %>%
-#'   cluster(c_method = "single", d_method = "manhattan")
-#' plot(cls)
+#'   cluster(c_method = "average", d_method = "bray")
+#' 
 #' # library(ggdendro)
 #' # show standard cluster
 #' # ggdendro::ggdendrogram(cls)
