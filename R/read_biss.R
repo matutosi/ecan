@@ -4,7 +4,7 @@
 #' 
 #' @param txt    A JSON string, URL or file.
 #' @param join   A logical. TRUE: join plot and occurrence, FALSE: do not join.
-#' @retrun  A data frame
+#' @return  A data frame.
 #' 
 #' @examples
 #' library(dplyr)

@@ -16,10 +16,7 @@
 #'   dune %>%
 #'   table2df(st = "stand", sp = "species", ab = "cover") %>%
 #'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
-#' ind_val(df, abundance = "cover", group = "Moisture", row_data = TRUE)
-#' ind_val(df, abundance = "cover", group = "Management")
-#' ind_val(df, abundance = "cover", group = "Use")
-#' ind_val(df, abundance = "cover", group = "Manure")
+#' ind_val(df, abundance = "cover", group = "Moisture")
 #' 
 #' @export
 ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = NULL, row_data = FALSE){

@@ -2,10 +2,10 @@
 
 #  ecan 0.2.0
 
-* 2023-03-
+* 2023-03-16
 
-* 
-    * 
+* Bug fix
+* Release to CRAN
 
 #  ecan 0.1.0
 

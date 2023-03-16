@@ -15,32 +15,29 @@
 #'                 "binomial", "chao", "cao", "mahalanobis", "chisq", 
 #'                 "chord", "aitchison", or "robust.aitchison".
 #' @param indiv,group
-#'                 A string to specify indiv, group, row_name column in df.
+#'               A string to specify individual and group name of column in df.
 #' @return  cluster() returns result of clustering.
 #'          $clustering_method: c_method
 #'          $distance_method:   d_method
 #' @examples
-#' library(vegan)
-#' library(ggdendro)
-#' data(dune)
-#' data(dune.env)
-#' 
 #' df <- 
-#'   table2df(dune) %>%
-#'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
-#' sp_dammy <- 
-#'  tibble::tibble("species" = colnames(dune), 
-#'                 "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
-#'                 "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
-#' df <- 
-#'   df %>%
-#'   dplyr::left_join(sp_dammy)
+#'   tibble::tibble(
+#'   stand = paste0("ST_", c("A", "A", "A", "B", "B", "C", "C", "C", "C")),
+#'   species = paste0("sp_", c("a", "e", "d", "e", "b", "e", "d", "b", "a")),
+#'   abundance = c(3, 3, 1, 9, 5, 4, 3, 3, 1))
+#' cls <- 
+#'   df2table(df) %>%
+#'   cluster(c_method = "single", d_method = "manhattan")
+#' plot(cls)
+#' # library(ggdendro)
+#' # show standard cluster
+#' # ggdendro::ggdendrogram(cls)
 #' 
-#' cls <- cluster(dune, c_method = "average", d_method = "euclidean")
-#' ggdendro::ggdendrogram(cls)
-#' 
-#' cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
-#' ggdendro::ggdendrogram(cls)
+#' # show cluster with group
+#' # data(dune.env, package = "vegan")
+#' # df <- dplyr::left_join(dune, tibble::rownames_to_column(dune.env, "stand"))
+#' # cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
+#' # ggdendro::ggdendrogram(cls)
 #' 
 #' @export
 cluster <- function(x, c_method, d_method){

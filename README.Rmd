@@ -23,15 +23,21 @@ The goal of ecan is to support ecological analysis.
 devtools::install_github("matutosi/ecan")
 ```
 
+You can use almost the same functionality in shiny.
+
+https://matutosi.shinyapps.io/ecanvis/ .
 
 ## Example
 
-### Prepare adn convert data
+### Prepare and convert data
 
 ``` r
 library(ecan)
 library(vegan)
-library(tidyverse)
+library(dplyr)
+library(stringr)
+library(tibble)
+library(ggplot2)
 data(dune)
 data(dune.env)
 

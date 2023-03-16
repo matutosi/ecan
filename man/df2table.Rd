@@ -35,8 +35,12 @@ Convert data.frame and table to each other.
 \examples{
 library(vegan)
 data(dune)
-tibble::tibble(st=rep(1:2, 2), sp=rep(1:2, each=2), ab=runif(4)) \%>\%
+tibble::tibble(
+   st = paste0("st_", rep(1:2, times = 2)), 
+   sp = paste0("sp_", rep(1:2, each = 2)), 
+   ab = runif(4)) \%>\%
   dplyr::bind_rows(., .) \%>\%
+  print() \%>\%
   df2table("st", "sp", "ab")
 
 }

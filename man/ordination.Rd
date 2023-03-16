@@ -72,9 +72,7 @@ sp_dammy <-
  tibble::tibble("species" = colnames(dune), 
                 "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
                 "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
-df <- 
-  df \%>\%
-  dplyr::left_join(sp_dammy)
+df <- dplyr::left_join(df, sp_dammy)
 
 ord_dca <- ordination(dune, o_method = "dca")
 ord_pca <- 

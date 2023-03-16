@@ -11,6 +11,9 @@ read_biss(txt, join = TRUE)
 
 \item{join}{A logical. TRUE: join plot and occurrence, FALSE: do not join.}
 }
+\value{
+A data frame.
+}
 \description{
 BiSS data is formatted as JSON.
 }
