@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 tools
+tools/
 inst/doc

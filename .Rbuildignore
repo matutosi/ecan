@@ -4,5 +4,6 @@
 ^data-raw$
 ^README\.Rmd$
 ^\tools$
+^\tools\*.R$
 ^cran-comments.md$
 ^CRAN-SUBMISSION$
