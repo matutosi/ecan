@@ -46,12 +46,12 @@
       examples/vignettes/tests you can write to tempdir(). -> tools/veg.r, 
       basel2()
 
-* In this version I have:
+*   I appreciate your advices. In this version I have:
       1. 
       2. 
-      3. 
+      3. Removed functions (moved into tools directory cf. 5. and 6.), because the funcions were under development.
       4. Wrapped examples (> 5 sec) in cluster.R 
-      5. and 6. Added tools/*.R in .rbuildignore to solve problems. (The directory of tools is for personal use.)
+      5. 6. Added tools/*.R in .rbuildignore to solve problems. (The directory of tools is for personal use.)
 
 説明欄は、パッケージが何をするのか、なぜそれが有用なのかを（1段落）説明することを意図しています。パッケージの機能と実装されたメソッドについての詳細は、Descriptionテキストに追加してください。
 
@@ -61,13 +61,6 @@
 著者名 (年, ISBN:...)
 または、それらが利用できない場合。<https:...>
 のように、'doi:'、'arXiv:'、'https:'の後にスペースを入れず、自動リンクのために角括弧を付けてください。(タイトルも付けたい場合は、引用符で囲んでください：「タイトル」）。
-
-.Rdファイルにエクスポートされたメソッドに関する説明文を追加し、ドキュメントで関数結果を説明してください。出力（クラス）の構造、出力の意味も書いてください。(関数が値を返さない場合は、その旨も記載してください。)例:㊟{戻り値なし、副作用のために呼ばれた}等
-Rdタグが不足している。
-      dots2list.Rd: \バリュー
-      shoot.Rdです。\バリュー
-      t_if_true.Rd: \バリュー
-
 
 ## Test environments
 

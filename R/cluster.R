@@ -72,17 +72,6 @@ distance <- function(x, d_method){
   return(d)
 }
 
-#' Transfer when true
-#' 
-#' @param x        A community data matrix.
-#' @param cond     A logical.
-#' 
-#' @export
-t_if_true <- function(x, cond){
-  if(cond) t(x) else x
-}
-
-
 #' Add group names to hclust labels.
 #' 
 #' @param cls      A result of cluster analysis (hclust).
