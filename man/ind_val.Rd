@@ -33,15 +33,16 @@ Calculating diversity indices such as species richness (s),
 Shannon's H' (h), Simpson' D (d), Simpson's inverse D (i).
 }
 \examples{
+\donttest{
 library(dplyr)
 library(tibble)
-library(vegan)
-data(dune)
-data(dune.env)
+data(dune, package = "vegan")
+data(dune.env, package = "vegan")
 df <- 
   dune \%>\%
   table2df(st = "stand", sp = "species", ab = "cover") \%>\%
   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
 ind_val(df, abundance = "cover", group = "Moisture")
+}
 
 }
