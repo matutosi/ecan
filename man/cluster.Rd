@@ -60,6 +60,8 @@ Add group names to hclust labels.
 Add colors to dendrogram
 }
 \examples{
+\donttest{
+library(dplyr)
 df <- 
   tibble::tibble(
   stand = paste0("ST_", c("A", "A", "A", "B", "B", "C", "C", "C", "C")),
@@ -68,15 +70,18 @@ species = paste0("sp_", c("a", "e", "d", "e", "b", "e", "d", "b", "a")),
 cls <- 
   df2table(df) \%>\%
   cluster(c_method = "average", d_method = "bray")
-
-# library(ggdendro)
+library(ggdendro)
 # show standard cluster
-# ggdendro::ggdendrogram(cls)
+ggdendro::ggdendrogram(cls)
 
 # show cluster with group
-# data(dune.env, package = "vegan")
-# df <- dplyr::left_join(dune, tibble::rownames_to_column(dune.env, "stand"))
-# cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
-# ggdendro::ggdendrogram(cls)
+data(dune, package = "vegan")
+data(dune.env, package = "vegan")
+cls <- 
+  cluster(dune, c_method = "average", d_method = "bray")
+df <- tibble::rownames_to_column(dune.env, "stand")
+cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
+ggdendro::ggdendrogram(cls)
+}
 
 }

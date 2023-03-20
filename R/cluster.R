@@ -21,6 +21,7 @@
 #'          $distance_method:   d_method
 #' @examples
 #' \donttest{
+#' library(dplyr)
 #' df <- 
 #'   tibble::tibble(
 #'   stand = paste0("ST_", c("A", "A", "A", "B", "B", "C", "C", "C", "C")),
@@ -30,12 +31,15 @@
 #'   df2table(df) %>%
 #'   cluster(c_method = "average", d_method = "bray")
 #' library(ggdendro)
-#' show standard cluster
+#' # show standard cluster
 #' ggdendro::ggdendrogram(cls)
 #' 
-#' show cluster with group
+#' # show cluster with group
+#' data(dune, package = "vegan")
 #' data(dune.env, package = "vegan")
-#' df <- dplyr::left_join(dune, tibble::rownames_to_column(dune.env, "stand"))
+#' cls <- 
+#'   cluster(dune, c_method = "average", d_method = "bray")
+#' df <- tibble::rownames_to_column(dune.env, "stand")
 #' cls <- cls_add_group(cls, df, indiv = "stand", group = "Use")
 #' ggdendro::ggdendrogram(cls)
 #' }
