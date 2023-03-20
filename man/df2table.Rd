@@ -33,8 +33,6 @@ dist2df() return data.frame.
 Convert data.frame and table to each other.
 }
 \examples{
-library(vegan)
-data(dune)
 tibble::tibble(
    st = paste0("st_", rep(1:2, times = 2)), 
    sp = paste0("sp_", rep(1:2, each = 2)), 

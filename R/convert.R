@@ -11,8 +11,6 @@
 #'     table2df() return data.frame,
 #'     dist2df() return data.frame.
 #' @examples
-#' library(vegan)
-#' data(dune)
 #' tibble::tibble(
 #'    st = paste0("st_", rep(1:2, times = 2)), 
 #'    sp = paste0("sp_", rep(1:2, each = 2)), 
