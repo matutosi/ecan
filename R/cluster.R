@@ -79,17 +79,22 @@ distance <- function(x, d_method){
 #' Add group names to hclust labels.
 #' 
 #' @param cls      A result of cluster analysis (hclust).
+#' @param          pad  A logical to specify padding strings.
 #' @inheritParams  ordination
 #' @rdname         cluster
 #' @export
-cls_add_group <- function(cls, df, indiv, group){
+cls_add_group <- function(cls, df, indiv, group, pad = TRUE){
   labs_group <- 
     df %>%
-    dplyr::distinct(!!indiv := as.character(.data[[indiv]]), .data[[group]]) 
+    dplyr::distinct(!!indiv := as.character(.data[[indiv]]), .data[[group]])
   labs_group <- 
     tibble::tibble(!!indiv := cls$labels) %>%
     dplyr::left_join(labs_group)
-  cls$labels <- stringr::str_c(labs_group[[group]] , "_", cls$labels)
+  if(pad){
+    labs_group[[group]] <- pad2longest(labs_group[[group]], side = "left", pad = "_")
+    cls$labels <- pad2longest(cls$labels, side = "left", pad = "_")
+  }
+  cls$labels <- stringr::str_c(labs_group[[group]], "-", cls$labels)
   return(cls)
 }
 

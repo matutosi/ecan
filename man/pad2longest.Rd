@@ -11,7 +11,7 @@ pad2longest(string, side = "right", pad = " ")
 
 \item{side}{Side on which padding character is added (left, right or both).}
 
-\item{pad}{Single padding character (default is a space).}
+\item{pad}{Single padding character (default is spaces).}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{    Strings.

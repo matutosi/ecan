@@ -11,7 +11,7 @@ cluster(x, c_method, d_method)
 
 distance(x, d_method)
 
-cls_add_group(cls, df, indiv, group)
+cls_add_group(cls, df, indiv, group, pad = TRUE)
 
 cls_color(cls, df, indiv, group)
 }
@@ -38,6 +38,8 @@ colnames: species.}
 \item{df}{A data.frame to be added into ord scores}
 
 \item{indiv, group}{A string to specify individual and group name of column in df.}
+
+\item{pad}{A logical to specify padding strings.}
 }
 \value{
 cluster() returns result of clustering.
