@@ -22,7 +22,6 @@ Imports:
     dendextend,
     dplyr,
     ggplot2,
-    graphics,
     jsonlite,
     labdsv,
     magrittr,
