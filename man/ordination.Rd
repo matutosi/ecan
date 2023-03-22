@@ -60,6 +60,7 @@ ord_add_group() adds group data.frame into ordination scores.
 Helper function for ordination methods
 }
 \examples{
+\donttest{
 library(ggplot2)
 library(vegan)
 data(dune)
@@ -85,6 +86,6 @@ ord_dca_st <-
 ord_pca_sp <- 
   ord_add_group(ord_pca, 
   score = "sp_scores", df, indiv = "species", group = "dammy_1")
-
+}
 
 }

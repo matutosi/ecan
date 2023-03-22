@@ -31,7 +31,7 @@
 #'          from ordination result. 
 #'          ord_add_group() adds group data.frame into ordination scores.
 #' @examples
-#' \donotrun{
+#' \donttest{
 #' library(ggplot2)
 #' library(vegan)
 #' data(dune)

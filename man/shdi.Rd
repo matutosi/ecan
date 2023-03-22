@@ -23,8 +23,7 @@ Calculating diversity indices such as species richness (s),
 Shannon's H' (h), Simpson' D (d), Simpson's inverse D (i).
 }
 \examples{
-library(vegan)
-data(dune)
+data(dune, package = "vegan")
 df <- table2df(dune)
 shdi(df)
 

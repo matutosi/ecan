@@ -7,7 +7,7 @@
 
       * Removed functions (moved into tools directory cf. 5. and 6.), because the funcions were under development.
 
-      * Wrapped examples (> 5 sec) in cluster.R and ind_val.R.
+      * Wrapped examples by \donttest() (> 5 sec) in cluster.R and ind_val.R.
 
       * Added tools/*.R in .rbuildignore to solve problems (The "tools" directory is for personal use). 
 

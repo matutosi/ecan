@@ -3,17 +3,23 @@
 \name{is_one2multi}
 \alias{is_one2multi}
 \alias{is_one2one}
+\alias{is_multi2multi}
 \alias{cols_one2multi}
 \alias{select_one2multi}
+\alias{unique_length}
 \title{Check cols one-to-one, or one-to-multi in data.frame}
 \usage{
 is_one2multi(df, col_1, col_2)
 
 is_one2one(df, col_1, col_2)
 
+is_multi2multi(df, col_1, col_2)
+
 cols_one2multi(df, col, inculde_self = TRUE)
 
 select_one2multi(df, col, inculde_self = TRUE)
+
+unique_length(df, col_1, col_2)
 }
 \arguments{
 \item{df}{A data.frame}
@@ -24,35 +30,27 @@ select_one2multi(df, col, inculde_self = TRUE)
 If TRUE, return value including input col.}
 }
 \value{
-is_one2multi() and is_one2one() return a logical.
+is_one2multi(), is_one2one(), is_multi2multi()  return a logical.
 cols_one2multi() returns strings of colnames
 that has one2multi relation to input col.
+unique_length() returns a list.
 }
 \description{
 Check cols one-to-one, or one-to-multi in data.frame
 }
 \examples{
-library(vegan)
-data(dune)
-data(dune.env)
+df <- tibble::tibble(
+  x     = rep(letters[1:6], each = 1),
+  x_grp = rep(letters[1:3], each = 2),
+  y     = rep(LETTERS[1:3], each = 2),
+  y_grp = rep(LETTERS[1:3], each = 2),
+  z      = rep(LETTERS[1:3], each = 2),
+  z_grp  = rep(LETTERS[1:3], times = 2))
 
-df <- 
-  table2df(dune) \%>\%
-  dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
-sp_dammy <- 
- tibble::tibble("species" = colnames(dune), 
-                "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
-                "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
-df <- 
-  df \%>\%
-  dplyr::left_join(sp_dammy)
+unique_length(df, "x", "x_grp")
 
-is_one2one(df, "stand", "Use")
-is_one2multi(df, "stand", "Use")
-cols_one2multi(df, "stand")
-cols_one2multi(df, "species")
-select_one2multi(df, "stand")
-select_one2multi(df, "species")
-
+is_one2one(df, "x", "x_grp")
+is_one2one(df, "y", "y_grp")
+is_one2one(df, "z", "z_grp")
 
 }
