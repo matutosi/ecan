@@ -1,15 +1,10 @@
 ## Resubmission
 
 *   This is a resubmission. In this version I have:
-      * Explained the package functionality.
-
-      * Added no references.
-
-      * Removed functions (moved into tools directory cf. 5. and 6.), because the funcions were under development.
-
-      * Wrapped examples by \donttest() (> 5 sec) in cluster.R and ind_val.R.
-
+      * Explained the package functionality (added no references).
+      * Removed (moved into tools directory) functions (dots2list(), shoot(), and t_if_true()), because the funcions were under development.
       * Added tools/*.R in .rbuildignore to solve problems (The "tools" directory is for personal use). 
+      * Wrapped examples by \donttest() (> 5 sec) in cluster(), ind_val() and ordination().
 
 
 ## Test environments
@@ -28,7 +23,7 @@
 
 ## R CMD check results
 
-There were 0 ERRORs, 0 WARNINGs, and 4 NOTEs.
+There were 0 ERRORs, 0 WARNINGs, and 2 NOTEs.
 
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Toshikazu Matsumura <matutosi@gmail.com>'
@@ -41,20 +36,6 @@ There were 0 ERRORs, 0 WARNINGs, and 4 NOTEs.
     'lastMiKTeXException'   
 
   check_rhub() on Windows Server shows this note. 
-
-
-* checking HTML version of manual ... NOTE
-  Skipping checking HTML validation: no command 'tidy' found
-
-* checking examples ... [9s/19s] NOTE
-  Examples with CPU (user + system) or elapsed time > 5s
-           user system elapsed
-  cluster 2.245   0.12   5.142
-
-
-  check_rhub() on Fedora Linux shows the last 2 notes.
-  The example is very simple and short code, but elapsed time is over 5s.
-  I have no idea to solve this.
 
 
 ## Downstream dependencies
