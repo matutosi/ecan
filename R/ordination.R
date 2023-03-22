@@ -31,6 +31,7 @@
 #'          from ordination result. 
 #'          ord_add_group() adds group data.frame into ordination scores.
 #' @examples
+#' \donotrun{
 #' library(ggplot2)
 #' library(vegan)
 #' data(dune)
@@ -56,7 +57,7 @@
 #' ord_pca_sp <- 
 #'   ord_add_group(ord_pca, 
 #'   score = "sp_scores", df, indiv = "species", group = "dammy_1")
-#' 
+#' }
 #' 
 #' @export
 ordination <- function(tbl, o_method, d_method = NULL, ...){
