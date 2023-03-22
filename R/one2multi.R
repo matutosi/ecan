@@ -10,10 +10,10 @@
 #'         that has one2multi relation to input col.
 #' 
 #' @examples
+#' \dontrun{
 #' library(vegan)
 #' data(dune)
 #' data(dune.env)
-#' 
 #' df <- 
 #'   table2df(dune) %>%
 #'   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
@@ -21,9 +21,7 @@
 #'  tibble::tibble("species" = colnames(dune), 
 #'                 "dammy_1" = stringr::str_sub(colnames(dune), 1, 1),
 #'                 "dammy_6" = stringr::str_sub(colnames(dune), 6, 6))
-#' df <- 
-#'   df %>%
-#'   dplyr::left_join(sp_dammy)
+#' df <- dplyr::left_join(df, sp_dammy)
 #' 
 #' is_one2one(df, "stand", "Use")
 #' is_one2multi(df, "stand", "Use")
@@ -31,19 +29,17 @@
 #' cols_one2multi(df, "species")
 #' select_one2multi(df, "stand")
 #' select_one2multi(df, "species")
-#' 
+#' }
 #' 
 #' @export
 is_one2multi <- function(df, col_1, col_2){
   res <- 
-  #   try(silent = TRUE, {
       df %>%
       dplyr::distinct(.data[[col_1]], .data[[col_2]]) %>%
       dplyr::group_by(.data[[col_1]]) %>%
       dplyr::tally() %>%
       dplyr::summarise(max(.data[["n"]])) %>%
       as.numeric()
-  #   })
   return(res == 1)
 }
 
