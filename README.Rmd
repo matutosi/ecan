@@ -7,7 +7,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "60%"
 )
 ```
 
@@ -17,7 +17,8 @@ The goal of ecan is to support ecological analysis.
 
 ## Installation
 
-``` r
+```{r eval = FALSE}
+install.packages("ecan")
   # development
   # install.packages("devtools")
 devtools::install_github("matutosi/ecan")
@@ -31,7 +32,7 @@ https://matutosi.shinyapps.io/ecanvis/ .
 
 ### Prepare and convert data
 
-``` r
+```{r}
 library(ecan)
 library(vegan)
 library(dplyr)
@@ -60,7 +61,7 @@ df
 
 ### Diversity index
 
-``` r
+```{r}
 div <- 
   shdi(df) %>%
   dplyr::left_join(select_one2multi(df, "stand"))
@@ -75,7 +76,7 @@ div %>%
 
 ### Indicator Species Analysis (ISA, ind val)
 
-``` r
+```{r}
 ind_val(df, group = "Moisture", row_data = TRUE)
 ind_val(df, group = "Management")
 ind_val(df, group = "Use")
@@ -84,7 +85,7 @@ ind_val(df, group = "Manure")
 
 ### Cluster analysis
 
-``` r
+```{r}
 library(ggdendro)
 library(dendextend)
 
@@ -111,7 +112,7 @@ plot(cls)
 ### Ordination
 
 
-``` r
+```{r}
 ord_dca <- ordination(dune, o_method = "dca")
 ord_pca <-
   df %>%
