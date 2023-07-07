@@ -4,7 +4,8 @@
 #'                 rownames: stands.
 #'                 colnames: species.
 #' @param o_method A string of ordination method. 
-#'                 "pca", "ca", "dca", "pcoa", "fspa", or "nmds".
+#'                 "pca", "ca", "dca", "pcoa", or "nmds".
+#'                 "fspa" is removed, because package dave was archived.
 #' @param d_method A string of distance method.
 #'                 "correlation", "manhattan", "euclidean", "canberra", 
 #'                 "clark", "bray", "kulczynski", "jaccard", "gower", 
@@ -110,15 +111,15 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$sp_scores  <- ord$points
       res$results_raw[[2]] <- ord
     },
-    "fspa" = {
-      ord <- dave::fspa(tbl, method = d_method, d.rev=0.5, n.groups=3) # st
-      res$st_scores  <- ord$newpoints
-      res$eig_val <- ord$eig
-      res$results_raw[[1]] <- ord
-      ord <- dave::fspa(t(tbl), method = d_method, d.rev=0.5, n.groups=3) # sp
-      res$sp_scores  <- ord$newpoints
-      res$results_raw[[2]] <- ord
-    }
+  #     "fspa" = {
+  #       ord <- dave::fspa(tbl, method = d_method, d.rev=0.5, n.groups=3) # st
+  #       res$st_scores  <- ord$newpoints
+  #       res$eig_val <- ord$eig
+  #       res$results_raw[[1]] <- ord
+  #       ord <- dave::fspa(t(tbl), method = d_method, d.rev=0.5, n.groups=3) # sp
+  #       res$sp_scores  <- ord$newpoints
+  #       res$results_raw[[2]] <- ord
+  #     }
   )
   res$ordination_method <- o_method
   res$distance_method <- d_method

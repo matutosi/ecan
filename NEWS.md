@@ -1,5 +1,11 @@
 # ecan release news
 
+#  ecan 0.2.1
+
+* 2023-07-18
+
+* Removed method "fsap" in `ordination()`, because package dave was archived.
+
 #  ecan 0.2.0
 
 * 2023-03-16

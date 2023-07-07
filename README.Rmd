@@ -21,7 +21,7 @@ The goal of ecan is to support ecological analysis.
 install.packages("ecan")
   # development
   # install.packages("devtools")
-devtools::install_github("matutosi/ecan")
+remotes::install_github("matutosi/ecan")
 ```
 
 You can use almost the same functionality in shiny.

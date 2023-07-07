@@ -1,11 +1,11 @@
 Package: ecan
 Title: Ecological Analysis and Visualization
-Version: 0.2.0.9000
+Version: 0.2.1
 Authors@R: 
     person("Toshikazu", "Matsumura", , "matutosi@gmail.com", role = c("aut", "cre"))
 Description: Support ecological analyses such as ordination and clustering. 
-    Contains consistent and easy wrapper functions of 'stat', 'vegan', 'labdsv' 
-    and 'dave' packages, and visualisation functions of ordination and clustering.
+    Contains consistent and easy wrapper functions of 'stat', 'vegan', and 
+    'labdsv' packages, and visualisation functions of ordination and clustering.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,7 +18,6 @@ LazyData: true
 Imports: 
     MASS,
     cluster,
-    dave,
     dendextend,
     dplyr,
     ggplot2,

@@ -21,7 +21,8 @@ rownames: stands.
 colnames: species.}
 
 \item{o_method}{A string of ordination method.
-"pca", "ca", "dca", "pcoa", "fspa", or "nmds".}
+"pca", "ca", "dca", "pcoa", or "nmds".
+"fspa" is removed, because package dave was archived.}
 
 \item{d_method}{A string of distance method.
 "correlation", "manhattan", "euclidean", "canberra",
