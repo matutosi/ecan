@@ -9,7 +9,7 @@ The goal of ecan is to support ecological analysis.
 install.packages("ecan")
   # development
   # install.packages("devtools")
-devtools::install_github("matutosi/ecan")
+remotes::install_github("matutosi/ecan")
 ```
 
 You can use almost the same functionality in shiny.
@@ -18,6 +18,8 @@ You can use almost the same functionality in shiny.
 
 ## Example
 
+You can read docs in <https://matutosi.github.io/ecan/>
+
 ### Prepare and convert data
 
 ``` r
@@ -25,16 +27,8 @@ library(ecan)
 library(vegan)
 #> Loading required package: permute
 #> Loading required package: lattice
-#> This is vegan 2.6-4
+#> This is vegan 2.6-6.1
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(stringr)
 library(tibble)
 library(ggplot2)
@@ -58,19 +52,20 @@ df <-
 
 df
 #> # A tibble: 197 × 10
-#>    stand species  abundance    A1 Moisture Manage…¹ Use   Manure dammy_1 dammy_6
-#>    <chr> <chr>        <dbl> <dbl> <ord>    <fct>    <ord> <ord>  <chr>   <chr>  
-#>  1 1     Achimill         1   2.8 1        SF       Hayp… 4      A       i      
-#>  2 1     Elymrepe         4   2.8 1        SF       Hayp… 4      E       e      
-#>  3 1     Lolipere         7   2.8 1        SF       Hayp… 4      L       e      
-#>  4 1     Poaprat          4   2.8 1        SF       Hayp… 4      P       a      
-#>  5 1     Poatriv          2   2.8 1        SF       Hayp… 4      P       i      
-#>  6 2     Achimill         3   3.5 1        BF       Hayp… 2      A       i      
-#>  7 2     Alopgeni         2   3.5 1        BF       Hayp… 2      A       e      
-#>  8 2     Bellpere         3   3.5 1        BF       Hayp… 2      B       e      
-#>  9 2     Bromhord         4   3.5 1        BF       Hayp… 2      B       o      
-#> 10 2     Elymrepe         4   3.5 1        BF       Hayp… 2      E       e      
-#> # … with 187 more rows, and abbreviated variable name ¹​Management
+#>    stand species  abundance    A1 Moisture Management Use      Manure dammy_1
+#>    <chr> <chr>        <dbl> <dbl> <ord>    <fct>      <ord>    <ord>  <chr>  
+#>  1 1     Achimill         1   2.8 1        SF         Haypastu 4      A      
+#>  2 1     Elymrepe         4   2.8 1        SF         Haypastu 4      E      
+#>  3 1     Lolipere         7   2.8 1        SF         Haypastu 4      L      
+#>  4 1     Poaprat          4   2.8 1        SF         Haypastu 4      P      
+#>  5 1     Poatriv          2   2.8 1        SF         Haypastu 4      P      
+#>  6 2     Achimill         3   3.5 1        BF         Haypastu 2      A      
+#>  7 2     Alopgeni         2   3.5 1        BF         Haypastu 2      A      
+#>  8 2     Bellpere         3   3.5 1        BF         Haypastu 2      B      
+#>  9 2     Bromhord         4   3.5 1        BF         Haypastu 2      B      
+#> 10 2     Elymrepe         4   3.5 1        BF         Haypastu 2      E      
+#> # ℹ 187 more rows
+#> # ℹ 1 more variable: dammy_6 <chr>
 ```
 
 ### Diversity index
@@ -89,7 +84,7 @@ div %>%
     geom_jitter(height = 0, width = 0.1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="60%" />
+<img src="man/figures/README-diversity-1.png" width="60%" />
 
 ### Indicator Species Analysis (ISA, ind val)
 
@@ -218,13 +213,13 @@ ind_val(df, group = "Moisture", row_data = TRUE)
 #> 
 #> $pval
 #> Achimill Elymrepe Lolipere  Poaprat  Poatriv Alopgeni Bellpere Bromhord 
-#>    0.240    0.417    0.062    0.378    0.502    0.053    0.131    0.190 
+#>    0.261    0.438    0.074    0.352    0.493    0.056    0.150    0.204 
 #> Scorautu Trifrepe Agrostol Bracruta Cirsarve Sagiproc Anthodor Planlanc 
-#>    0.797    0.698    0.383    0.614    0.286    0.072    0.311    0.107 
+#>    0.797    0.687    0.396    0.582    0.317    0.067    0.354    0.087 
 #> Rumeacet Trifprat Juncbufo Eleopalu Juncarti Ranuflam Vicilath Hyporadi 
-#>    0.092    0.136    0.004    0.024    0.214    0.001    0.699    1.000 
+#>    0.084    0.143    0.004    0.023    0.210    0.001    0.688    1.000 
 #> Chenalbu Comapalu Callcusp Airaprae Salirepe Empenigr 
-#>    1.000    0.449    0.072    0.755    0.594    1.000 
+#>    1.000    0.453    0.080    0.762    0.608    1.000 
 #> 
 #> $error
 #> [1] 0
@@ -236,49 +231,49 @@ ind_val(df, group = "Management")
 #> # A tibble: 30 × 4
 #>    Management species  ind.val p.value
 #>    <fct>      <chr>      <dbl>   <dbl>
-#>  1 SF         Elymrepe   0.188   0.684
-#>  2 SF         Alopgeni   0.547   0.038
-#>  3 SF         Agrostol   0.472   0.054
+#>  1 SF         Elymrepe   0.188   0.697
+#>  2 SF         Alopgeni   0.547   0.042
+#>  3 SF         Agrostol   0.472   0.059
 #>  4 SF         Cirsarve   0.167   1    
-#>  5 SF         Sagiproc   0.241   0.514
+#>  5 SF         Sagiproc   0.241   0.574
 #>  6 SF         Chenalbu   0.167   1    
-#>  7 BF         Achimill   0.386   0.118
-#>  8 BF         Lolipere   0.45    0.07 
-#>  9 BF         Poaprat    0.379   0.188
-#> 10 BF         Bellpere   0.362   0.126
-#> # … with 20 more rows
+#>  7 BF         Achimill   0.386   0.131
+#>  8 BF         Lolipere   0.45    0.066
+#>  9 BF         Poaprat    0.379   0.181
+#> 10 BF         Bellpere   0.362   0.154
+#> # ℹ 20 more rows
 ind_val(df, group = "Use")
 #> Joining with `by = join_by(numeric_Use)`
 #> # A tibble: 30 × 4
 #>    Use      species  ind.val p.value
 #>    <ord>    <chr>      <dbl>   <dbl>
-#>  1 Haypastu Elymrepe   0.292   0.288
-#>  2 Haypastu Lolipere   0.259   0.796
-#>  3 Haypastu Poaprat    0.288   0.824
-#>  4 Haypastu Poatriv    0.451   0.118
-#>  5 Haypastu Alopgeni   0.359   0.184
-#>  6 Haypastu Agrostol   0.269   0.589
+#>  1 Haypastu Elymrepe   0.292   0.305
+#>  2 Haypastu Lolipere   0.259   0.827
+#>  3 Haypastu Poaprat    0.288   0.826
+#>  4 Haypastu Poatriv    0.451   0.113
+#>  5 Haypastu Alopgeni   0.359   0.176
+#>  6 Haypastu Agrostol   0.269   0.586
 #>  7 Haypastu Cirsarve   0.125   1    
-#>  8 Haypastu Sagiproc   0.178   0.8  
-#>  9 Haypastu Juncbufo   0.118   0.848
+#>  8 Haypastu Sagiproc   0.178   0.82 
+#>  9 Haypastu Juncbufo   0.118   0.863
 #> 10 Haypastu Chenalbu   0.125   1    
-#> # … with 20 more rows
+#> # ℹ 20 more rows
 ind_val(df, group = "Manure")
 #> Joining with `by = join_by(numeric_Manure)`
 #> # A tibble: 30 × 4
 #>    Manure species  ind.val p.value
 #>    <ord>  <chr>      <dbl>   <dbl>
-#>  1 4      Elymrepe   0.5     0.048
-#>  2 4      Lolipere   0.351   0.211
-#>  3 4      Poaprat    0.315   0.28 
-#>  4 4      Bellpere   0.248   0.469
-#>  5 4      Cirsarve   0.333   0.279
-#>  6 2      Achimill   0.309   0.262
-#>  7 2      Poatriv    0.299   0.394
-#>  8 2      Bromhord   0.173   0.703
-#>  9 2      Anthodor   0.178   0.763
-#> 10 2      Rumeacet   0.522   0.041
-#> # … with 20 more rows
+#>  1 4      Elymrepe   0.5     0.051
+#>  2 4      Lolipere   0.351   0.215
+#>  3 4      Poaprat    0.315   0.258
+#>  4 4      Bellpere   0.248   0.47 
+#>  5 4      Cirsarve   0.333   0.298
+#>  6 2      Achimill   0.309   0.276
+#>  7 2      Poatriv    0.299   0.428
+#>  8 2      Bromhord   0.173   0.712
+#>  9 2      Anthodor   0.178   0.76 
+#> 10 2      Rumeacet   0.522   0.047
+#> # ℹ 20 more rows
 ```
 
 ### Cluster analysis
@@ -291,7 +286,7 @@ library(dendextend)
 #>   rev.hclust vegan
 #> 
 #> ---------------------
-#> Welcome to dendextend version 1.16.0
+#> Welcome to dendextend version 1.17.1
 #> Type citation('dendextend') for how to cite the package.
 #> 
 #> Type browseVignettes(package = 'dendextend') for the package vignette.
@@ -319,7 +314,7 @@ cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 ggdendro::ggdendrogram(cls)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="60%" />
+<img src="man/figures/README-cluster-1.png" width="60%" />
 
 ``` r
 
@@ -330,7 +325,7 @@ ggdendro::ggdendrogram(cls_add_group(cls, df, indiv, group))
 #> Joining with `by = join_by(stand)`
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-2.png" width="60%" />
+<img src="man/figures/README-cluster-2.png" width="60%" />
 
 ``` r
 
@@ -349,7 +344,7 @@ par(new = TRUE)
 plot(cls)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-3.png" width="60%" />
+<img src="man/figures/README-cluster-3.png" width="60%" />
 
 ### Ordination
 
@@ -368,7 +363,7 @@ ord_dca_st %>%
   geom_text()
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="60%" />
+<img src="man/figures/README-ordination-1.png" width="60%" />
 
 ``` r
 
@@ -386,7 +381,7 @@ ord_pca_sp %>%
   theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-2.png" width="60%" />
+<img src="man/figures/README-ordination-2.png" width="60%" />
 
 ## Citation
 
