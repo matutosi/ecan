@@ -1,6 +1,6 @@
 Package: ecan
 Title: Ecological Analysis and Visualization
-Version: 0.2.1
+Version: 0.2.1.9000
 Authors@R: 
     person("Toshikazu", "Matsumura", , "matutosi@gmail.com", role = c("aut", "cre"))
 Description: Support ecological analyses such as ordination and clustering. 

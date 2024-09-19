@@ -111,6 +111,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$sp_scores  <- ord$points
       res$results_raw[[2]] <- ord
     },
+  #  https://github.com/cran/dave/blob/master/R/fspa.R
   #     "fspa" = {
   #       ord <- dave::fspa(tbl, method = d_method, d.rev=0.5, n.groups=3) # st
   #       res$st_scores  <- ord$newpoints

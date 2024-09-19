@@ -20,7 +20,7 @@ The goal of ecan is to support ecological analysis.
 ```{r eval = FALSE}
 install.packages("ecan")
   # development
-  # install.packages("devtools")
+  # install.packages("remotes")
 remotes::install_github("matutosi/ecan")
 ```
 
