@@ -109,7 +109,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw[[1]] <- ord
       x_sp <- vegan::vegdist(t(tbl), method = d_method) # sp
       ord <- labdsv::pco(x_sp)
-      res$sp_scores  <- ord$points
+      res$sp_scores <- ord$points
       res$results_raw[[2]] <- ord
     },
   #     "fspa" = {
