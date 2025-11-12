@@ -63,9 +63,10 @@
 #' @export
 ordination <- function(tbl, o_method, d_method = NULL, ...){
   res <- list()
-  if(is.null(d_method)) d_method <- "bray"
+  if(is.null(d_method)){ d_method <- "bray" }
   switch(o_method,
     "pca" = {
+      d_method <- NULL
       ord <- labdsv::pca(tbl, dim=10, ...)
       res$st_scores  <- ord$scores                                         # "pca", "scores", "loadings", "sdev", NULL
       res$sp_scores  <- ord$loadings
