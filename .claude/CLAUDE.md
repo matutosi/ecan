@@ -47,26 +47,41 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 06:16 (JST)
-- `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した．
-- 作業ツリーはクリーン，`develop` は `origin/develop` と同期している．
+- 更新: 2026-08-18 06:31 (JST)
+- `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
+  (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
+- 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
+  devtools 2.5.2 / roxygen2 8.1.0 / testthat 3.3.2 / pkgdown 2.2.1 / ggdendro 0.2.0 /
+  knitr 1.51 / rmarkdown 2.31．
+- `main` を `develop` へマージし，版数の逆転を解消した．
+  `develop` の `DESCRIPTION` は 0.2.1.9000，`CRAN-SUBMISSION` は 0.2.1 になった．
+  `README.Rmd` の `remotes` 修正も取り込んだ．
+- ここまでを `origin/develop` へ push した．
 
 ### 積み残し
 
-1. **`main` と `develop` で版数が逆転している**
-   - `main`: `DESCRIPTION` = 0.2.1.9000 (開発版), `CRAN-SUBMISSION` = 0.2.1
-   - `develop`: `DESCRIPTION` = 0.2.1, `CRAN-SUBMISSION` = 0.2.0
-   - 本来は `develop` が `.9000` 側．`main` の版数上げコミットを `develop` へ取り込んで解消する．
-2. **`README.Rmd` も `main` の修正が `develop` に来ていない**
-   - `main` は `# install.packages("remotes")`，`develop` は `devtools` のまま
-     (実際に呼ぶのは `remotes::install_github()` なので `remotes` が正しい)．
-3. **`develop` の ordination 修正が `main` へ未マージ**
-   - `pca` のとき `d_method <- NULL` を明示 (PCA に距離法は不要)
-   - `if` の整形，コメント 1 行削除
-4. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．`develop` の変更分が未記載．
-5. **テストが薄い**．`R/` は 11 ファイルあるがテストは 3 本 (diversity, layer_construction, ordination)．
-   `cluster` / `ind_val` / `one2multi` / `convert` などが未カバー．
-6. `RoxygenNote: 7.2.3` と古い．`DESCRIPTION` に `BugReports` が無い．
+段階 2: 基準線を作る
+
+1. `DESCRIPTION` に `BugReports` を追加する．
+2. `devtools::document()` で `man/` を再生成する
+   (roxygen2 が 8.1.0 なので `RoxygenNote: 7.2.3` が更新される)．
+3. `devtools::build_readme()` で `README.md` と `man/figures/README-*.png` を再生成する．
+4. **`devtools::check()` を通し，R 4.6.1・vegan 2.7.5 の組み合わせでの警告・注意を洗い出す．**
+   テストを増やす前にここを済ませ，失敗が環境由来か自分のコード由来かを切り分けられるようにする．
+
+段階 3: 品質
+
+5. `ordination()` の PCA 変更 (`d_method <- NULL`) の回帰テストを追加する．
+   `develop` の変更のうち唯一の挙動の変更なので，リリースするなら根拠が要る．
+6. **テストが薄い**．`R/` は 11 ファイルあるがテストは 3 本 (diversity, layer_construction, ordination)．
+   `cluster` 系 → `ind_val` → `convert` (`df2table`/`table2df`) → `one2multi` 系 の順に追加する．
+
+段階 4-5: リリース
+
+7. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
+8. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
+9. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
+   公開後に `main` の `DESCRIPTION` を 0.2.2.9000 に戻す．
 
 ### コミット履歴 (直近)
 
