@@ -9,10 +9,10 @@ Description: Support ecological analyses such as ordination and clustering.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
 Depends: 
     R (>= 3.5.0)
 URL: https://github.com/matutosi/ecan https://github.com/matutosi/ecan/tree/develop (devel), https://matutosi.github.io/ecan/
+BugReports: https://github.com/matutosi/ecan/issues
 LazyData: true
 Imports: 
     MASS,
@@ -35,3 +35,4 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
