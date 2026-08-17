@@ -28,7 +28,7 @@ df2table <- function(df, st = "stand", sp = "species", ab = "abundance"){
   df %>%
     dplyr::select(dplyr::all_of(c(st, sp, ab))) %>%
     tidyr::pivot_wider(
-      names_from = sp, values_from = ab, 
+      names_from = dplyr::all_of(sp), values_from = dplyr::all_of(ab),
       values_fill = 0, values_fn = sum) %>%
     tibble::column_to_rownames(var = st)
 }
