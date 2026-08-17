@@ -45,9 +45,32 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ## 進捗状況
 
+> **現状確認を頼まれたら，下の「CRAN 提出の手順」を必ず一緒に再掲する．**
+> 別 PC へ移って作業を続けるための申し送り (2026-08-18)．
+> 提出が済んだらこの指示は消してよい．
+
+### CRAN 提出の手順 (0.2.2，未実施)
+
+提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz`
+(別 PC には無いので，その場合は `devtools::build(path = "..")` で作り直す)．
+
+方法 1: **対話的な R セッション**から呼ぶ．
+
+```r
+# RStudio か R.exe のコンソールで (Rscript では動かない)
+setwd("<ecan のディレクトリ>")
+devtools::submit_cran()
+```
+
+方法 2: Web フォーム <https://cran.r-project.org/submit.html> から手動で提出．
+name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
+コメント欄には `cran-comments.md` の内容を貼る．
+
+どちらでも**確認メールのリンクを踏むまで提出は完了しない**．
+
 ### 現在の状態
 
-- 更新: 2026-08-18 07:55 (JST)
+- 更新: 2026-08-18 07:56 (JST)
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
