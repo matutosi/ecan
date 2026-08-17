@@ -75,6 +75,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw <- ord
     },
     "ca" = {
+      d_method <- NULL
       ord <- vegan::cca(tbl)                                                 # "ca", "CA$u", "CA$v", "eig", NULL
       res$st_scores  <- ord$CA$u
       res$sp_scores  <- ord$CA$v
@@ -83,6 +84,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw <- ord
     },
     "dca" = {
+      d_method <- NULL
       ord <- vegan::decorana(tbl)
       res$st_scores  <- ord$rproj                                         # "rproj", "cproj", "evals", NULL
       res$sp_scores  <- ord$cproj
