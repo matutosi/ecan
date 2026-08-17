@@ -47,7 +47,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 07:50 (JST)
+- 更新: 2026-08-18 07:55 (JST)
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
@@ -98,10 +98,16 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 CRAN 提出 (次はここから)
 
-1. **`devtools::submit_cran()` はまだ実行していない**．取り消しが効かないので，
-   ユーザ自身で実行する．`cran-comments.md` は 4 環境の結果を書いた状態になっている．
+1. **`devtools::submit_cran()` はまだ実行していない**．
+   `cran-comments.md` は 4 環境の結果を書いた状態になっている．
+   提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz` に作ってある．
+   - **【落とし穴】`Rscript -e "devtools::submit_cran()"` は動かない**．
+     `yesno()` が `Called from non-interactive context.` で落ちる．
+     回避フラグは無いので，**R コンソール (RStudio か `R.exe`) から呼ぶ**．
+   - Web フォーム <https://cran.r-project.org/submit.html> からの手動提出でもよい．
+     ただし**手動提出では `CRAN-SUBMISSION` が更新されない**ので，あとで手で直す．
+   - どちらでも，**確認メールのリンクを踏むまで提出は完了しない**．
 2. 受理されたら `main` の `DESCRIPTION` を 0.2.2.9000 に上げる (この運用の作法)．
-   `CRAN-SUBMISSION` は提出時に自動更新される．
 
 いつか
 
