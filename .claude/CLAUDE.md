@@ -47,7 +47,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 06:42 (JST)
+- 更新: 2026-08-18 07:01 (JST)
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
@@ -66,34 +66,49 @@ CRAN 公開済み (最新リリース 0.2.1)．
     従来は `build_readme()` のたびに p 値と全 PNG が変わっていた．
     再実行して**差分ゼロ**になることを確認した．
   - `README.md` と `man/figures/README-*.png` を再生成した．
+- **段階 3 (品質) を完了した**．`check()` は 0/0/0，テストは 108 パス・警告 0．
+  - **`pcoa` のバグを直した (`R/ordination.R`)**．
+    `res$st_scores <- ord$` と `$` の後ろが空のまま行が終わっており，
+    R がコメントを飛ばして次行を続きとして解釈するため，
+    `res$eig_val <- ord$eig` が丸ごと飲み込まれていた．
+    その結果 `st_scores` に固有値のベクトルが入り，`eig_val` は設定されなかった．
+    構文としては正しいので `R CMD check` は素通りしていた．
+  - `ca` と `dca` も距離法を使わないので `distance_method` を `NULL` にした
+    (`pca` に合わせた．従来は未使用の `"bray"` を記録していた)．
+  - `df2table()` の `pivot_wider()` を `dplyr::all_of()` で包み，
+    tidyselect の非推奨警告 60 件を解消した．
+  - テストを追加した (`cluster`, `convert`, `one2multi`, `ind_val` は新規，
+    `ordination` は拡充)．3 本 → 35 本．
+    既存の `expect_equal(res_ord$sdev, res_pca$eig_val)` は
+    **両辺とも NULL で素通りしていた**ので比較先を直した．
 - ここまでを `origin/develop` へ push した．
 
 ### 積み残し
 
-段階 3: 品質 (次はここから)
+段階 4-5: リリース (次はここから)
 
-1. `ordination()` の PCA 変更 (`d_method <- NULL`) の回帰テストを追加する．
-   `develop` の変更のうち唯一の挙動の変更なので，リリースするなら根拠が要る．
-2. **テストが薄い**．`R/` は 11 ファイルあるがテストは 3 本 (diversity, layer_construction, ordination)．
-   `cluster` 系 → `ind_val` → `convert` (`df2table`/`table2df`) → `one2multi` 系 の順に追加する．
-   `ind_val()` は並べ替え検定なので，テスト側でも `set.seed()` が要る．
-
-段階 4-5: リリース
-
-3. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
-4. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
+1. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
+   `pcoa` のバグ修正は利用者に影響するので必ず書く．
+2. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
    このとき次の 2 点も直す (CRAN の incoming チェックで NOTE になりうる)．
    - `URL:` が空白区切り + 括弧書きになっている → カンマ区切りにする．
    - `Suggests:` の末尾に余分なコンマが残っている．
-5. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
+3. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
    公開後に `main` の `DESCRIPTION` を 0.2.2.9000 に戻す．
+
+いつか
+
+4. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
+   `pad2longest()`．
+5. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
+   (README は `pcoa` を載せていないため)．
 
 ### コミット履歴 (直近)
 
+- 段階 3: pcoa 修正 → ca/dca の distance_method → tidyselect 非推奨 → テスト追加 の 4 つに分けた
 - `fbe6b4a` rebuild README.md and figures (生成物)
 - `2f26e16` set the seed in README.Rmd for reproducible output (生成元)
 - `dd943e0` add BugReports and re-document with roxygen2 8.1.0
-- `aa8c046` record progress: dev tools installed, main merged into develop
 - `3db5453` Merge branch 'main' into develop
 - `79ba137` add .claude/CLAUDE.md with project notes
 - `b00f309` Merge branch 'develop' (main の先端)
