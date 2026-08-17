@@ -47,7 +47,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 06:31 (JST)
+- 更新: 2026-08-18 06:42 (JST)
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
@@ -56,37 +56,44 @@ CRAN 公開済み (最新リリース 0.2.1)．
 - `main` を `develop` へマージし，版数の逆転を解消した．
   `develop` の `DESCRIPTION` は 0.2.1.9000，`CRAN-SUBMISSION` は 0.2.1 になった．
   `README.Rmd` の `remotes` 修正も取り込んだ．
+- **段階 2 (基準線) を完了した**．
+  - `devtools::check()` は変更の前後とも **0 errors / 0 warnings / 0 notes** (R 4.6.1)．
+  - `DESCRIPTION` に `BugReports` を追加した．
+  - `devtools::document()` を実行した．roxygen2 が 8 系になり
+    `RoxygenNote` → `Config/roxygen2/version`，`NAMESPACE` の `importFrom` が複数行形式に
+    変わったが，**`man/*.Rd` の内容に差分は無かった**．
+  - `README.Rmd` に `set.seed(1)` を入れた．`ind_val()` が並べ替え検定のため，
+    従来は `build_readme()` のたびに p 値と全 PNG が変わっていた．
+    再実行して**差分ゼロ**になることを確認した．
+  - `README.md` と `man/figures/README-*.png` を再生成した．
 - ここまでを `origin/develop` へ push した．
 
 ### 積み残し
 
-段階 2: 基準線を作る
+段階 3: 品質 (次はここから)
 
-1. `DESCRIPTION` に `BugReports` を追加する．
-2. `devtools::document()` で `man/` を再生成する
-   (roxygen2 が 8.1.0 なので `RoxygenNote: 7.2.3` が更新される)．
-3. `devtools::build_readme()` で `README.md` と `man/figures/README-*.png` を再生成する．
-4. **`devtools::check()` を通し，R 4.6.1・vegan 2.7.5 の組み合わせでの警告・注意を洗い出す．**
-   テストを増やす前にここを済ませ，失敗が環境由来か自分のコード由来かを切り分けられるようにする．
-
-段階 3: 品質
-
-5. `ordination()` の PCA 変更 (`d_method <- NULL`) の回帰テストを追加する．
+1. `ordination()` の PCA 変更 (`d_method <- NULL`) の回帰テストを追加する．
    `develop` の変更のうち唯一の挙動の変更なので，リリースするなら根拠が要る．
-6. **テストが薄い**．`R/` は 11 ファイルあるがテストは 3 本 (diversity, layer_construction, ordination)．
+2. **テストが薄い**．`R/` は 11 ファイルあるがテストは 3 本 (diversity, layer_construction, ordination)．
    `cluster` 系 → `ind_val` → `convert` (`df2table`/`table2df`) → `one2multi` 系 の順に追加する．
+   `ind_val()` は並べ替え検定なので，テスト側でも `set.seed()` が要る．
 
 段階 4-5: リリース
 
-7. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
-8. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
-9. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
+3. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
+4. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
+   このとき次の 2 点も直す (CRAN の incoming チェックで NOTE になりうる)．
+   - `URL:` が空白区切り + 括弧書きになっている → カンマ区切りにする．
+   - `Suggests:` の末尾に余分なコンマが残っている．
+5. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
    公開後に `main` の `DESCRIPTION` を 0.2.2.9000 に戻す．
 
 ### コミット履歴 (直近)
 
-- `082740e` fix formatting in ordination function for consistency (develop の先端)
-- `d613800` refactor ordination function to set default distance method and handle PCA case
+- `fbe6b4a` rebuild README.md and figures (生成物)
+- `2f26e16` set the seed in README.Rmd for reproducible output (生成元)
+- `dd943e0` add BugReports and re-document with roxygen2 8.1.0
+- `aa8c046` record progress: dev tools installed, main merged into develop
+- `3db5453` Merge branch 'main' into develop
+- `79ba137` add .claude/CLAUDE.md with project notes
 - `b00f309` Merge branch 'develop' (main の先端)
-- `2a079b0` version 0.2.1.9000 (main のみ)
-- `08223c1` ver 0.2.1
