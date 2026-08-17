@@ -47,7 +47,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 07:01 (JST)
+- 更新: 2026-08-18 07:50 (JST)
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
@@ -81,30 +81,40 @@ CRAN 公開済み (最新リリース 0.2.1)．
     `ordination` は拡充)．3 本 → 35 本．
     既存の `expect_equal(res_ord$sdev, res_pca$eig_val)` は
     **両辺とも NULL で素通りしていた**ので比較先を直した．
-- ここまでを `origin/develop` へ push した．
+- **段階 4-5 (リリース準備) を完了した．CRAN 提出だけが残っている**．
+  - 版数を 0.2.2 に上げ，`NEWS.md` に 0.2.2 の項を書いた．
+    `DESCRIPTION` の `URL:` をカンマ区切りにし，`Suggests:` の余分なコンマを消した．
+  - **4 環境すべてで 0 errors / 0 warnings / 0 notes**．
+    ローカル Windows R 4.6.1，win-builder R-devel (r90413)，
+    rhub の linux / macOS / Windows (いずれも R-devel)．
+  - rhub は 2.x から GitHub Actions 方式なので `.github/workflows/rhub.yaml` を追加した
+    (`rhub::rhub_setup()` が生成．**デフォルトブランチに無いと動かない**)．
+    実行は `$env:GITHUB_PAT = (gh auth token)` を設定してから
+    `rhub::rhub_check(platforms = c('linux','macos','windows'))`．
+  - `develop` を `main` へ `--no-ff` でマージし，**タグ `v0.2.2`** を付けて push した
+    (このリポジトリで最初のタグ)．pkgdown のデプロイも成功した．
 
 ### 積み残し
 
-段階 4-5: リリース (次はここから)
+CRAN 提出 (次はここから)
 
-1. `NEWS.md` が 0.2.1 (2023-07-07) 止まり．0.2.2 の項を追記する．
-   `pcoa` のバグ修正は利用者に影響するので必ず書く．
-2. `DESCRIPTION` を 0.2.2 に上げ，`cran-comments.md` を更新して `check(cran = TRUE)`．
-   このとき次の 2 点も直す (CRAN の incoming チェックで NOTE になりうる)．
-   - `URL:` が空白区切り + 括弧書きになっている → カンマ区切りにする．
-   - `Suggests:` の末尾に余分なコンマが残っている．
-3. `develop` → `main` マージ，タグ付け，CRAN 提出，pkgdown のデプロイ確認．
-   公開後に `main` の `DESCRIPTION` を 0.2.2.9000 に戻す．
+1. **`devtools::submit_cran()` はまだ実行していない**．取り消しが効かないので，
+   ユーザ自身で実行する．`cran-comments.md` は 4 環境の結果を書いた状態になっている．
+2. 受理されたら `main` の `DESCRIPTION` を 0.2.2.9000 に上げる (この運用の作法)．
+   `CRAN-SUBMISSION` は提出時に自動更新される．
 
 いつか
 
-4. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
+3. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
    `pad2longest()`．
-5. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
+4. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
 ### コミット履歴 (直近)
 
+- `aa29ffa` Merge branch 'develop' for 0.2.2 (main，タグ `v0.2.2`)
+- `84585b5` add the R-hub v2 workflow
+- `0b7b92b` prepare release 0.2.2
 - 段階 3: pcoa 修正 → ca/dca の distance_method → tidyselect 非推奨 → テスト追加 の 4 つに分けた
 - `fbe6b4a` rebuild README.md and figures (生成物)
 - `2f26e16` set the seed in README.Rmd for reproducible output (生成元)
