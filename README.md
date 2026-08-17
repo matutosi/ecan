@@ -8,7 +8,7 @@ The goal of ecan is to support ecological analysis.
 ``` r
 install.packages("ecan")
   # development
-  # install.packages("devtools")
+  # install.packages("remotes")
 remotes::install_github("matutosi/ecan")
 ```
 
@@ -26,9 +26,15 @@ You can read docs in <https://matutosi.github.io/ecan/>
 library(ecan)
 library(vegan)
 #> Loading required package: permute
-#> Loading required package: lattice
-#> This is vegan 2.6-6.1
 library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(stringr)
 library(tibble)
 library(ggplot2)
@@ -84,7 +90,7 @@ div %>%
     geom_jitter(height = 0, width = 0.1)
 ```
 
-<img src="man/figures/README-diversity-1.png" width="60%" />
+<img src="man/figures/README-diversity-1.png" alt="" width="60%" />
 
 ### Indicator Species Analysis (ISA, ind val)
 
@@ -213,13 +219,13 @@ ind_val(df, group = "Moisture", row_data = TRUE)
 #> 
 #> $pval
 #> Achimill Elymrepe Lolipere  Poaprat  Poatriv Alopgeni Bellpere Bromhord 
-#>    0.261    0.438    0.074    0.352    0.493    0.056    0.150    0.204 
+#>    0.264    0.441    0.076    0.344    0.512    0.059    0.110    0.198 
 #> Scorautu Trifrepe Agrostol Bracruta Cirsarve Sagiproc Anthodor Planlanc 
-#>    0.797    0.687    0.396    0.582    0.317    0.067    0.354    0.087 
+#>    0.823    0.676    0.366    0.613    0.300    0.073    0.326    0.096 
 #> Rumeacet Trifprat Juncbufo Eleopalu Juncarti Ranuflam Vicilath Hyporadi 
-#>    0.084    0.143    0.004    0.023    0.210    0.001    0.688    1.000 
+#>    0.093    0.136    0.002    0.023    0.206    0.002    0.703    1.000 
 #> Chenalbu Comapalu Callcusp Airaprae Salirepe Empenigr 
-#>    1.000    0.453    0.080    0.762    0.608    1.000 
+#>    1.000    0.437    0.078    0.752    0.600    1.000 
 #> 
 #> $error
 #> [1] 0
@@ -231,31 +237,31 @@ ind_val(df, group = "Management")
 #> # A tibble: 30 × 4
 #>    Management species  ind.val p.value
 #>    <fct>      <chr>      <dbl>   <dbl>
-#>  1 SF         Elymrepe   0.188   0.697
-#>  2 SF         Alopgeni   0.547   0.042
-#>  3 SF         Agrostol   0.472   0.059
+#>  1 SF         Elymrepe   0.188   0.703
+#>  2 SF         Alopgeni   0.547   0.036
+#>  3 SF         Agrostol   0.472   0.063
 #>  4 SF         Cirsarve   0.167   1    
-#>  5 SF         Sagiproc   0.241   0.574
+#>  5 SF         Sagiproc   0.241   0.525
 #>  6 SF         Chenalbu   0.167   1    
-#>  7 BF         Achimill   0.386   0.131
-#>  8 BF         Lolipere   0.45    0.066
-#>  9 BF         Poaprat    0.379   0.181
-#> 10 BF         Bellpere   0.362   0.154
+#>  7 BF         Achimill   0.386   0.119
+#>  8 BF         Lolipere   0.45    0.071
+#>  9 BF         Poaprat    0.379   0.211
+#> 10 BF         Bellpere   0.362   0.144
 #> # ℹ 20 more rows
 ind_val(df, group = "Use")
 #> Joining with `by = join_by(numeric_Use)`
 #> # A tibble: 30 × 4
 #>    Use      species  ind.val p.value
 #>    <ord>    <chr>      <dbl>   <dbl>
-#>  1 Haypastu Elymrepe   0.292   0.305
-#>  2 Haypastu Lolipere   0.259   0.827
-#>  3 Haypastu Poaprat    0.288   0.826
-#>  4 Haypastu Poatriv    0.451   0.113
-#>  5 Haypastu Alopgeni   0.359   0.176
-#>  6 Haypastu Agrostol   0.269   0.586
+#>  1 Haypastu Elymrepe   0.292   0.314
+#>  2 Haypastu Lolipere   0.259   0.801
+#>  3 Haypastu Poaprat    0.288   0.819
+#>  4 Haypastu Poatriv    0.451   0.116
+#>  5 Haypastu Alopgeni   0.359   0.201
+#>  6 Haypastu Agrostol   0.269   0.587
 #>  7 Haypastu Cirsarve   0.125   1    
-#>  8 Haypastu Sagiproc   0.178   0.82 
-#>  9 Haypastu Juncbufo   0.118   0.863
+#>  8 Haypastu Sagiproc   0.178   0.799
+#>  9 Haypastu Juncbufo   0.118   0.834
 #> 10 Haypastu Chenalbu   0.125   1    
 #> # ℹ 20 more rows
 ind_val(df, group = "Manure")
@@ -263,16 +269,16 @@ ind_val(df, group = "Manure")
 #> # A tibble: 30 × 4
 #>    Manure species  ind.val p.value
 #>    <ord>  <chr>      <dbl>   <dbl>
-#>  1 4      Elymrepe   0.5     0.051
-#>  2 4      Lolipere   0.351   0.215
-#>  3 4      Poaprat    0.315   0.258
-#>  4 4      Bellpere   0.248   0.47 
-#>  5 4      Cirsarve   0.333   0.298
-#>  6 2      Achimill   0.309   0.276
-#>  7 2      Poatriv    0.299   0.428
-#>  8 2      Bromhord   0.173   0.712
-#>  9 2      Anthodor   0.178   0.76 
-#> 10 2      Rumeacet   0.522   0.047
+#>  1 4      Elymrepe   0.5     0.039
+#>  2 4      Lolipere   0.351   0.194
+#>  3 4      Poaprat    0.315   0.279
+#>  4 4      Bellpere   0.248   0.474
+#>  5 4      Cirsarve   0.333   0.294
+#>  6 2      Achimill   0.309   0.278
+#>  7 2      Poatriv    0.299   0.432
+#>  8 2      Bromhord   0.173   0.713
+#>  9 2      Anthodor   0.178   0.761
+#> 10 2      Rumeacet   0.522   0.038
 #> # ℹ 20 more rows
 ```
 
@@ -286,7 +292,7 @@ library(dendextend)
 #>   rev.hclust vegan
 #> 
 #> ---------------------
-#> Welcome to dendextend version 1.17.1
+#> Welcome to dendextend version 1.19.1
 #> Type citation('dendextend') for how to cite the package.
 #> 
 #> Type browseVignettes(package = 'dendextend') for the package vignette.
@@ -314,7 +320,7 @@ cls <- cluster(dune, c_method = "average", d_method = "euclidean")
 ggdendro::ggdendrogram(cls)
 ```
 
-<img src="man/figures/README-cluster-1.png" width="60%" />
+<img src="man/figures/README-cluster-1.png" alt="" width="60%" />
 
 ``` r
 
@@ -325,7 +331,7 @@ ggdendro::ggdendrogram(cls_add_group(cls, df, indiv, group))
 #> Joining with `by = join_by(stand)`
 ```
 
-<img src="man/figures/README-cluster-2.png" width="60%" />
+<img src="man/figures/README-cluster-2.png" alt="" width="60%" />
 
 ``` r
 
@@ -344,7 +350,7 @@ par(new = TRUE)
 plot(cls)
 ```
 
-<img src="man/figures/README-cluster-3.png" width="60%" />
+<img src="man/figures/README-cluster-3.png" alt="" width="60%" />
 
 ### Ordination
 
@@ -363,7 +369,7 @@ ord_dca_st %>%
   geom_text()
 ```
 
-<img src="man/figures/README-ordination-1.png" width="60%" />
+<img src="man/figures/README-ordination-1.png" alt="" width="60%" />
 
 ``` r
 
@@ -381,7 +387,7 @@ ord_pca_sp %>%
   theme_bw()
 ```
 
-<img src="man/figures/README-ordination-2.png" width="60%" />
+<img src="man/figures/README-ordination-2.png" alt="" width="60%" />
 
 ## Citation
 

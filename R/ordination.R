@@ -63,9 +63,10 @@
 #' @export
 ordination <- function(tbl, o_method, d_method = NULL, ...){
   res <- list()
-  if(is.null(d_method)) d_method <- "bray"
+  if(is.null(d_method)){ d_method <- "bray" }
   switch(o_method,
     "pca" = {
+      d_method <- NULL
       ord <- labdsv::pca(tbl, dim=10, ...)
       res$st_scores  <- ord$scores                                         # "pca", "scores", "loadings", "sdev", NULL
       res$sp_scores  <- ord$loadings
@@ -74,6 +75,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw <- ord
     },
     "ca" = {
+      d_method <- NULL
       ord <- vegan::cca(tbl)                                                 # "ca", "CA$u", "CA$v", "eig", NULL
       res$st_scores  <- ord$CA$u
       res$sp_scores  <- ord$CA$v
@@ -82,6 +84,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw <- ord
     },
     "dca" = {
+      d_method <- NULL
       ord <- vegan::decorana(tbl)
       res$st_scores  <- ord$rproj                                         # "rproj", "cproj", "evals", NULL
       res$sp_scores  <- ord$cproj
@@ -92,7 +95,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
     "pcoa" = {
       x_st <- vegan::vegdist(tbl,    method = d_method) # st
       ord <- labdsv::pco(x_st)
-      res$st_scores  <- ord$                                         # "points", "points", "eng", d_method
+      res$st_scores  <- ord$points                                       # "points", "points", "eng", d_method
       res$eig_val <- ord$eig
       res$results_raw[[1]] <- ord
       x_sp <- vegan::vegdist(t(tbl), method = d_method) # sp
@@ -108,7 +111,7 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$results_raw[[1]] <- ord
       x_sp <- vegan::vegdist(t(tbl), method = d_method) # sp
       ord <- labdsv::pco(x_sp)
-      res$sp_scores  <- ord$points
+      res$sp_scores <- ord$points
       res$results_raw[[2]] <- ord
     },
   #  https://github.com/cran/dave/blob/master/R/fspa.R

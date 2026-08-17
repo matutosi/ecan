@@ -27,7 +27,11 @@ export(select_one2multi)
 export(shdi)
 export(table2df)
 export(unique_length)
-importFrom(magrittr,"%>%")
-importFrom(magrittr,set_colnames)
-importFrom(rlang,":=")
-importFrom(rlang,.data)
+importFrom(magrittr,
+  "%>%",
+  set_colnames
+)
+importFrom(rlang,
+  ":=",
+  .data
+)
