@@ -51,6 +51,14 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### CRAN 提出の手順 (0.2.2，未実施)
 
+> **【重要】CRAN は 2026-08-05 〜 2026-08-19 の間，提出の受付を止めている**
+> (CRAN team vacation and maintenance work)．**8-19 以降に再挑戦する**．
+> 再開したかどうかは次で分かる (200 なら再開，404 なら停止中)．
+>
+> ```
+> curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit/index2.php
+> ```
+
 提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz`
 (別 PC には無いので，その場合は `devtools::build(path = "..")` で作り直す)．
 
@@ -70,7 +78,24 @@ name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
 
 ### 現在の状態
 
-- 更新: 2026-08-18 07:56 (JST)
+- 更新: 2026-08-18 09:32 (JST)
+- **CRAN 提出を試みたが，CRAN 側が受付を停止していてできなかった**．
+  - フォームのページ <https://xmpalantir.wu.ac.at/cransubmit/> に
+    `CRAN submissions will be offline from Aug 5, 2026 to Aug 19, 2026` と告知が出ており，
+    入力欄ごと消えている．devtools が POST する `index2.php` は **404** を返す．
+  - 対話的な R コンソールから `devtools::submit_cran()` を実行したところ，
+    ビルドは成功 (`ecan_0.2.2.tar.gz`，72.4 Kb) したが，
+    アップロードで `Resolving timed out [xmpalantir.wu.ac.at]` になった．
+    **これは DNS の一時的な失敗で本質ではない** (直後に確認したら 0.008 秒で解決した)．
+    名前解決が通っても，受付が再開するまでは 404 で `Package failed to upload.` になる．
+- **この PC (`MATUTOSI_DP`) には devtools が入っていなかったので導入した**
+  (R 4.6.1 のユーザーライブラリ `win-library/4.6`，devtools 2.5.2 と依存一式)．
+  LaTeX は `C:\texlive\2024` にあり `pkgbuild::has_latex()` は TRUE なので，
+  `build(manual = TRUE)` は通る．
+- 【参考】非対話セッションから `submit_cran()` を回したいときは，
+  `devtools:::yesno()` を差し替える．**`yesno()` は「はい以外」で TRUE を返す**ので，
+  `utils::assignInNamespace("yesno", function(msg, .envir = parent.frame()) FALSE, ns = "devtools")`
+  とすれば「はい」を選んだのと同じになる．確認は 2 か所だけで，他に対話は入らない．
 - `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
   (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
 - 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
@@ -119,9 +144,9 @@ name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
 
 ### 積み残し
 
-CRAN 提出 (次はここから)
+CRAN 提出 (次はここから．**8-19 以降に再挑戦する**)
 
-1. **`devtools::submit_cran()` はまだ実行していない**．
+1. **`devtools::submit_cran()` は実行したが，CRAN の受付停止 (〜8-19) で提出できなかった**．
    `cran-comments.md` は 4 環境の結果を書いた状態になっている．
    提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz` に作ってある．
    - **【落とし穴】`Rscript -e "devtools::submit_cran()"` は動かない**．
