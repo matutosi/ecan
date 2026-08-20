@@ -89,6 +89,25 @@ name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
 
 ### 現在の状態
 
+- 更新: 2026-08-21 02:27 (JST)
+- **提出しようとしたが，CRAN の提出サーバへ接続できなかった** (受付停止とは別の症状)．
+  - `xmpalantir.wu.ac.at` は **443 も 80 も TCP がつながらない** (いずれも 21 秒でタイムアウト)．
+    DNS は引けている (137.208.57.16)．`cran.r-project.org` は 200 なので回線側の問題ではない．
+  - 8-18 の 404 (受付停止の告知が出ていた状態) とは違い，**サーバまで届いていない**．
+    サーバ側の停止か一時的な不通とみて，**時間をおいて再確認する**．
+  - 準備は整っている: 版数 0.2.2，`cran-comments.md` は4環境 0/0/0，
+    `main` と `develop` の差は `.claude/CLAUDE.md` だけ (コードは同一)，タグ `v0.2.2` は push 済み．
+  - `D:\Dropbox\todo\ecan_0.2.2.tar.gz` は無くなっていた (上の「後始末」のとおり消したもの)．
+    `submit_cran()` は自分でビルドするので支障はない．
+
+- 更新: 2026-08-20 10:01 (JST)
+- **CRAN の受付停止期間 (2026-08-05 〜 08-19) は明けた．0.2.2 の提出はいつでもできる**．
+  提出の前に受付が開いているか確認する (200 なら開いている)．
+
+  ```
+  curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit/index2.php
+  ```
+
 - 更新: 2026-08-18 09:32 (JST)
 - **CRAN 提出を試みたが，CRAN 側が受付を停止していてできなかった**．
   - フォームのページ <https://xmpalantir.wu.ac.at/cransubmit/> に
@@ -158,6 +177,7 @@ name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
 CRAN 提出 (次はここから．**8-19 以降に再挑戦する**)
 
 1. **`devtools::submit_cran()` は実行したが，CRAN の受付停止 (〜8-19) で提出できなかった**．
+  2026-08-20以降に実行する(JSTで)．
    `cran-comments.md` は 4 環境の結果を書いた状態になっている．
    提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz` に作ってある．
    - **【落とし穴】`Rscript -e "devtools::submit_cran()"` は動かない**．
