@@ -87,15 +87,13 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 積み残し
 
-次はここから
-
-1. **`main`・`develop` を origin へ push する** (マージと版数上げをリモートへ反映)．
+0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
 
 いつか
 
-4. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
+1. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
    `pad2longest()`．
-5. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
+2. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
 ### コミット履歴 (直近)
