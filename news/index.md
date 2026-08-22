@@ -2,6 +2,8 @@
 
 ## ecan 0.2.2
 
+CRAN release: 2026-08-22
+
 - 2026-08-18
 
 - Bug fix in
