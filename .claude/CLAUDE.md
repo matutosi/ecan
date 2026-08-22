@@ -43,71 +43,56 @@ CRAN 公開済み (最新リリース 0.2.1)．
 - 版数を上げたら `NEWS.md` に日付と変更点を追記する．
 - CRAN 提出の記録は `CRAN-SUBMISSION` (提出時に自動更新される)．
 
+## check の生成物の後始末
+
+- **`R CMD check` などで作られる `*.tar.gz` は，役割が終わったら削除する**．
+  結果を確認し終えたら (CRAN へ出す場合は提出が済んだら) 消してよい．
+  DESCRIPTION とソースから何度でも作り直せるため，残しておく理由がない．
+- 同じ理由で，`*.Rcheck/` (check の作業ディレクトリ) も確認が済んだら消す．
+- 補足: `*.tar.gz` を作るのは `R CMD build` / `devtools::build()` で，
+  `devtools::check()` は既定で一時ディレクトリに作るためプロジェクト直下には残らない．
+  プロジェクト直下に残るのは `R CMD build` を直接実行したときが多い．
+  どちらの経路でできたものでも，見つけたら消す．
+
 ## 進捗状況
+
+**CRAN 提出の手順・段階ごとの作業ログ・過去のコミット履歴は
+[.claude/notes/history.md](notes/history.md)**．
 
 ### 現在の状態
 
-- 更新: 2026-08-18 07:50 (JST)
-- `.claude/CLAUDE.md` を新規作成し，パッケージの構成・ブランチ運用・開発の作法を記録した
-  (あわせて `.Rbuildignore` に `^\.claude$` を追加)．
-- 開発用パッケージを導入した (R 4.6.1 のユーザーライブラリ `win-library/4.6`)．
-  devtools 2.5.2 / roxygen2 8.1.0 / testthat 3.3.2 / pkgdown 2.2.1 / ggdendro 0.2.0 /
-  knitr 1.51 / rmarkdown 2.31．
-- `main` を `develop` へマージし，版数の逆転を解消した．
-  `develop` の `DESCRIPTION` は 0.2.1.9000，`CRAN-SUBMISSION` は 0.2.1 になった．
-  `README.Rmd` の `remotes` 修正も取り込んだ．
-- **段階 2 (基準線) を完了した**．
-  - `devtools::check()` は変更の前後とも **0 errors / 0 warnings / 0 notes** (R 4.6.1)．
-  - `DESCRIPTION` に `BugReports` を追加した．
-  - `devtools::document()` を実行した．roxygen2 が 8 系になり
-    `RoxygenNote` → `Config/roxygen2/version`，`NAMESPACE` の `importFrom` が複数行形式に
-    変わったが，**`man/*.Rd` の内容に差分は無かった**．
-  - `README.Rmd` に `set.seed(1)` を入れた．`ind_val()` が並べ替え検定のため，
-    従来は `build_readme()` のたびに p 値と全 PNG が変わっていた．
-    再実行して**差分ゼロ**になることを確認した．
-  - `README.md` と `man/figures/README-*.png` を再生成した．
-- **段階 3 (品質) を完了した**．`check()` は 0/0/0，テストは 108 パス・警告 0．
-  - **`pcoa` のバグを直した (`R/ordination.R`)**．
-    `res$st_scores <- ord$` と `$` の後ろが空のまま行が終わっており，
-    R がコメントを飛ばして次行を続きとして解釈するため，
-    `res$eig_val <- ord$eig` が丸ごと飲み込まれていた．
-    その結果 `st_scores` に固有値のベクトルが入り，`eig_val` は設定されなかった．
-    構文としては正しいので `R CMD check` は素通りしていた．
-  - `ca` と `dca` も距離法を使わないので `distance_method` を `NULL` にした
-    (`pca` に合わせた．従来は未使用の `"bray"` を記録していた)．
-  - `df2table()` の `pivot_wider()` を `dplyr::all_of()` で包み，
-    tidyselect の非推奨警告 60 件を解消した．
-  - テストを追加した (`cluster`, `convert`, `one2multi`, `ind_val` は新規，
-    `ordination` は拡充)．3 本 → 35 本．
-    既存の `expect_equal(res_ord$sdev, res_pca$eig_val)` は
-    **両辺とも NULL で素通りしていた**ので比較先を直した．
-- **段階 4-5 (リリース準備) を完了した．CRAN 提出だけが残っている**．
-  - 版数を 0.2.2 に上げ，`NEWS.md` に 0.2.2 の項を書いた．
-    `DESCRIPTION` の `URL:` をカンマ区切りにし，`Suggests:` の余分なコンマを消した．
-  - **4 環境すべてで 0 errors / 0 warnings / 0 notes**．
-    ローカル Windows R 4.6.1，win-builder R-devel (r90413)，
-    rhub の linux / macOS / Windows (いずれも R-devel)．
-  - rhub は 2.x から GitHub Actions 方式なので `.github/workflows/rhub.yaml` を追加した
-    (`rhub::rhub_setup()` が生成．**デフォルトブランチに無いと動かない**)．
-    実行は `$env:GITHUB_PAT = (gh auth token)` を設定してから
-    `rhub::rhub_check(platforms = c('linux','macos','windows'))`．
-  - `develop` を `main` へ `--no-ff` でマージし，**タグ `v0.2.2`** を付けて push した
-    (このリポジトリで最初のタグ)．pkgdown のデプロイも成功した．
+- 更新: 2026-08-22 19:05 (JST)
+- **CLAUDE.md の書き方ルール (todo 直下で確定) をこのプロジェクトにも適用した**．
+  段階ごとの作業ログ (08-18 〜 08-21) と直近のコミット履歴を `.claude/notes/history.md` へ移し，
+  本体には現在の状態・積み残しだけを残した．CRAN 提出まわりの現在の状況・積み残しは変更なし．
+
+- 更新: 2026-08-22 18:09 (JST)
+- **0.2.2 を Web フォームから手動で提出し，確認メールのリンクも踏んで完了した**．
+  疎通確認 (同日) で受付が開いていることを確かめたうえでの提出．
+  `CRAN-SUBMISSION` は 0.2.2 (2026-08-22 09:06:50 UTC) に自動更新されていた
+  (手動提出でも更新されると分かった．前回の記述は誤り)．
+
+- 更新: 2026-08-22 (JST)
+- **CRAN 提出サーバへの疎通を再確認した．提出可能な状態**．
+  `https://xmpalantir.wu.ac.at/cransubmit/` は HTTP 200，フォームの入力欄も通常どおり表示．
+  ページ内の「受付停止」の文言は `<!-- -->` でコメントアウトされた 2017/2018 年の古い告知で，
+  現在アクティブな告知は無い．
+  準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
 
 ### 積み残し
 
-CRAN 提出 (次はここから)
+CRAN 受理待ち (次はここから)
 
-1. **`devtools::submit_cran()` はまだ実行していない**．取り消しが効かないので，
-   ユーザ自身で実行する．`cran-comments.md` は 4 環境の結果を書いた状態になっている．
+1. **CRAN からの受理連絡を待つ**．
 2. 受理されたら `main` の `DESCRIPTION` を 0.2.2.9000 に上げる (この運用の作法)．
-   `CRAN-SUBMISSION` は提出時に自動更新される．
+3. **今回の記録 (このコミット) は `develop` にしか無い．`CRAN-SUBMISSION` が `main` と食い違ったまま**．
+   受理後の `develop` → `main` マージ (上記2と合わせて) で解消する．
 
 いつか
 
-3. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
+4. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
    `pad2longest()`．
-4. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
+5. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
 ### コミット履歴 (直近)
