@@ -172,27 +172,31 @@ name は `Toshikazu Matsumura`，email は `matutosi@gmail.com`，
   - `develop` を `main` へ `--no-ff` でマージし，**タグ `v0.2.2`** を付けて push した
     (このリポジトリで最初のタグ)．pkgdown のデプロイも成功した．
 
+- 更新: 2026-08-22 18:09 (JST)
+- **0.2.2 を Web フォームから手動で提出し，確認メールのリンクも踏んで完了した**．
+  疎通確認 (同日) で受付が開いていることを確かめたうえでの提出．
+  `CRAN-SUBMISSION` は 0.2.2 (2026-08-22 09:06:50 UTC) に自動更新されていた
+  (手動提出でも更新されると分かった．前回の記述は誤り)．
+
+- 更新: 2026-08-22 (JST)
+- **CRAN 提出サーバへの疎通を再確認した．提出可能な状態**．
+  `https://xmpalantir.wu.ac.at/cransubmit/` は HTTP 200，フォームの入力欄も通常どおり表示．
+  ページ内の「受付停止」の文言は `<!-- -->` でコメントアウトされた 2017/2018 年の古い告知で，
+  現在アクティブな告知は無い．
+  準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
+
 ### 積み残し
 
-CRAN 提出 (次はここから．**8-19 以降に再挑戦する**)
+CRAN 受理待ち (次はここから)
 
-1. **`devtools::submit_cran()` は実行したが，CRAN の受付停止 (〜8-19) で提出できなかった**．
-  2026-08-20以降に実行する(JSTで)．
-   `cran-comments.md` は 4 環境の結果を書いた状態になっている．
-   提出用のパッケージは `D:\Dropbox\todo\ecan_0.2.2.tar.gz` に作ってある．
-   - **【落とし穴】`Rscript -e "devtools::submit_cran()"` は動かない**．
-     `yesno()` が `Called from non-interactive context.` で落ちる．
-     回避フラグは無いので，**R コンソール (RStudio か `R.exe`) から呼ぶ**．
-   - Web フォーム <https://cran.r-project.org/submit.html> からの手動提出でもよい．
-     ただし**手動提出では `CRAN-SUBMISSION` が更新されない**ので，あとで手で直す．
-   - どちらでも，**確認メールのリンクを踏むまで提出は完了しない**．
+1. **CRAN からの受理連絡を待つ**．
 2. 受理されたら `main` の `DESCRIPTION` を 0.2.2.9000 に上げる (この運用の作法)．
 
 いつか
 
-3. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
+4. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
    `pad2longest()`．
-4. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
+5. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
 ### コミット履歴 (直近)
