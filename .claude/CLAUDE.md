@@ -61,6 +61,12 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
+- 更新: 2026-08-23 (JST)
+- **CRAN から 0.2.2 の受理連絡 (auto-check OK) が届いた．積み残しの手順をすべて終えた**．
+  `develop` を `main` へマージし (`CRAN-SUBMISSION` の食い違いを解消)，
+  `main` の `DESCRIPTION` を `0.2.2.9000` に上げてこの運用の作法どおり開発版へ戻した．
+  `develop` も `main` に追随させて版数をそろえた．**push は未実施 (次の一手)**．
+
 - 更新: 2026-08-22 19:05 (JST)
 - **CLAUDE.md の書き方ルール (todo 直下で確定) をこのプロジェクトにも適用した**．
   段階ごとの作業ログ (08-18 〜 08-21) と直近のコミット履歴を `.claude/notes/history.md` へ移し，
@@ -81,12 +87,9 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 積み残し
 
-CRAN 受理待ち (次はここから)
+次はここから
 
-1. **CRAN からの受理連絡を待つ**．
-2. 受理されたら `main` の `DESCRIPTION` を 0.2.2.9000 に上げる (この運用の作法)．
-3. **今回の記録 (このコミット) は `develop` にしか無い．`CRAN-SUBMISSION` が `main` と食い違ったまま**．
-   受理後の `develop` → `main` マージ (上記2と合わせて) で解消する．
+1. **`main`・`develop` を origin へ push する** (マージと版数上げをリモートへ反映)．
 
 いつか
 
@@ -97,6 +100,8 @@ CRAN 受理待ち (次はここから)
 
 ### コミット履歴 (直近)
 
+- `10b7b0e` bump version to 0.2.2.9000 for development (main)
+- `95e6382` Merge branch 'develop' (main，CRAN-SUBMISSION の食い違いを解消)
 - `aa29ffa` Merge branch 'develop' for 0.2.2 (main，タグ `v0.2.2`)
 - `84585b5` add the R-hub v2 workflow
 - `0b7b92b` prepare release 0.2.2
