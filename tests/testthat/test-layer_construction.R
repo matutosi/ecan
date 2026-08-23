@@ -5,3 +5,25 @@ test_that("mid point and bin width can be caluculated", {
   expect_equal(mid_point(height), mid_point)
   expect_equal(bin_width(height), bin_width)
 })
+
+test_that("add_mid_p_bin_w attaches mid_point and bin_width to df", {
+  df <- tibble::tibble(stand = "A", height = c(2, 4, 8, 20), cover = c(1, 2, 3, 4))
+  out <- add_mid_p_bin_w(df, "height")
+  expect_true(all(c("mid_point", "bin_width") %in% names(out)))
+  expect_equal(out$mid_point, mid_point(sort(unique(df$height))))
+  expect_equal(out$bin_width, bin_width(sort(unique(df$height))))
+  expect_equal(nrow(out), nrow(df))
+})
+
+test_that("draw_layer_construction returns a ggplot object", {
+  df <- tibble::tibble(stand = "A", height = c(2, 4, 8, 20), cover = c(1, 2, 3, 4))
+  gg <- draw_layer_construction(df)
+  expect_s3_class(gg, "ggplot")
+})
+
+test_that("draw_layer_construction groups by the given column", {
+  df <- tibble::tibble(stand = "A", height = c(2, 4, 8, 20),
+                        cover = c(1, 2, 3, 4), sp_group = c("g1", "g1", "g2", "g2"))
+  gg <- draw_layer_construction(df, group = "sp_group")
+  expect_s3_class(gg, "ggplot")
+})
