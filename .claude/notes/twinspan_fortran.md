@@ -131,6 +131,37 @@ COLWGT = CCWT * ((AY/FRQLIM)^ICWEXP * (1-CWTMIN) + CWTMIN)
    さらに **2 番目・3 番目の cut level は 2 倍**する (`clsum <- c(1,2,2)*clsum`)．
 6. この行列に対して，標本のときと同じ `CLASS` を回す．
 
+## 【完了 2026-08-27】原典と完全一致に到達
+
+**`dune`・`sipoo`・`varespec`・`mite`・`BCI`・`pyrifos` の 6 データすべてで，
+標本の分類も種の分類も，群・番号・固有値まで原典と完全に一致**する．
+
+### 決め手: 種の分類は指標種を使わない (`MIND = 0`)
+
+R 側の 2 回目の `.Fortran("class", ...)` の**第4引数が `0L`** で，これが `MIND` にあたる．
+`CLASS` は `IF (MIND.EQ.0) GOTO 100` で**指標種の段階をまるごと飛ばし**，
+`IZD = (1+MZ)/2 = 8`，`IIZD = IZD`，`ISD = 0` とする．
+`REPORT` の分類規則に当てはめると，**帯は無く，`zone > 8`**，すなわち
+**研磨後の軸の範囲の中点で分割**することになる．
+
+引数の対応が名前で分かりにくく (`nspec` → `MM`，`jnam` → `ICLASS`，`inflag` → `JNAM`)，
+`0L` が `MIND` だと気づくまでに時間がかかった．**呼び出し側の引数の並びを
+最後まで確かめるべきだった**．
+
+### 検証に使った道具 (再開時に有用)
+
+`jarioksa/twinspan` の `src/*.f` を切り出して DLL を作り，R から直接呼んで
+各段階を突き合わせた (`R CMD SHLIB` で `pkgbuild::with_build_tools()` を使う)．
+`COMMON` ブロックは小さな `SETCOM`/`SETPCT` を書いて設定する．
+この方法で **`WEIGHT`・`RA`・`POLISH`・`ZONEUP`+`INDSCO`+`TOPIND`+`TABLE`+`FIND` の
+すべてが ecan と一致する**ことを確かめられた (`POLISH` は 7e-11，`WEIGHT` は誤差 0)．
+**推測で詰めるより速い**．
+
+### 残る差
+
+人工の対数正規データ (80×40) で 1 件だけ食い違いを確認している．
+vegan の実データ 6 件と，Poisson・疎行列の人工データでは一致する．
+
 ### `TOPIND` を読んで直した2点 (2026-08-27)
 
 **指標種の選抜は推測で書いていたので，`twinsub23.f` を読んで直した**．

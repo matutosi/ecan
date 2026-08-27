@@ -281,9 +281,11 @@ b が意味を持つのは「pure R のまま完全一致も欲しい」とき�
     その後ユーザ指示で再開し，一致に到達した．
 1. 次のリリースの前に `devtools::check(--as-cran)` を通す．
 2. **`CLOSER` も実装済み**．群の番号まで原典と一致する．
-3. **種の分類も原典の枠組みで実装済み**．**dune と sipoo は群も番号も完全一致**．
-   varespec・mite・BCI はまだ一致しない (研磨後の軸が微妙に違うと見られる)．
-   **標本の分類には影響しない**．詳細は [twinspan_fortran.md](twinspan_fortran.md)．
+3. **【完了 2026-08-27】種の分類も原典と完全一致**．
+   **dune・sipoo・varespec・mite・BCI・pyrifos の 6 データで，標本も種も，
+   群・番号・固有値まで原典と一致する**．
+   決め手は「種の分類は指標種を使わない (`MIND = 0`)」こと．
+   詳細は [twinspan_fortran.md](twinspan_fortran.md)．
 3. **`pyrifos` は深い分割で分かれる** (同点の破り方の違いと見られる)．
 3. pkgdown サイトへ vignette が載ることを確認する
    (**`main` へ merge するまで走らない**．workflow の trigger は `main`/`master` への push のみ)．
