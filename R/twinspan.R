@@ -521,6 +521,8 @@ tw_het <- function(y, opt){
 tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL,
                     rw = NULL, cw = NULL){
   lv <- if(identical(opt$polish, "hill")) tw_species_counts(y, sp_map) else NULL
+  sp_id <- if(is.null(sp_map)) seq_len(ncol(y)) else
+             as.integer(factor(sp_map, levels = unique(sp_map)))
   nodes <- list(list(id       = 1L,
                      parent   = NA_integer_,
                      members  = seq_len(nrow(y)),
@@ -551,6 +553,7 @@ tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL,
       ctx <- list(lv      = lv,
                   rw      = rw,
                   cw      = cw,
+                  sp      = sp_id,
                   path    = nd$path,
                   members = nd$members,
                   sibling = tw_members_of(nodes, tw_sib_path(nd$path)),

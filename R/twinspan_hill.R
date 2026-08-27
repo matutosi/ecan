@@ -144,19 +144,36 @@ tw_polish <- function(y, x, opt, rw = NULL, cw = NULL){
 # Indicator pseudospecies of a division, in the way of the original.
 # The number of indicators is the one that misclassifies fewest stands,
 # and the stands of the critical zone are placed by the indicator score.
-tw_indicator_hill <- function(y, x, opt, rw = NULL){
+# The best indicator pseudospecies of a division (TOPIND).
+# The strength of a pseudospecies is truncated to steps of 1/500 before
+# the ordering, ties are broken by the order of the columns, and only one
+# pseudospecies of a species can become an indicator.
+tw_topind <- function(d, opt, sp = NULL){
+  if(is.null(sp)) sp <- seq_along(d)
+  rank <- as.integer(abs(d) * 500)          # IDINT: truncation
+  ord  <- order(-rank, seq_along(d))
+  res  <- integer(0)
+  used <- integer(0)
+  for(j in ord){
+    if(length(res) >= opt$max_indicators) break
+    if(opt$feeble - abs(d[j]) > 1e-7) next  # PRECIS
+    if(sp[j] %in% used) next                # one indicator per species
+    res  <- c(res, j)
+    used <- c(used, sp[j])
+  }
+  return(res)
+}
+
+tw_indicator_hill <- function(y, x, opt, rw = NULL, sp = NULL){
   rng <- range(x)
   mid <- sum(rng) / 2
   hlf <- 0.5 * opt$cr_long * (rng[2] - rng[1])
   zone <- tw_zone(x, mid - hlf, mid + hlf, opt$mz_out, opt$mz_crit)
-  cut1 <- mid - hlf * opt$mz_ind / opt$mz_crit
+  cut1 <- mid - hlf * opt$mz_ind / (opt$mz_crit + 0.001)
   s    <- tw_indsco(y, x, cut1, 2 * mid - cut1, rw)
   d    <- s$ypos / max(s$axpos, 1e-12) - s$yneg / max(s$axneg, 1e-12)
-  cand <- which(abs(d) >= opt$feeble)
-  if(!length(cand)) return(NULL)
-  freq <- colSums(y)
-  ord  <- cand[order(-abs(d[cand]), -freq[cand], cand)]
-  ord  <- ord[seq_len(min(opt$max_indicators, length(ord)))]
+  ord  <- tw_topind(d, opt, sp)
+  if(!length(ord)) return(NULL)
   best <- NULL
   for(k in seq_along(ord)){
     sel   <- ord[seq_len(k)]
@@ -349,7 +366,7 @@ tw_divide_hill <- function(y, opt, ctx = NULL){
     mid <- -mid
     pos <- !pos
   }
-  ind <- tw_indicator_hill(y, x, opt, rw)
+  ind <- tw_indicator_hill(y, x, opt, rw, ctx$sp)
   if(!is.null(ind) && any(ind$positive) && !all(ind$positive))
     pos <- ind$positive
   return(list(positive   = pos,
