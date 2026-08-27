@@ -114,6 +114,38 @@ par(new = TRUE)
 plot(cls)
 ```
 
+### TWINSPAN
+
+`twinspan()` is a native R implementation of TWINSPAN (Hill 1979) and of
+the modified TWINSPAN of Roleček et al. (2009).
+It needs no compiler, but it is not a port of Hill's original FORTRAN
+program: see `?twinspan` for the known differences.
+
+```{r twinspan}
+tw <- twinspan(dune)
+tw
+
+head(tw$classification)
+
+# the division tree works with the clustering helpers of ecan
+ggdendro::ggdendrogram(stats::as.hclust(tw))
+```
+
+The modified TWINSPAN divides the most heterogeneous group first,
+so that the number of groups can be chosen directly.
+
+```{r twinspan_modified}
+tw_mod <- twinspan(dune, modified = TRUE, n_clusters = 4)
+table(tw_mod$classification$group)
+```
+
+`tw_two_way()` arranges the stands and the species by their divisions.
+The digits below the table show the dichotomy of each stand.
+
+```{r twinspan_table}
+tw_two_way(tw)
+```
+
 ### Ordination
 
 
