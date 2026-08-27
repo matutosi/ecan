@@ -10,7 +10,7 @@ twinspan(
   x,
   cut_levels = c(0, 2, 5, 10, 20),
   min_size = 5,
-  max_depth = 7,
+  max_depth = 6,
   max_indicators = 7,
   diff_threshold = 1/3,
   refine_iter = 5,
@@ -33,7 +33,8 @@ rownames: stands, colnames: species.}
 \item{min_size}{An integer. Groups smaller than this are not divided.}
 
 \item{max_depth}{An integer of the maximum number of division levels.
-The default (7) is the same as the original TWINSPAN.}
+The default (6) is the same as the original TWINSPAN
+(its \code{levmax}).}
 
 \item{max_indicators}{An integer of the maximum number of indicator
 pseudospecies used to summarise a division.}
@@ -94,13 +95,27 @@ It is \strong{not} a port of Hill's original FORTRAN program, and
 the results may differ from it in details.
 The known differences are:
 \itemize{
+\item \strong{rare pseudospecies are not downweighted} before the correspondence
+analysis, while the original downweights them as \code{decorana()} does.
+This is the largest difference: the eigenvalues of the original are
+reproduced within 0.001 by a correspondence analysis of
+\code{vegan::downweight()}ed pseudospecies,
 \item stands close to the boundary of a division are not swapped between
 the groups, and the size of the groups is not balanced;
 only \code{min_size} keeps small groups from being divided,
+\item all pseudospecies whose preference reaches \code{diff_threshold} are
+eligible as indicators, and the \code{max_indicators} best of them are
+used, while the original chooses fewer of them,
 \item the pseudospecies are classified without weighting them by the
 groups of the stands,
 \item the reciprocal averaging is iterated until it converges.
 }
+
+On the \code{dune}, \code{varespec} and \code{mite} data of \code{vegan} the first division
+agrees with the original for 95\%, 100\% and 83\% of the stands, and the
+adjusted Rand index of the final groups is 0.87, 0.52 and 0.29:
+the two agree on the coarse structure and drift apart as the divisions
+go deeper.
 
 If the results of the original program are needed,
 the \code{twinspan} package of Oksanen

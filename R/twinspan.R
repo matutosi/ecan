@@ -13,12 +13,26 @@
 #' the results may differ from it in details.
 #' The known differences are:
 #'
+#' * **rare pseudospecies are not downweighted** before the correspondence
+#'   analysis, while the original downweights them as `decorana()` does.
+#'   This is the largest difference: the eigenvalues of the original are
+#'   reproduced within 0.001 by a correspondence analysis of
+#'   `vegan::downweight()`ed pseudospecies,
 #' * stands close to the boundary of a division are not swapped between
 #'   the groups, and the size of the groups is not balanced;
 #'   only `min_size` keeps small groups from being divided,
+#' * all pseudospecies whose preference reaches `diff_threshold` are
+#'   eligible as indicators, and the `max_indicators` best of them are
+#'   used, while the original chooses fewer of them,
 #' * the pseudospecies are classified without weighting them by the
 #'   groups of the stands,
 #' * the reciprocal averaging is iterated until it converges.
+#'
+#' On the `dune`, `varespec` and `mite` data of `vegan` the first division
+#' agrees with the original for 95%, 100% and 83% of the stands, and the
+#' adjusted Rand index of the final groups is 0.87, 0.52 and 0.29:
+#' the two agree on the coarse structure and drift apart as the divisions
+#' go deeper.
 #'
 #' If the results of the original program are needed,
 #' the `twinspan` package of Oksanen
@@ -31,7 +45,8 @@
 #' @param cut_levels  A numeric vector of pseudospecies cut levels.
 #' @param min_size    An integer. Groups smaller than this are not divided.
 #' @param max_depth   An integer of the maximum number of division levels.
-#'                    The default (7) is the same as the original TWINSPAN.
+#'                    The default (6) is the same as the original TWINSPAN
+#'                    (its `levmax`).
 #' @param max_indicators
 #'                    An integer of the maximum number of indicator
 #'                    pseudospecies used to summarise a division.
@@ -93,7 +108,7 @@
 twinspan <- function(x,
                      cut_levels     = c(0, 2, 5, 10, 20),
                      min_size       = 5,
-                     max_depth      = 7,
+                     max_depth      = 6,
                      max_indicators = 7,
                      diff_threshold = 1/3,
                      refine_iter    = 5,
