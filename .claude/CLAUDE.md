@@ -30,8 +30,10 @@ CRAN 公開済み (最新リリース 0.2.1)．
 - 多様度: `shdi()` (種数・Shannon・Simpson など)
 - 指標種分析: `ind_val()`
 - TWINSPAN: `twinspan()`, `pseudospecies()`, `tw_ra()`, `tw_downweight()`,
-  `tw_inertia()`, `tw_preference()`, `tw_two_way()`
-  (Modified TWINSPAN も `twinspan(modified = TRUE)` で)
+  `tw_inertia()`, `tw_preference()`, `tw_hill_const()`, `tw_two_way()`
+  (Modified TWINSPAN も `twinspan(modified = TRUE)` で)．
+  **既定の `polish = "hill"` は原典 TWINSPAN の分割手順そのもので，
+  5 データで分類が原典と完全一致する**．`polish = "ecan"` で従来の挙動．
 - データ変換: `df2table()`, `table2df()`, `one2multi` 系 (`is_one2multi()` など)
 - その他: `gen_example()`, `read_biss()`, `draw_layer_construction()`, `pad2longest()`
 
@@ -69,6 +71,11 @@ CRAN 公開済み (最新リリース 0.2.1)．
 [.claude/notes/twinspan_fortran.md](notes/twinspan_fortran.md)** (2026-08-27．実装は未着手)．
 
 ### 現在の状態
+
+- 更新: 2026-08-27 (JST)
+  **原典 FORTRAN を読んで同じ分割手順を実装し，`polish = "hill"` を既定にした**．
+  **dune・varespec・mite・sipoo・BCI の 5 データで，階層のすべてのレベルの分類が
+  原典と完全一致** (ARI = 1.000)．固有値も一致．全 216 テスト成功．
 
 - 更新: 2026-08-27 11:13 (JST)
   **TWINSPAN の一式を `develop` へ merge した**．README に節を足して `build_readme()` で再生成し，
