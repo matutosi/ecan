@@ -369,13 +369,13 @@ tw
 #>   divisions:    4
 #>   groups:       5
 #> 
-#> division 1 at level 0 (n = 20, eig = 0.54)
+#> division 1 at level 0 (n = 20, eig = 0.515)
 #>   indicators: Lolipere_3(-) Achimill_1(-) Planlanc_1(-) Planlanc_2(-) Achimill_2(-) Anthodor_1(-) Anthodor_2(-)
-#> division 2 at level 1 (n = 12, eig = 0.441)
+#> division 2 at level 1 (n = 12, eig = 0.404)
 #>   indicators: Poatriv_1(-) Poatriv_2(-) Bromhord_1(-) Bromhord_2(-) Elymrepe_1(-) Elymrepe_2(-) Poatriv_3(-)
-#> division 3 at level 1 (n = 8, eig = 0.442)
+#> division 3 at level 1 (n = 8, eig = 0.426)
 #>   indicators: Sagiproc_1(-) Sagiproc_2(-) Alopgeni_3(-) Callcusp_1(+) Callcusp_2(+) Juncbufo_1(-) Juncbufo_2(-)
-#> division 4 at level 2 (n = 8, eig = 0.367)
+#> division 4 at level 2 (n = 8, eig = 0.338)
 #>   indicators: Anthodor_1(-) Anthodor_2(-) Planlanc_1(-) Planlanc_2(-) Alopgeni_1(+) Alopgeni_2(+) Planlanc_3(-)
 
 head(tw$classification)
@@ -423,20 +423,20 @@ tw_two_way(tw)
 #> Trifprat 232-----------------  0101
 #> Bromhord 2-22-2-2------------  0110
 #> Cirsarve -------2------------  0111
-#> Lolipere 233333333-2-22------  10000
-#> Elymrepe 2---2222-----3------  10010
-#> Poatriv  32322333----2323--2-  10010
-#> Alopgeni -----232----3233--2-  10100
-#> Juncbufo --2----------222----  10101
-#> Bellpere 2--2-222--2---------  1011000
-#> Poaprat  22222232212-22-2----  1011000
-#> Rumeacet 332----------22-----  1011001
-#> Bracruta 2322--222-32222--222  1011010
-#> Scorautu 2222-3223233222222-2  1011010
-#> Trifrepe 2323-3212-22222231--  1011010
-#> Salirepe ----------22-------3  1011011
-#> Agrostol ------23----22232233  10111
-#> Sagiproc -------32--22222----  10111
+#> Lolipere 233333333-2-22------  100000
+#> Bellpere 2--2-222--2---------  100001
+#> Elymrepe 2---2222-----3------  100001
+#> Poatriv  32322333----2323--2-  1001
+#> Juncbufo --2----------222----  1010
+#> Agrostol ------23----22232233  101100
+#> Alopgeni -----232----3233--2-  101101
+#> Poaprat  22222232212-22-2----  101110
+#> Rumeacet 332----------22-----  101110
+#> Scorautu 2222-3223233222222-2  101110
+#> Trifrepe 2323-3212-22222231--  101110
+#> Bracruta 2322--222-32222--222  101111
+#> Sagiproc -------32--22222----  101111
+#> Salirepe ----------22-------3  101111
 #> Juncarti ------------22---222  1100
 #> Callcusp ----------------2-22  110100
 #> Eleopalu ------------2---2332  110101
