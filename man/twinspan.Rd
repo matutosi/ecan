@@ -114,21 +114,19 @@ around that point are placed by the indicator pseudospecies, whose
 number and threshold are the ones that misclassify fewest stands.
 The constants of the original are in \code{tw_hill_const()}.
 
+The two halves of a division are put in the order of the original as
+well: the half that resembles the group next to the one being divided
+comes first, so that neighbouring groups stay together.
+
 On the \code{dune}, \code{varespec}, \code{mite}, \code{sipoo} and \code{BCI} data of \code{vegan}
-this reproduces the classification of the original program exactly,
-at every level of the hierarchy and with the same eigenvalues.
+this reproduces the original program exactly: the same groups with the
+same numbers, the same divisions and the same eigenvalues.
 On \code{pyrifos} the first division is the same, and the deeper ones
 differ; that data is transformed so that most pseudospecies are of the
 lowest cut level, which leaves many ties for the division to break.
-Two things are still not reproduced:
-\itemize{
-\item which of the two groups of a division is called the first one
-(the original compares them with the group next to their parent),
-so the numbering of the groups can differ although the grouping
-itself is the same,
-\item the pseudospecies are classified without weighting them by the
-groups of the stands.
-}
+One thing is still not reproduced: the pseudospecies are classified
+without weighting them by the groups of the stands, so the order of
+the species in \code{tw_two_way()} can differ from the original.
 
 \code{polish = "ecan"} keeps the earlier way of this package, which was
 written from the published description alone: the division is refined

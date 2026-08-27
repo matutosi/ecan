@@ -168,8 +168,89 @@ tw_indicator_hill <- function(y, x, opt){
   return(best)
 }
 
+# Occurrences of every species in every stand, counted over the cut
+# levels of the species. Used by tw_closer().
+tw_species_counts <- function(y, sp_map = NULL){
+  y <- as.matrix(y) * 1
+  if(is.null(sp_map)) return(y)
+  sp  <- unique(sp_map)
+  res <- matrix(0, nrow(y), length(sp), dimnames = list(rownames(y), sp))
+  for(k in seq_along(sp))
+    res[, k] <- rowSums(y[, sp_map == sp[k], drop = FALSE])
+  return(res)
+}
+
+# Path of the other child of the same parent
+tw_sib_path <- function(path){
+  n <- nchar(path)
+  if(!n) return(NA_character_)
+  paste0(substr(path, 1, n - 1),
+         if(substr(path, n, n) == "0") "1" else "0")
+}
+
+# Members of the node of a path, or NULL
+tw_members_of <- function(nodes, path){
+  if(is.na(path)) return(NULL)
+  for(nd in nodes) if(identical(nd$path, path)) return(nd$members)
+  return(NULL)
+}
+
+# How much a group resembles the positive side of a division (CLOSER).
+# A negative value means that the group resembles the negative side.
+# The species that prefer one side count most, and the indifferent ones
+# are trimmed so that they cannot outweigh the preferential ones.
+tw_closer <- function(lv, ref, neg, pos, active){
+  small <- 1e-7
+  tot  <- length(ref)
+  tot0 <- length(neg)
+  tot1 <- length(pos)
+  if(!tot || !tot0 || !tot1 || !any(active)) return(0)
+  lv  <- lv[, active, drop = FALSE]
+  ay  <- (colSums(lv[ref, , drop = FALSE]) + small) / tot
+  ay0 <- (colSums(lv[neg, , drop = FALSE]) + small) / tot0
+  ay1 <- (colSums(lv[pos, , drop = FALSE]) + small) / tot1
+  pref <- pmin(abs(ay0 - ay1) / (ay0 + ay1) / 0.3, 1)^4
+  to_pos <- ay1 > ay0
+  ppos <- ifelse(to_pos, pref, 0)
+  pneg <- ifelse(to_pos, 0, pref)
+  pind <- 1 - pref
+  yneg <- sum(pneg * ay)
+  yind <- sum(pind * ay)
+  ypos <- sum(ppos * ay)
+  xneg <- sum(pneg * ay0) + sum(pneg * ay1)
+  xind <- sum(pind * ay0) + sum(pind * ay1)
+  xpos <- sum(ppos * ay0) + sum(ppos * ay1)
+  if(xpos > xneg){
+    yind <- -yind
+    xind <- -xind
+    if(-xind > xpos - xneg) yind <- yind * (xpos - xneg) / (-xind)
+  } else {
+    if(xind > xneg - xpos) yind <- yind * (xneg - xpos) / xind
+  }
+  return((ypos - yneg + yind) * tot)
+}
+
+# Should the two halves of a division be swapped?
+# The original puts first the half that resembles the group next to the
+# one being divided, so that neighbouring groups stay together.
+tw_swap <- function(ctx, neg, pos){
+  if(is.null(ctx) || !nzchar(ctx$path) || is.null(ctx$sibling)) return(FALSE)
+  # only the species that occur in the group being divided are compared
+  active <- colSums(ctx$lv[ctx$members, , drop = FALSE]) > 0
+  y1 <- tw_closer(ctx$lv, ctx$sibling, neg, pos, active)
+  y2 <- if(nchar(ctx$path) >= 2 && !is.null(ctx$uncle))
+          tw_closer(ctx$lv, ctx$uncle, neg, pos, active) else 0
+  id <- strtoi(paste0("1", ctx$path), base = 2L)
+  w  <- if((id %% 4) %in% c(1, 2)) -0.5 else 0.5
+  score <- y1 + w * y2
+  # the sibling is the first (even) child when this node is the second one
+  if(substr(ctx$path, nchar(ctx$path), nchar(ctx$path)) == "1")
+    return(score > 0)      # sibling is even: the negative half should suit it
+  return(score < 0)        # sibling is odd
+}
+
 # One dichotomy in the way of the original TWINSPAN (CLASS).
-tw_divide_hill <- function(y, opt){
+tw_divide_hill <- function(y, opt, ctx = NULL){
   w  <- if(isTRUE(opt$downweight)) tw_downweight(y, method = "hill") else NULL
   ra <- tw_ra(y, w = w)
   x  <- ra$sample
@@ -182,6 +263,12 @@ tw_divide_hill <- function(y, opt){
   mid <- sum(rng) / 2
   pos <- x >= mid
   if(all(pos) || !any(pos)) return(NULL)
+  if(!is.null(ctx) &&
+     tw_swap(ctx, ctx$members[x <= mid], ctx$members[x >= mid])){
+    x   <- -x
+    mid <- -mid
+    pos <- !pos
+  }
   ind <- tw_indicator_hill(y, x, opt)
   if(!is.null(ind) && any(ind$positive) && !all(ind$positive))
     pos <- ind$positive

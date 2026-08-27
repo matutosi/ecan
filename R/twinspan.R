@@ -17,20 +17,19 @@
 #' number and threshold are the ones that misclassify fewest stands.
 #' The constants of the original are in `tw_hill_const()`.
 #'
+#' The two halves of a division are put in the order of the original as
+#' well: the half that resembles the group next to the one being divided
+#' comes first, so that neighbouring groups stay together.
+#'
 #' On the `dune`, `varespec`, `mite`, `sipoo` and `BCI` data of `vegan`
-#' this reproduces the classification of the original program exactly,
-#' at every level of the hierarchy and with the same eigenvalues.
+#' this reproduces the original program exactly: the same groups with the
+#' same numbers, the same divisions and the same eigenvalues.
 #' On `pyrifos` the first division is the same, and the deeper ones
 #' differ; that data is transformed so that most pseudospecies are of the
 #' lowest cut level, which leaves many ties for the division to break.
-#' Two things are still not reproduced:
-#'
-#' * which of the two groups of a division is called the first one
-#'   (the original compares them with the group next to their parent),
-#'   so the numbering of the groups can differ although the grouping
-#'   itself is the same,
-#' * the pseudospecies are classified without weighting them by the
-#'   groups of the stands.
+#' One thing is still not reproduced: the pseudospecies are classified
+#' without weighting them by the groups of the stands, so the order of
+#' the species in `tw_two_way()` can differ from the original.
 #'
 #' `polish = "ecan"` keeps the earlier way of this package, which was
 #' written from the published description alone: the division is refined
@@ -155,7 +154,8 @@ twinspan <- function(x,
               polish         = polish)
   if(polish == "hill") opt <- c(opt, tw_hill_const())
 
-  tree <- tw_tree(psp, opt, modified = modified, n_clusters = n_clusters)
+  tree <- tw_tree(psp, opt, modified = modified, n_clusters = n_clusters,
+                  sp_map = attr(psp, "species"))
   cls  <- tw_leaf_table(tree, rownames(x), unit = "stand")
 
   sp_tree <- NULL
@@ -495,7 +495,8 @@ tw_het <- function(y, opt){
 }
 
 # Build the division tree of a binary matrix (rows are the units to divide)
-tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL){
+tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL){
+  lv <- if(identical(opt$polish, "hill")) tw_species_counts(y, sp_map) else NULL
   nodes <- list(list(id       = 1L,
                      parent   = NA_integer_,
                      members  = seq_len(nrow(y)),
@@ -521,7 +522,15 @@ tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL){
       target <- cand[order(dep, cand)][1]
     }
     nd  <- nodes[[target]]
-    div <- tw_divide(y[nd$members, , drop = FALSE], opt)
+    ctx <- NULL
+    if(!is.null(lv) && nzchar(nd$path))
+      ctx <- list(lv      = lv,
+                  path    = nd$path,
+                  members = nd$members,
+                  sibling = tw_members_of(nodes, tw_sib_path(nd$path)),
+                  uncle   = tw_members_of(nodes,
+                              tw_sib_path(substr(nd$path, 1, nchar(nd$path) - 1))))
+    div <- tw_divide(y[nd$members, , drop = FALSE], opt, ctx)
     nodes[[target]]$tried <- TRUE
     if(is.null(div)){
       nodes[[target]]$terminal <- TRUE
@@ -712,8 +721,8 @@ print.tw_two_way <- function(x, ...){
 }
 
 # One dichotomy: primary -> refined -> indicator ordination
-tw_divide <- function(y, opt){
-  if(identical(opt$polish, "hill")) return(tw_divide_hill(y, opt))
+tw_divide <- function(y, opt, ctx = NULL){
+  if(identical(opt$polish, "hill")) return(tw_divide_hill(y, opt, ctx))
   w   <- if(isTRUE(opt$downweight)) tw_downweight(y, method = "decorana") else NULL
   ra  <- tw_ra(y, w = w)
   pos <- ra$sample > 0
