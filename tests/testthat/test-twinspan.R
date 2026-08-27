@@ -115,6 +115,12 @@ test_that("the species are classified on their fidelity to the groups", {
   expect_setequal(sc$species, colnames(dune))
   expect_equal(nrow(sc), ncol(dune))
   expect_false(is.unsorted(sc$group))
+  # the species groups of Hill's program for the dune data, with his numbering
+  hill <- c(37, 13, 36, 13, 37, 17, 17, 15, 16, 29, 29, 16, 36, 36, 29,
+            13, 19, 37, 19, 5, 28, 19, 12, 12, 5, 17, 5, 36, 5, 29)
+  names(hill) <- colnames(dune)
+  id <- stats::setNames(strtoi(paste0("1", sc$path), base = 2L), sc$species)
+  expect_equal(unname(id[names(hill)]), unname(hill))
   # tw_two_way() works with it
   expect_silent(tab <- tw_two_way(tw))
   expect_setequal(rownames(tab), colnames(dune))
