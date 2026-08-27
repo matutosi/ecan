@@ -149,8 +149,9 @@ varespec は 96% のまま，mite は 94%．逆に mite は差異種で絞らな
 **データごとに最良の式が違う** = 3 データへの当てはめにすぎず，原典の規則ではない．
 
 → ここから先は**原典 FORTRAN の精密化の規則を実際に読む**しかない
-(`twinsub12.f` の `CLASS`，約 425 行)．MIT なので読むこと自体に支障は無く，
-見積りは 1-2 日．**現時点では追わない方針なので，ここで打ち切る**．
+(`twinsub21.f` の `POLISH` と `twinsub22.f` の `ZONEUP`)．MIT なので読むこと自体に支障は無い．
+**読むべき範囲は合わせて 101 行**なので (下の「原典 FORTRAN の規模」を見る)，
+**見積りは 0.5-1 日**．**現時点では追わない方針なので，ここで打ち切る**．
 
 ### 原典と違うと分かっている点
 
@@ -183,10 +184,51 @@ varespec は 96% のまま，mite は 94%．逆に mite は差異種で絞らな
   `COMMON/LIMS/RARE,FEEBLE,FRQLIM,TOL,RATLIM,REPLIM,PRECIS`，
   `COMMON/ARBS/CWTMIN,CRLONG,CRCUT`，`COMMON/IARBS/ICWEXP,IEND,MMIN,IPREXP,LEVMAX`．
   差異種の閾値・平衡化の規則・borderline の扱いは読めば分かる．
-- **それでも手数は残る**．`CLASS` だけで約 425 行，`GOTO` が 30 箇所近い F77．
+- **それでも手数は残る**．driver の `CLASS` は 272 行で `GOTO` が 26 箇所の F77．
   `ISORT` は **heap sort (不安定ソート)** なので，同点の並び順が分割に効く箇所があると
   R の `order()` (安定) と食い違う．
 - 一致の検証には原典を走らせる必要があり，Windows では Rtools (C と Fortran のコンパイラ) が要る．
+
+### 原典 FORTRAN の規模 (2026-08-27 実測)
+
+`jarioksa/twinspan` を clone して数えた．
+
+| | 値 |
+|---|---|
+| ファイル数 (`.f`) | **21** |
+| 総行数 | **1414** (コメント 186，空行 1 → **実行行 1227**) |
+| `GOTO` の出現 | **146** |
+| C のグルー | `init.c` 35 行，`data2hill.c` 34 行 (計 69 行) |
+
+**サブルーチンの対応** (どこを読めばよいかの地図):
+
+| ファイル | 名前 | 行数 | 役割 |
+|---|---|---|---|
+| twinsub12.f | `CLASS` | 272 | 分割の driver |
+| twinsub19.f | `RA` | 198 | reciprocal averaging |
+| twinsub11.f | `PSEUDO` | 130 | 擬似種化 |
+| twinsub27.f | `REPORT` | 94 | 出力 |
+| twinsub13.f | `CLOSER` | 80 | |
+| twinsub26.f | `FIND` | 73 | |
+| **twinsub21.f** | **`POLISH`** | **64** | **精密化序列 (残る差の本命)** |
+| twinsub16.f | `RECODE` | 54 | |
+| twinsub23.f | `TOPIND` | 51 | 指標種の選抜 |
+| twinsub07.f | `ISORT` | 46 | heap sort |
+| revspec.f | `revspec` | 45 | |
+| twinsub15.f | `UPDATE` | 43 | |
+| twinsub30.f | `INDSCO` | 42 | 指標得点 |
+| **twinsub22.f** | **`ZONEUP`** | **37** | **境界帯の更新 (残る差の本命)** |
+| twinsub18.f | `WEIGHT` | 37 | 重み (重み下げ) |
+| twinsub25.f | `TABLE` | 34 | 二元表 |
+| twinsub24.f | `CODESC` | 30 | |
+| twinsub29.f | `YXMULT` | 26 | |
+| twinsub28.f | `XYMULT` | 26 | |
+| twinsub14.f | `DECODE` | 17 | |
+| twinsub20.f | `XMAXMI` | 14 | |
+
+**要点**: 一致に向けて読む必要があるのは全体ではなく，**`POLISH` (64 行) と
+`ZONEUP` (37 行) の 101 行**．`ZONEUP` という名前は，まさに切り分けで突き止めた
+「境界帯 (zone) の標本の扱い」に対応する．
 
 ### 完全一致の道は3つ
 
