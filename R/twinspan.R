@@ -152,6 +152,7 @@ twinspan <- function(x,
 
 #' @rdname twinspan
 #' @param ... Ignored.
+#' @importFrom stats as.hclust
 #' @return  as.hclust() returns an "hclust" object
 #'          so that cls_color(), cls_add_group() and
 #'          ggdendro::ggdendrogram() can be used.

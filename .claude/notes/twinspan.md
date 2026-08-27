@@ -128,5 +128,13 @@ b が意味を持つのは「pure R のまま完全一致も欲しい」とき�
 
 ## 次に決めること
 
-1. **【判断待ち】`develop` へ merge する時期**．
-2. README / vignette への記載．
+- **【完了 2026-08-27】README.Rmd に TWINSPAN の節を足し，`build_readme()` で再生成した**
+  (生成元と生成物は別コミット)．差分は 97 行の追加のみで既存部分に変化なし．
+  あわせて `vignettes/twinspan.Rmd` を新設し，`DESCRIPTION` に `VignetteBuilder: knitr` を足した
+  (ecan で初めての vignette)．
+- **【完了 2026-08-27】`develop` へ merge した**．
+
+次にやること
+
+1. 次のリリースの前に `devtools::check(--as-cran)` を通す．
+2. pkgdown サイトへ vignette が載ることを確認する．
