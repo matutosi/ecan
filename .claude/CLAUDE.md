@@ -59,6 +59,9 @@ CRAN 公開済み (最新リリース 0.2.1)．
 **CRAN 提出の手順・段階ごとの作業ログ・過去のコミット履歴は
 [.claude/notes/history.md](notes/history.md)**．
 
+**TWINSPAN の方針・ライセンス調査・実装の構成・原典との差異は
+[.claude/notes/twinspan.md](notes/twinspan.md)**．
+
 ### 現在の状態
 
 - 更新: 2026-08-27 09:12 (JST，worktree `worktree-twinspan`)
@@ -94,17 +97,14 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
 
-TWINSPAN (`worktree-twinspan` で作業中)
+TWINSPAN (`worktree-twinspan` で作業中．詳細は [notes/twinspan.md](notes/twinspan.md))
 
-1. **【判断待ち】原典 FORTRAN を参照して完全一致を目指すか**．
-   参照元は **jarioksa/twinspan (MIT)** を使う．**GPL-2 の zdealveindy/twinspanR は使わない**
-   (そちらは `twinspan.exe` を包むだけで，ソースも入っていない)．
-   移植する場合は MIT の条件として **Oksanen と Hill の著作権表示を残し**，
-   `Authors@R` に `ctb`/`cph` で加え，`LICENSE`(または `inst/COPYRIGHTS`) に注記する．
-   Hill 本人の許諾文は公開されていないので，Oksanen の表示に依拠する点は承知のうえで進める．
-2. `max_depth` の既定は原典が 7．今の実装は 6 なので，合わせるかを判断する．
-3. 検証用に twinspan.exe / jarioksa/twinspan の出力を fixture として置く
-   (数値結果なので取り込みは問題ない)．
+1. **【判断待ち】原典 FORTRAN を参照して完全一致を目指すか** (見積り 3-5 日)．
+   参照元は **jarioksa/twinspan (MIT)**．**GPL-2 の zdealveindy/twinspanR は使わない**．
+2. **【判断待ち】`max_depth` の既定を 6 から 7 (原典と同じ) に合わせるか**．
+3. **【判断待ち】`develop` へ merge する時期**．
+4. 検証用に jarioksa/twinspan の出力を fixture として置く．
+5. README / vignette への記載．
 
 いつか
 
