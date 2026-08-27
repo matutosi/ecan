@@ -38,22 +38,73 @@ test_that("tw_ra() and tw_inertia() are safe for degenerate data", {
   expect_equal(tw_inertia(y1), 0, tolerance = 1e-12)
 })
 
-test_that("tw_downweight() reproduces the downweighting of vegan", {
+test_that("tw_downweight() gives both ways of downweighting", {
   skip_if_not_installed("vegan")
   data(dune, package = "vegan")
   psp <- pseudospecies(dune)
-  w   <- tw_downweight(psp)
+  # "decorana" is the downweighting of vegan
+  w <- tw_downweight(psp, method = "decorana")
   expect_equal(length(w), ncol(psp))
   expect_true(all(w > 0 & w <= 1))
   expect_equal(as.vector(sweep(psp, 2, w, "*")),
                as.vector(as.matrix(vegan::downweight(psp))),
                tolerance = 1e-8)
-  # the most frequent pseudospecies keeps the weight of 1
   expect_equal(unname(w[which.max(colSums(psp))]), 1)
-  # no downweighting when every pseudospecies is equally frequent
+  # "hill" is the WEIGHT subroutine: frq_lim of the stands, floor at w_min
+  h <- tw_downweight(psp, method = "hill")
+  f <- colSums(psp) / nrow(psp)
+  expect_equal(unname(h), unname(pmin(f, 0.2) / 0.2 * 0.99 + 0.01))
+  expect_true(all(h >= 0.01 & h <= 1))
+  expect_equal(unname(h[f >= 0.2]), rep(1, sum(f >= 0.2)))
+  # the default is "hill"
+  expect_equal(tw_downweight(psp), h)
+  # degenerate data
   y <- matrix(1L, 4, 3, dimnames = list(letters[1:4], paste0("s", 1:3)))
-  expect_equal(unname(tw_downweight(y)), rep(1, 3))
+  expect_equal(unname(tw_downweight(y, method = "decorana")), rep(1, 3))
   expect_equal(unname(tw_downweight(matrix(0L, 2, 2))), rep(1, 2))
+})
+
+test_that("polish = 'hill' reproduces the original TWINSPAN", {
+  skip_if_not_installed("vegan")
+  data(dune, package = "vegan")
+  tw <- twinspan(dune)
+  expect_equal(tw$polish, "hill")
+  # the classification of Hill's program for the dune data
+  hill <- c("11" = 1, "17" = 1, "19" = 1,
+            "18" = 2, "5" = 3, "6" = 3, "7" = 3, "10" = 3,
+            "1" = 4, "2" = 4, "3" = 4, "4" = 4, "9" = 5,
+            "8" = 6, "12" = 6, "13" = 6,
+            "14" = 7, "15" = 7, "16" = 7, "20" = 7)
+  g <- tw$classification$group[match(names(hill), tw$classification$stand)]
+  # the same partition, whatever the numbers of the groups are
+  expect_equal(length(unique(paste(hill, g))), length(unique(hill)))
+  expect_equal(length(unique(g)), length(unique(hill)))
+  # the eigenvalue of the first division of the original
+  expect_equal(tw$nodes[[1]]$division$eig, 0.5106, tolerance = 1e-3)
+  # the original uses few indicators, chosen to misclassify fewest stands
+  expect_lte(length(tw$nodes[[1]]$division$indicator$indicators), 7)
+})
+
+test_that("polish = 'ecan' keeps the earlier way", {
+  skip_if_not_installed("vegan")
+  data(dune, package = "vegan")
+  tw <- twinspan(dune, polish = "ecan")
+  expect_equal(tw$polish, "ecan")
+  expect_setequal(tw$classification$stand, rownames(dune))
+  expect_true(tw$n_division >= 1)
+  expect_error(twinspan(dune, polish = "no_such_way"))
+})
+
+test_that("tw_hill_const() gives the constants of the original", {
+  cn <- tw_hill_const()
+  expect_equal(cn$rat_lim, 3)
+  expect_equal(cn$frq_lim, 0.2)
+  expect_equal(cn$feeble, 0.1)
+  expect_equal(cn$ipr_exp, 4)
+  expect_equal(cn$polish_iter, 2)
+  expect_equal(cn$mz_crit, 8)
+  expect_equal(cn$mz_out, 4)
+  expect_equal(cn$mz_ind, 4)
 })
 
 test_that("downweighting changes the ordination but not the preference", {
