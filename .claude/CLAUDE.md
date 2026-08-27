@@ -61,6 +61,11 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
+- 更新: 2026-08-27 09:12 (JST，worktree `worktree-twinspan`)
+  **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
+  `tw_ra()` が `vegan::cca()` の第1軸と完全一致することを確認し，新規 49 検査を含む全 185 テストが成功．
+  **原典 FORTRAN のライセンスは MIT と判明** (jarioksa/twinspan)．clean-room は不要になった．
+
 - 更新: 2026-08-23 (JST)
 - **CRAN から 0.2.2 の受理連絡 (auto-check OK) が届いた．積み残しの手順をすべて終えた**．
   `develop` を `main` へマージし (`CRAN-SUBMISSION` の食い違いを解消)，
@@ -88,6 +93,18 @@ CRAN 公開済み (最新リリース 0.2.1)．
 ### 積み残し
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
+
+TWINSPAN (`worktree-twinspan` で作業中)
+
+1. **【判断待ち】原典 FORTRAN を参照して完全一致を目指すか**．
+   参照元は **jarioksa/twinspan (MIT)** を使う．**GPL-2 の zdealveindy/twinspanR は使わない**
+   (そちらは `twinspan.exe` を包むだけで，ソースも入っていない)．
+   移植する場合は MIT の条件として **Oksanen と Hill の著作権表示を残し**，
+   `Authors@R` に `ctb`/`cph` で加え，`LICENSE`(または `inst/COPYRIGHTS`) に注記する．
+   Hill 本人の許諾文は公開されていないので，Oksanen の表示に依拠する点は承知のうえで進める．
+2. `max_depth` の既定は原典が 7．今の実装は 6 なので，合わせるかを判断する．
+3. 検証用に twinspan.exe / jarioksa/twinspan の出力を fixture として置く
+   (数値結果なので取り込みは問題ない)．
 
 いつか
 
