@@ -126,6 +126,25 @@ test_that("the species are classified on their fidelity to the groups", {
   expect_setequal(rownames(tab), colnames(dune))
 })
 
+test_that("varespec is classified as the original does", {
+  skip_if_not_installed("vegan")
+  data(varespec, package = "vegan")
+  tw <- twinspan(varespec)
+  # the groups of the stands in Hill's program, with his numbering
+  st <- c(35, 25, 13, 7, 24, 7, 25, 25, 7, 5, 5, 25, 13, 34, 34, 35, 35,
+          16, 9, 9, 9, 9, 5, 7)
+  id <- stats::setNames(strtoi(paste0("1", tw$classification$path), base = 2L),
+                        tw$classification$stand)
+  expect_equal(unname(id[rownames(varespec)]), st)
+  # and the groups of the species
+  sp <- c(9, 47, 29, 29, 93, 93, 28, 15, 47, 8, 15, 6, 6, 29, 28, 47, 93,
+          28, 93, 6, 28, 22, 10, 9, 92, 22, 93, 93, 93, 93, 10, 15, 8, 47,
+          22, 92, 8, 10, 10, 92, 9, 22, 93, 9)
+  sc <- tw$species_classification
+  sid <- stats::setNames(strtoi(paste0("1", sc$path), base = 2L), sc$species)
+  expect_equal(unname(sid[colnames(varespec)]), sp)
+})
+
 test_that("tw_hill_const() gives the constants of the original", {
   cn <- tw_hill_const()
   expect_equal(cn$rat_lim, 3)

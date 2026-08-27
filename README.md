@@ -370,7 +370,7 @@ tw
 #>   groups:       7
 #> 
 #> division 1 at level 0 (n = 20, eig = 0.511)
-#>   indicators: Ranuflam_1(+) Ranuflam_2(+) Agrostol_1(+) Agrostol_2(+) Eleopalu_1(+) Eleopalu_2(+) Lolipere_1(-)
+#>   indicators: Ranuflam_1(+) Agrostol_1(+) Eleopalu_1(+) Lolipere_1(-)
 #> division 2 at level 1 (n = 13, eig = 0.384)
 #>   indicators: Hyporadi_1(-)
 #> division 3 at level 1 (n = 7, eig = 0.411)
@@ -380,7 +380,7 @@ tw
 #> division 5 at level 3 (n = 5, eig = 0.284)
 #>   indicators: Achimill_1(+)
 #> division 6 at level 3 (n = 5, eig = 0.301)
-#>   indicators: Lolipere_3(-)
+#>   indicators: Juncarti_1(+)
 
 head(tw$classification)
 #> # A tibble: 6 × 4
