@@ -29,8 +29,9 @@ CRAN 公開済み (最新リリース 0.2.1)．
 - 距離: `distance()`, `dist2df()`
 - 多様度: `shdi()` (種数・Shannon・Simpson など)
 - 指標種分析: `ind_val()`
-- TWINSPAN: `twinspan()`, `pseudospecies()`, `tw_ra()`, `tw_inertia()`,
-  `tw_preference()`, `tw_two_way()` (Modified TWINSPAN も `twinspan(modified = TRUE)` で)
+- TWINSPAN: `twinspan()`, `pseudospecies()`, `tw_ra()`, `tw_downweight()`,
+  `tw_inertia()`, `tw_preference()`, `tw_two_way()`
+  (Modified TWINSPAN も `twinspan(modified = TRUE)` で)
 - データ変換: `df2table()`, `table2df()`, `one2multi` 系 (`is_one2multi()` など)
 - その他: `gen_example()`, `read_biss()`, `draw_layer_construction()`, `pad2longest()`
 
