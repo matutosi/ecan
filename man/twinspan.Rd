@@ -122,6 +122,7 @@ On the \code{dune}, \code{sipoo}, \code{varespec}, \code{mite}, \code{BCI} and \
 of \code{vegan}
 this reproduces the original program exactly: the same groups with the
 same numbers, the same divisions and the same eigenvalues.
+It does so on twenty randomly generated data sets as well.
 The species are classified in the way of the original as well, that is
 on how faithful each of them is to the groups of stands rather than on
 the pseudospecies table itself, and without indicators:

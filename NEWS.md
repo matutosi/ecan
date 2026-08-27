@@ -13,7 +13,7 @@
       program, and reproduces it exactly on the `dune`, `sipoo`, 
       `varespec`, `mite`, `BCI` and `pyrifos` data of 'vegan': the same 
       groups of stands and of species, with the same numbers, divisions 
-      and eigenvalues. 
+      and eigenvalues, and on twenty randomly generated data sets. 
       `polish = "ecan"` keeps the earlier way, written from the 
       published description alone.
     * Rare pseudospecies are downweighted in the ordination as the 
