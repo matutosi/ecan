@@ -9,7 +9,8 @@ tw_downweight(
   method = c("hill", "decorana"),
   fraction = 5,
   frq_lim = 0.2,
-  w_min = 0.01
+  w_min = 0.01,
+  rw = NULL
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ tw_downweight(
 downweight.}
 
 \item{w_min}{A numeric of the smallest weight of "hill".}
+
+\item{rw}{A numeric vector of stand weights, or NULL.}
 }
 \value{
 A numeric vector of the weight of each pseudospecies.

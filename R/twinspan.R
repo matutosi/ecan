@@ -27,9 +27,13 @@
 #' On `pyrifos` the first division is the same, and the deeper ones
 #' differ; that data is transformed so that most pseudospecies are of the
 #' lowest cut level, which leaves many ties for the division to break.
-#' One thing is still not reproduced: the pseudospecies are classified
-#' without weighting them by the groups of the stands, so the order of
-#' the species in `tw_two_way()` can differ from the original.
+#' The species are classified in the way of the original too, that is on
+#' how faithful each of them is to the groups of stands rather than on
+#' the pseudospecies table itself: see `tw_species_data()`.
+#' The groups of species that this gives are close to those of the
+#' original but not the same, so the order of the species in
+#' `tw_two_way()` can differ from it.
+#' The classification of the stands does not depend on this.
 #'
 #' `polish = "ecan"` keeps the earlier way of this package, which was
 #' written from the published description alone: the division is refined
@@ -88,8 +92,8 @@
 #' @return  twinspan() returns a list with class "twinspan".
 #'          $classification: a tibble of stand, group, path and depth.
 #'          $species_classification:
-#'                           a tibble of pseudospecies, species, level,
-#'                           group, path and depth.
+#'                           a tibble of species, group, path and depth
+#'                           (of pseudospecies when `polish = "ecan"`).
 #'          $nodes:          a list of the nodes of the division tree.
 #'          $pseudospecies:  the pseudospecies matrix.
 #'          $call, and the parameters above.
@@ -161,13 +165,23 @@ twinspan <- function(x,
   sp_tree <- NULL
   sp_cls  <- NULL
   if(species && ncol(psp) >= 2){
-    sp_tree <- tw_tree(t(psp), opt, modified = modified, n_clusters = NULL)
-    sp_cls  <- tw_leaf_table(sp_tree, colnames(psp), unit = "pseudospecies")
-    i <- match(sp_cls$pseudospecies, colnames(psp))
-    sp_cls <- dplyr::mutate(sp_cls,
-                            species = attr(psp, "species")[i],
-                            level   = attr(psp, "level")[i],
-                            .after  = "pseudospecies")
+    if(polish == "hill"){
+      sd <- tw_species_data(list(nodes = tree$nodes), psp = psp,
+                            sp_map = attr(psp, "species"), levmax = max_depth)
+      if(ncol(sd$y) >= 2 && nrow(sd$y) >= 2){
+        sp_tree <- tw_tree(sd$y, opt, modified = modified, n_clusters = NULL,
+                           rw = sd$rw, cw = sd$cw)
+        sp_cls  <- tw_leaf_table(sp_tree, rownames(sd$y), unit = "species")
+      }
+    } else {
+      sp_tree <- tw_tree(t(psp), opt, modified = modified, n_clusters = NULL)
+      sp_cls  <- tw_leaf_table(sp_tree, colnames(psp), unit = "pseudospecies")
+      i <- match(sp_cls$pseudospecies, colnames(psp))
+      sp_cls <- dplyr::mutate(sp_cls,
+                              species = attr(psp, "species")[i],
+                              level   = attr(psp, "level")[i],
+                              .after  = "pseudospecies")
+    }
   }
 
   res <- list(classification = cls,
@@ -314,6 +328,7 @@ pseudospecies <- function(x, cut_levels = c(0, 2, 5, 10, 20)){
 #'
 #' @param y        A binary matrix of stands by pseudospecies.
 #' @param w        A numeric vector of pseudospecies weights, or NULL.
+#' @param rw       A numeric vector of stand weights, or NULL.
 #' @param max_iter An integer of the maximum number of iterations.
 #' @param tol      A numeric of the convergence tolerance.
 #' @return  A list of stand scores ($sample), pseudospecies scores
@@ -325,12 +340,13 @@ pseudospecies <- function(x, cut_levels = c(0, 2, 5, 10, 20)){
 #' ra$eig
 #' }
 #' @export
-tw_ra <- function(y, w = NULL, max_iter = 999, tol = 1e-10){
+tw_ra <- function(y, w = NULL, rw = NULL, max_iter = 999, tol = 1e-10){
   y <- as.matrix(y) * 1
   n <- nrow(y)
   p <- ncol(y)
   if(is.null(w)) w <- rep(1, p)
   ym <- sweep(y, 2, w, "*")
+  if(!is.null(rw)) ym <- sweep(ym, 1, rw, "*")
   r  <- rowSums(ym)
   cs <- colSums(ym)
   smp <- stats::setNames(rep(0, n), rownames(y))
@@ -417,14 +433,20 @@ tw_downweight <- function(y,
                           method   = c("hill", "decorana"),
                           fraction = 5,
                           frq_lim  = 0.2,
-                          w_min    = 0.01){
+                          w_min    = 0.01,
+                          rw       = NULL){
   method <- match.arg(method)
   y   <- as.matrix(y) * 1
   tot <- colSums(y)
   one <- stats::setNames(rep(1, ncol(y)), colnames(y))
   if(!nrow(y) || !any(tot > 0)) return(one)
   if(method == "hill"){
-    f <- pmin(tot / nrow(y), frq_lim)
+    if(is.null(rw)){
+      f <- tot / nrow(y)
+    } else {
+      f <- colSums(sweep(y, 1, rw, "*")) / sum(rw)
+    }
+    f <- pmin(f, frq_lim)
     w <- (f / frq_lim) * (1 - w_min) + w_min
   } else {
     lim <- max(tot) / fraction
@@ -495,7 +517,8 @@ tw_het <- function(y, opt){
 }
 
 # Build the division tree of a binary matrix (rows are the units to divide)
-tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL){
+tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL,
+                    rw = NULL, cw = NULL){
   lv <- if(identical(opt$polish, "hill")) tw_species_counts(y, sp_map) else NULL
   nodes <- list(list(id       = 1L,
                      parent   = NA_integer_,
@@ -523,8 +546,10 @@ tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL, sp_map = NULL){
     }
     nd  <- nodes[[target]]
     ctx <- NULL
-    if(!is.null(lv) && nzchar(nd$path))
+    if(!is.null(lv))
       ctx <- list(lv      = lv,
+                  rw      = rw,
+                  cw      = cw,
                   path    = nd$path,
                   members = nd$members,
                   sibling = tw_members_of(nodes, tw_sib_path(nd$path)),
@@ -663,8 +688,8 @@ tw_two_way <- function(object, cells = c("level", "abundance")){
   st       <- object$classification
   st_order <- match(st$stand, rownames(x))
 
-  sc    <- object$species_classification
-  sc    <- sc[order(sc$level), ]
+  sc <- object$species_classification
+  if("level" %in% colnames(sc)) sc <- sc[order(sc$level), ]
   first <- sc[!duplicated(sc$species), ]
   first <- first[order(first$path, first$species), ]
   sp_order <- match(first$species, colnames(x))

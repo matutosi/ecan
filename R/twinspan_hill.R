@@ -95,10 +95,11 @@ tw_find <- function(zone, score, opt){
 # Weight of each stand for one side of a division (INDSCO).
 # A stand is counted in proportion to how far it lies beyond the zone
 # between cut1 and cut2, up to a full weight of one.
-tw_indsco <- function(y, x, cut1, cut2){
+tw_indsco <- function(y, x, cut1, cut2, rw = NULL){
   mid <- (cut1 + cut2) / 2
   hlf <- (cut2 - cut1) / 2 + 1e-10
   ax  <- pmax(pmin((x - mid) / hlf, 1), -1)
+  if(!is.null(rw)) ax <- ax * rw
   neg <- pmax(-ax, 0)
   pos <- pmax( ax, 0)
   return(list(axneg = sum(neg),
@@ -111,11 +112,11 @@ tw_indsco <- function(y, x, cut1, cut2){
 # The polished axis is the sum of two ordinations: an additive score in
 # which frequent and preferential pseudospecies weigh most, and the plain
 # mean preference of the pseudospecies of the stand.
-tw_polish <- function(y, x, opt){
+tw_polish <- function(y, x, opt, rw = NULL){
   rng <- range(x)
   mid <- sum(rng) / 2
   hlf <- (rng[2] - rng[1]) * 0.5 * opt$cr_cut
-  s   <- tw_indsco(y, x, mid - hlf, mid + hlf)
+  s   <- tw_indsco(y, x, mid - hlf, mid + hlf, rw)
   prlim <- (opt$rat_lim - 1) / (opt$rat_lim + 1)
   ay  <- if(s$axneg > 0) s$yneg / s$axneg else rep(0, ncol(y))
   ayy <- if(s$axpos > 0) s$ypos / s$axpos else rep(0, ncol(y))
@@ -138,13 +139,13 @@ tw_polish <- function(y, x, opt){
 # Indicator pseudospecies of a division, in the way of the original.
 # The number of indicators is the one that misclassifies fewest stands,
 # and the stands of the critical zone are placed by the indicator score.
-tw_indicator_hill <- function(y, x, opt){
+tw_indicator_hill <- function(y, x, opt, rw = NULL){
   rng <- range(x)
   mid <- sum(rng) / 2
   hlf <- 0.5 * opt$cr_long * (rng[2] - rng[1])
   zone <- tw_zone(x, mid - hlf, mid + hlf, opt$mz_out, opt$mz_crit)
   cut1 <- mid - hlf * opt$mz_ind / opt$mz_crit
-  s    <- tw_indsco(y, x, cut1, 2 * mid - cut1)
+  s    <- tw_indsco(y, x, cut1, 2 * mid - cut1, rw)
   d    <- s$ypos / max(s$axpos, 1e-12) - s$yneg / max(s$axneg, 1e-12)
   cand <- which(abs(d) >= opt$feeble)
   if(!length(cand)) return(NULL)
@@ -166,6 +167,76 @@ tw_indicator_hill <- function(y, x, opt){
   best$positive <- pos
   best$zone     <- zone
   return(best)
+}
+
+#' Data on which the species of TWINSPAN are classified
+#'
+#' The original TWINSPAN does not classify the species on the
+#' pseudospecies table itself, but on how faithful each species is to the
+#' groups of stands.
+#' Every group of the hierarchy, the terminal ones and the ones that were
+#' divided further, becomes three pseudo-quadrats, at the cut levels
+#' 0.8, 2 and 6 of the ratio between the frequency of the species inside
+#' the group and its frequency outside.
+#' A species weighs as much as it occurs, and a group weighs as much as
+#' it holds, multiplied by `sqrt(2)` for every level it stands above the
+#' deepest one, and doubled for the two upper cut levels.
+#'
+#' @param object A "twinspan" object, or the result of `tw_tree()`.
+#' @param psp    The pseudospecies matrix of that object.
+#' @param sp_map The species of each pseudospecies.
+#' @param levmax The deepest level of division.
+#' @return  A list of the binary matrix ($y) of species by
+#'          pseudo-quadrats, the weights of the species ($rw) and of the
+#'          pseudo-quadrats ($cw), and the ratios ($ratio).
+#' @examples
+#' \donttest{
+#' data(dune, package = "vegan")
+#' tw <- twinspan(dune)
+#' str(tw_species_data(tw))
+#' }
+#' @export
+tw_species_data <- function(object, psp = object$pseudospecies,
+                            sp_map = attr(psp, "species"),
+                            levmax = object$max_depth){
+  tree <- object
+  lv   <- tw_species_counts(psp, sp_map)          # stands x species
+  sp   <- colnames(lv)
+  # the group of every stand, in the numbering of the original
+  leaf <- vapply(tree$nodes, function(nd)
+                   if(all(is.na(nd$children)))
+                     strtoi(paste0("1", nd$path), base = 2L) else NA_integer_,
+                 integer(1))
+  id <- integer(nrow(lv))
+  for(i in seq_along(tree$nodes))
+    if(!is.na(leaf[i])) id[tree$nodes[[i]]$members] <- leaf[i]
+  nc  <- max(id)
+  mat <- matrix(0, nc, length(sp), dimnames = list(NULL, sp))
+  for(k in unique(id))
+    mat[k, ] <- colSums(lv[id == k, , drop = FALSE])
+  # the totals of a group include those of the groups it was divided into
+  if(nc >= 2)
+    for(i in seq(nc, 2))
+      mat[i %/% 2, ] <- mat[i %/% 2, ] + mat[i, ]
+  clsum <- rowSums(mat)
+  ratio <- mat * (clsum[1] - clsum) /
+           (clsum * (rep(mat[1, ], each = nc) - mat) + 1e-7)
+  ratio <- t(ratio)                                # species x groups
+  keep  <- clsum > 0
+  ratio <- ratio[, keep, drop = FALSE]
+  y <- cbind(ratio >= 0.8, ratio >= 2, ratio >= 6) * 1L
+  o <- as.vector(t(matrix(seq_len(3 * ncol(ratio)), ncol = 3)))
+  y <- y[, o, drop = FALSE]                        # three columns per group
+  colnames(y) <- paste0("group_", rep(which(keep), each = 3), "_",
+                        rep(1:3, ncol(ratio)))
+  rownames(y) <- sp
+  # weights
+  rw  <- colSums(lv > 0)                           # how often a species occurs
+  cwt <- clsum[keep]
+  dep <- floor(log2(which(keep)))
+  cwt <- cwt * sqrt(2)^(levmax - dep)
+  cw  <- rep(cwt, each = 3) * c(1, 2, 2)
+  return(list(y = y, rw = as.vector(rw), cw = as.vector(cw), ratio = ratio))
 }
 
 # Occurrences of every species in every stand, counted over the cut
@@ -251,13 +322,16 @@ tw_swap <- function(ctx, neg, pos){
 
 # One dichotomy in the way of the original TWINSPAN (CLASS).
 tw_divide_hill <- function(y, opt, ctx = NULL){
-  w  <- if(isTRUE(opt$downweight)) tw_downweight(y, method = "hill") else NULL
-  ra <- tw_ra(y, w = w)
+  rw <- if(is.null(ctx$rw)) NULL else ctx$rw[ctx$members]
+  w  <- if(isTRUE(opt$downweight))
+          tw_downweight(y, method = "hill", rw = rw) else NULL
+  if(!is.null(ctx$cw)) w <- if(is.null(w)) ctx$cw else w * ctx$cw
+  ra <- tw_ra(y, w = w, rw = rw)
   x  <- ra$sample
   if(!any(x != 0)) return(NULL)
   rng <- range(x)
   if(rng[2] <= -rng[1]) x <- -x    # the longer end of the axis is positive
-  for(i in seq_len(opt$polish_iter)) x <- tw_polish(y, x, opt)
+  for(i in seq_len(opt$polish_iter)) x <- tw_polish(y, x, opt, rw)
   rng <- range(x)
   if(rng[2] - rng[1] <= 0) return(NULL)
   mid <- sum(rng) / 2
@@ -269,7 +343,7 @@ tw_divide_hill <- function(y, opt, ctx = NULL){
     mid <- -mid
     pos <- !pos
   }
-  ind <- tw_indicator_hill(y, x, opt)
+  ind <- tw_indicator_hill(y, x, opt, rw)
   if(!is.null(ind) && any(ind$positive) && !all(ind$positive))
     pos <- ind$positive
   return(list(positive   = pos,

@@ -4,12 +4,14 @@
 \alias{tw_ra}
 \title{Reciprocal averaging (first correspondence analysis axis)}
 \usage{
-tw_ra(y, w = NULL, max_iter = 999, tol = 1e-10)
+tw_ra(y, w = NULL, rw = NULL, max_iter = 999, tol = 1e-10)
 }
 \arguments{
 \item{y}{A binary matrix of stands by pseudospecies.}
 
 \item{w}{A numeric vector of pseudospecies weights, or NULL.}
+
+\item{rw}{A numeric vector of stand weights, or NULL.}
 
 \item{max_iter}{An integer of the maximum number of iterations.}
 

@@ -83,8 +83,8 @@ which is needed for tw_two_way().}
 twinspan() returns a list with class "twinspan".
 $classification: a tibble of stand, group, path and depth.
 $species_classification:
-a tibble of pseudospecies, species, level,
-group, path and depth.
+a tibble of species, group, path and depth
+(of pseudospecies when \code{polish = "ecan"}).
 $nodes:          a list of the nodes of the division tree.
 $pseudospecies:  the pseudospecies matrix.
 $call, and the parameters above.
@@ -124,9 +124,13 @@ same numbers, the same divisions and the same eigenvalues.
 On \code{pyrifos} the first division is the same, and the deeper ones
 differ; that data is transformed so that most pseudospecies are of the
 lowest cut level, which leaves many ties for the division to break.
-One thing is still not reproduced: the pseudospecies are classified
-without weighting them by the groups of the stands, so the order of
-the species in \code{tw_two_way()} can differ from the original.
+The species are classified in the way of the original too, that is on
+how faithful each of them is to the groups of stands rather than on
+the pseudospecies table itself: see \code{tw_species_data()}.
+The groups of species that this gives are close to those of the
+original but not the same, so the order of the species in
+\code{tw_two_way()} can differ from it.
+The classification of the stands does not depend on this.
 
 \code{polish = "ecan"} keeps the earlier way of this package, which was
 written from the published description alone: the division is refined
