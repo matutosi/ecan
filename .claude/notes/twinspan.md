@@ -58,7 +58,7 @@
 ### 既定値
 
 ```
-cut_levels = c(0, 2, 5, 10, 20), min_size = 5, max_depth = 6, max_indicators = 7,
+cut_levels = c(0, 2, 5, 10, 20), min_size = 5, max_depth = 7, max_indicators = 7,
 diff_threshold = 1/3, refine_iter = 5, modified = FALSE, n_clusters = NULL,
 use_indicator = FALSE, species = TRUE
 ```
@@ -69,11 +69,13 @@ use_indicator = FALSE, species = TRUE
 
 ### 原典と違うと分かっている点
 
-1. **`max_depth` の既定が 6**．原典は **7**．
-2. **borderline 標本の入れ替え規則と，群の大きさの平衡化を入れていない**．
+1. **borderline 標本の入れ替え規則と，群の大きさの平衡化を入れていない**．
    小さすぎる群を作らない配慮は `min_size` (それ未満の群は分割しない) だけ．
-3. **種の分類で標本群による重み付けをしていない**．転置した擬似種行列へ同じ手続きを当てるだけ．
-4. RA は**収束するまで回す**．原典は反復回数が決め打ちの可能性がある．
+2. **種の分類で標本群による重み付けをしていない**．転置した擬似種行列へ同じ手続きを当てるだけ．
+3. RA は**収束するまで回す**．原典は反復回数が決め打ちの可能性がある．
+
+`max_depth` の既定は **2026-08-27 に 6 から 7 (原典と同じ) へそろえた**．
+dune では結果は変わらない (`min_size` のほうが先に効く)．
 
 ## 検証の状況
 
@@ -126,7 +128,5 @@ b が意味を持つのは「pure R のまま完全一致も欲しい」とき�
 
 ## 次に決めること
 
-1. **【判断待ち】`max_depth` の既定を 6 のままにするか，原典と同じ 7 にするか**．
-   完全一致は追わないので必須ではないが，そろえておくと原典との比較がしやすい．
-2. **【判断待ち】`develop` へ merge する時期**．
-3. README / vignette への記載．
+1. **【判断待ち】`develop` へ merge する時期**．
+2. README / vignette への記載．

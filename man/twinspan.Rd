@@ -10,7 +10,7 @@ twinspan(
   x,
   cut_levels = c(0, 2, 5, 10, 20),
   min_size = 5,
-  max_depth = 6,
+  max_depth = 7,
   max_indicators = 7,
   diff_threshold = 1/3,
   refine_iter = 5,
@@ -32,7 +32,8 @@ rownames: stands, colnames: species.}
 
 \item{min_size}{An integer. Groups smaller than this are not divided.}
 
-\item{max_depth}{An integer of the maximum number of division levels.}
+\item{max_depth}{An integer of the maximum number of division levels.
+The default (7) is the same as the original TWINSPAN.}
 
 \item{max_indicators}{An integer of the maximum number of indicator
 pseudospecies used to summarise a division.}
@@ -93,7 +94,6 @@ It is \strong{not} a port of Hill's original FORTRAN program, and
 the results may differ from it in details.
 The known differences are:
 \itemize{
-\item the default \code{max_depth} is 6, while the original uses 7,
 \item stands close to the boundary of a division are not swapped between
 the groups, and the size of the groups is not balanced;
 only \code{min_size} keeps small groups from being divided,

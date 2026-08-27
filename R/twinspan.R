@@ -13,7 +13,6 @@
 #' the results may differ from it in details.
 #' The known differences are:
 #'
-#' * the default `max_depth` is 6, while the original uses 7,
 #' * stands close to the boundary of a division are not swapped between
 #'   the groups, and the size of the groups is not balanced;
 #'   only `min_size` keeps small groups from being divided,
@@ -32,6 +31,7 @@
 #' @param cut_levels  A numeric vector of pseudospecies cut levels.
 #' @param min_size    An integer. Groups smaller than this are not divided.
 #' @param max_depth   An integer of the maximum number of division levels.
+#'                    The default (7) is the same as the original TWINSPAN.
 #' @param max_indicators
 #'                    An integer of the maximum number of indicator
 #'                    pseudospecies used to summarise a division.
@@ -93,7 +93,7 @@
 twinspan <- function(x,
                      cut_levels     = c(0, 2, 5, 10, 20),
                      min_size       = 5,
-                     max_depth      = 6,
+                     max_depth      = 7,
                      max_indicators = 7,
                      diff_threshold = 1/3,
                      refine_iter    = 5,

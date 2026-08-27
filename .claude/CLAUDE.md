@@ -102,9 +102,9 @@ TWINSPAN (`worktree-twinspan` で作業中．詳細は [notes/twinspan.md](notes
 - **【決定 2026-08-27】pure R の独立実装のままとし，原典との完全一致は追わない**．
   この件はこれで終わり (以後は蒸し返さない)．`?twinspan` に既知の差異4点と，
   原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
-1. **【判断待ち】`max_depth` の既定を 6 のままにするか，原典と同じ 7 にするか**．
-2. **【判断待ち】`develop` へ merge する時期**．
-3. README / vignette への記載．
+- **【決定 2026-08-27】`max_depth` の既定を原典と同じ 7 にそろえた**．
+1. **【判断待ち】`develop` へ merge する時期**．
+2. README / vignette への記載．
 
 いつか
 
