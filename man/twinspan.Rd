@@ -127,10 +127,11 @@ lowest cut level, which leaves many ties for the division to break.
 The species are classified in the way of the original too, that is on
 how faithful each of them is to the groups of stands rather than on
 the pseudospecies table itself: see \code{tw_species_data()}.
-The groups of species that this gives are close to those of the
-original but not the same, so the order of the species in
-\code{tw_two_way()} can differ from it.
-The classification of the stands does not depend on this.
+This gives the species groups of the original for \code{dune} and \code{sipoo},
+but not for \code{varespec}, \code{mite} and \code{BCI}, where the groups are close
+to the original without being the same.
+Only the order of the species in \code{tw_two_way()} depends on this;
+the classification of the stands does not.
 
 \code{polish = "ecan"} keeps the earlier way of this package, which was
 written from the published description alone: the division is refined

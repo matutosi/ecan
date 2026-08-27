@@ -30,10 +30,11 @@
 #' The species are classified in the way of the original too, that is on
 #' how faithful each of them is to the groups of stands rather than on
 #' the pseudospecies table itself: see `tw_species_data()`.
-#' The groups of species that this gives are close to those of the
-#' original but not the same, so the order of the species in
-#' `tw_two_way()` can differ from it.
-#' The classification of the stands does not depend on this.
+#' This gives the species groups of the original for `dune` and `sipoo`,
+#' but not for `varespec`, `mite` and `BCI`, where the groups are close
+#' to the original without being the same.
+#' Only the order of the species in `tw_two_way()` depends on this;
+#' the classification of the stands does not.
 #'
 #' `polish = "ecan"` keeps the earlier way of this package, which was
 #' written from the published description alone: the division is refined

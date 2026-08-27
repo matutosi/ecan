@@ -57,9 +57,12 @@ tw_zone <- function(x, crmin, crmax, mz_out, mz_crit){
 # Chooses the zone boundary and the threshold that misclassify fewest
 # stands, and breaks ties by the balance of the two groups, then by a
 # threshold near zero, then by a centred band.
-tw_find <- function(zone, score, opt){
-  mz   <- opt$mz_crit + 2 * opt$mz_out
-  vals <- sort(unique(score))
+tw_find <- function(zone, score, opt, n_ind, n_neg){
+  mz     <- opt$mz_crit + 2 * opt$mz_out
+  ishift <- 1 + n_neg
+  # the indicator score runs from -n_neg to n_ind - n_neg, and is held
+  # as an index of 1 to n_ind + 1, whatever values actually occur
+  vals <- seq_len(n_ind + 1) - ishift
   best <- NULL
   for(izd in (opt$mz_out + opt$mz_ind):(opt$mz_out + opt$mz_crit)){
     iiz <- izd - opt$mz_ind
@@ -71,7 +74,7 @@ tw_find <- function(zone, score, opt){
       thr  <- vals[is]
       miss <- sum(zone <= iiz & score >  thr) +
               sum(zone >  izd & score <= thr)
-      ia   <- abs(is - 1)
+      ia   <- abs(is - ishift)
       cur  <- list(misclassified = miss, izd = izd, iiz = iiz,
                    threshold = thr, balance = bal, ia = ia, ib = ib)
       take <- FALSE
@@ -112,7 +115,7 @@ tw_indsco <- function(y, x, cut1, cut2, rw = NULL){
 # The polished axis is the sum of two ordinations: an additive score in
 # which frequent and preferential pseudospecies weigh most, and the plain
 # mean preference of the pseudospecies of the stand.
-tw_polish <- function(y, x, opt, rw = NULL){
+tw_polish <- function(y, x, opt, rw = NULL, cw = NULL){
   rng <- range(x)
   mid <- sum(rng) / 2
   hlf <- (rng[2] - rng[1]) * 0.5 * opt$cr_cut
@@ -125,14 +128,16 @@ tw_polish <- function(y, x, opt, rw = NULL){
   freq <- pmin(den, opt$frq_lim)
   pref <- pmax(pmin(pref, prlim), -prlim)
   pref[abs(pref) < 0.001] <- 0.001
-  colwgt <- (freq / opt$frq_lim)^opt$icw_exp *
+  if(is.null(cw)) cw <- rep(1, ncol(y))
+  colwgt <- cw * (freq / opt$frq_lim)^opt$icw_exp *
             (abs(pref) / prlim)^opt$ipr_exp
   score  <- pref / prlim
   ord1 <- as.vector(y %*% (score * colwgt))
   mx   <- max(abs(ord1))
   if(mx > 0) ord1 <- ord1 / mx
-  den2 <- rowSums(y)
-  ord2 <- ifelse(den2 > 0, as.vector(y %*% score) / den2, 0)
+  # the second ordination uses the basic weights of the columns only
+  den2 <- as.vector(y %*% cw)
+  ord2 <- ifelse(den2 > 0, as.vector(y %*% (score * cw)) / den2, 0)
   return(ord1 + ord2)
 }
 
@@ -150,14 +155,14 @@ tw_indicator_hill <- function(y, x, opt, rw = NULL){
   cand <- which(abs(d) >= opt$feeble)
   if(!length(cand)) return(NULL)
   freq <- colSums(y)
-  ord  <- cand[order(-abs(d[cand]), -freq[cand], colnames(y)[cand])]
+  ord  <- cand[order(-abs(d[cand]), -freq[cand], cand)]
   ord  <- ord[seq_len(min(opt$max_indicators, length(ord)))]
   best <- NULL
   for(k in seq_along(ord)){
     sel   <- ord[seq_len(k)]
     sgn   <- sign(d[sel])
     score <- as.vector(y[, sel, drop = FALSE] %*% sgn)
-    f     <- tw_find(zone, score, opt)
+    f     <- tw_find(zone, score, opt, n_ind = k, n_neg = sum(sgn < 0))
     if(is.null(best) || f$misclassified < best$misclassified)
       best <- c(f, list(indicators = sel, sign = sgn, score = score))
   }
@@ -222,19 +227,15 @@ tw_species_data <- function(object, psp = object$pseudospecies,
   ratio <- mat * (clsum[1] - clsum) /
            (clsum * (rep(mat[1, ], each = nc) - mat) + 1e-7)
   ratio <- t(ratio)                                # species x groups
-  keep  <- clsum > 0
-  ratio <- ratio[, keep, drop = FALSE]
   y <- cbind(ratio >= 0.8, ratio >= 2, ratio >= 6) * 1L
-  o <- as.vector(t(matrix(seq_len(3 * ncol(ratio)), ncol = 3)))
+  o <- as.vector(t(matrix(seq_len(3 * nc), ncol = 3)))
   y <- y[, o, drop = FALSE]                        # three columns per group
-  colnames(y) <- paste0("group_", rep(which(keep), each = 3), "_",
-                        rep(1:3, ncol(ratio)))
+  colnames(y) <- paste0("group_", rep(seq_len(nc), each = 3), "_",
+                        rep(1:3, nc))
   rownames(y) <- sp
   # weights
   rw  <- colSums(lv > 0)                           # how often a species occurs
-  cwt <- clsum[keep]
-  dep <- floor(log2(which(keep)))
-  cwt <- cwt * sqrt(2)^(levmax - dep)
+  cwt <- clsum * sqrt(2)^(levmax - floor(log2(seq_len(nc))))
   cw  <- rep(cwt, each = 3) * c(1, 2, 2)
   return(list(y = y, rw = as.vector(rw), cw = as.vector(cw), ratio = ratio))
 }
@@ -270,16 +271,20 @@ tw_members_of <- function(nodes, path){
 # A negative value means that the group resembles the negative side.
 # The species that prefer one side count most, and the indifferent ones
 # are trimmed so that they cannot outweigh the preferential ones.
-tw_closer <- function(lv, ref, neg, pos, active){
+tw_closer <- function(lv, ref, neg, pos, active, rw = NULL, cw = NULL){
   small <- 1e-7
-  tot  <- length(ref)
-  tot0 <- length(neg)
-  tot1 <- length(pos)
-  if(!tot || !tot0 || !tot1 || !any(active)) return(0)
+  if(is.null(rw)) rw <- rep(1, nrow(lv))
+  tot  <- sum(rw[ref])
+  tot0 <- sum(rw[neg])
+  tot1 <- sum(rw[pos])
+  if(!length(ref) || !length(neg) || !length(pos) || !any(active)) return(0)
+  if(tot <= 0 || tot0 <= 0 || tot1 <= 0) return(0)
   lv  <- lv[, active, drop = FALSE]
-  ay  <- (colSums(lv[ref, , drop = FALSE]) + small) / tot
-  ay0 <- (colSums(lv[neg, , drop = FALSE]) + small) / tot0
-  ay1 <- (colSums(lv[pos, , drop = FALSE]) + small) / tot1
+  if(!is.null(cw)) lv <- sweep(lv, 2, cw[active], "*")
+  wsum <- function(i) colSums(sweep(lv[i, , drop = FALSE], 1, rw[i], "*"))
+  ay  <- (wsum(ref) + small) / tot
+  ay0 <- (wsum(neg) + small) / tot0
+  ay1 <- (wsum(pos) + small) / tot1
   pref <- pmin(abs(ay0 - ay1) / (ay0 + ay1) / 0.3, 1)^4
   to_pos <- ay1 > ay0
   ppos <- ifelse(to_pos, pref, 0)
@@ -308,9 +313,9 @@ tw_swap <- function(ctx, neg, pos){
   if(is.null(ctx) || !nzchar(ctx$path) || is.null(ctx$sibling)) return(FALSE)
   # only the species that occur in the group being divided are compared
   active <- colSums(ctx$lv[ctx$members, , drop = FALSE]) > 0
-  y1 <- tw_closer(ctx$lv, ctx$sibling, neg, pos, active)
+  y1 <- tw_closer(ctx$lv, ctx$sibling, neg, pos, active, ctx$rw, ctx$cw)
   y2 <- if(nchar(ctx$path) >= 2 && !is.null(ctx$uncle))
-          tw_closer(ctx$lv, ctx$uncle, neg, pos, active) else 0
+          tw_closer(ctx$lv, ctx$uncle, neg, pos, active, ctx$rw, ctx$cw) else 0
   id <- strtoi(paste0("1", ctx$path), base = 2L)
   w  <- if((id %% 4) %in% c(1, 2)) -0.5 else 0.5
   score <- y1 + w * y2
@@ -328,10 +333,11 @@ tw_divide_hill <- function(y, opt, ctx = NULL){
   if(!is.null(ctx$cw)) w <- if(is.null(w)) ctx$cw else w * ctx$cw
   ra <- tw_ra(y, w = w, rw = rw)
   x  <- ra$sample
-  if(!any(x != 0)) return(NULL)
+  # the original abandons a division whose axis carries next to nothing
+  if(!any(x != 0) || ra$eig <= 1e-5) return(NULL)
   rng <- range(x)
   if(rng[2] <= -rng[1]) x <- -x    # the longer end of the axis is positive
-  for(i in seq_len(opt$polish_iter)) x <- tw_polish(y, x, opt, rw)
+  for(i in seq_len(opt$polish_iter)) x <- tw_polish(y, x, opt, rw, ctx$cw)
   rng <- range(x)
   if(rng[2] - rng[1] <= 0) return(NULL)
   mid <- sum(rng) / 2
