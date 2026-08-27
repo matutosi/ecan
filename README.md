@@ -372,13 +372,13 @@ tw
 #> division 1 at level 0 (n = 20, eig = 0.511)
 #>   indicators: Ranuflam_1(+) Ranuflam_2(+) Agrostol_1(+) Agrostol_2(+) Eleopalu_1(+) Eleopalu_2(+) Lolipere_1(-)
 #> division 2 at level 1 (n = 13, eig = 0.384)
-#>   indicators: Hyporadi_1(+)
+#>   indicators: Hyporadi_1(-)
 #> division 3 at level 1 (n = 7, eig = 0.411)
-#>   indicators: Alopgeni_3(+)
+#>   indicators: Alopgeni_3(-)
 #> division 4 at level 2 (n = 10, eig = 0.317)
 #>   indicators: Planlanc_1(-)
 #> division 5 at level 3 (n = 5, eig = 0.284)
-#>   indicators: Achimill_1(-)
+#>   indicators: Achimill_1(+)
 #> division 6 at level 3 (n = 5, eig = 0.301)
 #>   indicators: Lolipere_3(-)
 
@@ -386,12 +386,12 @@ head(tw$classification)
 #> # A tibble: 6 × 4
 #>   stand group path  depth
 #>   <chr> <int> <chr> <int>
-#> 1 5         1 0000      4
-#> 2 6         1 0000      4
-#> 3 7         1 0000      4
-#> 4 10        1 0000      4
-#> 5 18        2 0001      4
-#> 6 1         3 0010      4
+#> 1 11        1 00        2
+#> 2 17        1 00        2
+#> 3 19        1 00        2
+#> 4 18        2 0100      4
+#> 5 5         3 0101      4
+#> 6 6         3 0101      4
 
 # the division tree works with the clustering helpers of ecan
 ggdendro::ggdendrogram(stats::as.hclust(tw))
@@ -407,7 +407,7 @@ tw_mod <- twinspan(dune, modified = TRUE, n_clusters = 4)
 table(tw_mod$classification$group)
 #> 
 #>  1  2  3  4 
-#> 10  3  4  3
+#>  3 10  3  4
 ```
 
 `tw_two_way()` arranges the stands and the species by their divisions.
@@ -415,43 +415,43 @@ The digits below the table show the dichotomy of each stand.
 
 ``` r
 tw_two_way(tw)
-#>          56711123491111112811
-#>             08     1794560 23
-#> Bracruta 23223--2222-2-22222-  000000
-#> Scorautu 22223-322232322-2222  000000
-#> Trifrepe 23232-32122-231--222  000000
-#> Poatriv  3232-23333-----2-223  000001
-#> Sagiproc --------322-2----222  000010
-#> Juncbufo --2------2--------22  000011
-#> Rumeacet 332------2--------2-  000011
-#> Bellpere 2--22-222-----------  000100
-#> Elymrepe 2----22223----------  000100
-#> Lolipere 23332333323------2--  000100
-#> Poaprat  222222232221-----2-2  000100
-#> Cirsarve --------2-----------  00011
-#> Achimill 2222-12----2--------  001000
-#> Bromhord 2-22--2-2-----------  001000
-#> Anthodor 2222-------22-------  001010
-#> Trifprat 232-----------------  001011
-#> Planlanc 33322-----22--------  0011
-#> Vicilath ---11-----2---------  0011
-#> Airaprae -----------22-------  0100
-#> Hyporadi ----------223-------  0100
-#> Empenigr ------------2-------  0101
-#> Alopgeni ------2322-----2-333  1000
-#> Chenalbu -------------------1  1000
-#> Agrostol -------232---2233223  1001
-#> Eleopalu -------------23322--  101000
-#> Ranuflam -------------22222-2  101000
-#> Callcusp -------------2-22---  101001
-#> Comapalu -------------22-----  10101
-#> Juncarti ---------2----2222--  1011
-#> Salirepe ----2-------2---3---  11
+#>          11115671123498111112
+#>          1798   0      234560
+#> Empenigr --2-----------------  0000
+#> Airaprae -22-----------------  0001
+#> Hyporadi 223-----------------  0001
+#> Planlanc 22-23332------------  0100
+#> Vicilath 2--1---1------------  0100
+#> Trifprat ----232-------------  010100
+#> Anthodor -22-2222------------  010101
+#> Achimill -2--222212----------  010110
+#> Bromhord ----2-22-2-2--------  010110
+#> Cirsarve -----------2--------  01100
+#> Bellpere ---22--2-222--------  011011
+#> Elymrepe ----2---22223-------  011011
+#> Lolipere 3--22333333322------  011011
+#> Poaprat  21-22222223222-2----  011011
+#> Poatriv  ----323223333223--2-  011100
+#> Bracruta 2-232322--22222--222  011101
+#> Scorautu 32332222-322222222-2  011101
+#> Trifrepe 2-222323-321222231--  011101
+#> Sagiproc 2-2--------32222----  011110
+#> Juncbufo ------2-----2-22----  011111
+#> Rumeacet ----332-----2-2-----  011111
+#> Alopgeni ---------2322333--2-  1000
+#> Chenalbu ---------------1----  1000
+#> Agrostol ----------2322232233  1001
+#> Callcusp ----------------2-22  101000
+#> Eleopalu -------------2--2332  101001
+#> Ranuflam -------------2-22222  101001
+#> Comapalu ----------------22--  10101
+#> Juncarti ------------22---222  1011
+#> Salirepe --22---------------3  11
 #> 
 #>          00000000000001111111
-#>          00000000001110000111
-#>          0000011111          
-#>          0000100001
+#>          00011111111110001111
+#>             0000011111       
+#>             0111100001
 ```
 
 ### Ordination

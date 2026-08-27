@@ -69,16 +69,13 @@ test_that("polish = 'hill' reproduces the original TWINSPAN", {
   data(dune, package = "vegan")
   tw <- twinspan(dune)
   expect_equal(tw$polish, "hill")
-  # the classification of Hill's program for the dune data
-  hill <- c("11" = 1, "17" = 1, "19" = 1,
-            "18" = 2, "5" = 3, "6" = 3, "7" = 3, "10" = 3,
-            "1" = 4, "2" = 4, "3" = 4, "4" = 4, "9" = 5,
-            "8" = 6, "12" = 6, "13" = 6,
-            "14" = 7, "15" = 7, "16" = 7, "20" = 7)
-  g <- tw$classification$group[match(names(hill), tw$classification$stand)]
-  # the same partition, whatever the numbers of the groups are
-  expect_equal(length(unique(paste(hill, g))), length(unique(hill)))
-  expect_equal(length(unique(g)), length(unique(hill)))
+  # the group of every stand in Hill's program, with his numbering
+  hill <- c(22, 22, 22, 22, 21, 21, 21, 6, 23, 21,
+            4, 6, 6, 7, 7, 7, 4, 20, 4, 7)
+  names(hill) <- rownames(dune)
+  id <- stats::setNames(strtoi(paste0("1", tw$classification$path), base = 2L),
+                        tw$classification$stand)
+  expect_equal(unname(id[names(hill)]), unname(hill))
   # the eigenvalue of the first division of the original
   expect_equal(tw$nodes[[1]]$division$eig, 0.5106, tolerance = 1e-3)
   # the original uses few indicators, chosen to misclassify fewest stands
