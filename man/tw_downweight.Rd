@@ -4,30 +4,52 @@
 \alias{tw_downweight}
 \title{Downweighting of rare pseudospecies}
 \usage{
-tw_downweight(y, fraction = 5)
+tw_downweight(
+  y,
+  method = c("hill", "decorana"),
+  fraction = 5,
+  frq_lim = 0.2,
+  w_min = 0.01
+)
 }
 \arguments{
 \item{y}{A binary matrix of stands by pseudospecies.}
 
-\item{fraction}{A numeric of the downweighting fraction.}
+\item{method}{A string, "hill" or "decorana".}
+
+\item{fraction}{A numeric of the downweighting fraction of "decorana".}
+
+\item{frq_lim}{A numeric of the frequency above which "hill" does not
+downweight.}
+
+\item{w_min}{A numeric of the smallest weight of "hill".}
 }
 \value{
 A numeric vector of the weight of each pseudospecies.
 }
 \description{
-Gives a weight to each pseudospecies in the way of Hill's
-\code{decorana()}: a pseudospecies whose frequency is less than
-\code{1 / fraction} of the most frequent one is weighted in proportion to
-its frequency, and the others are weighted 1.
-The original TWINSPAN downweights the rare pseudospecies before the
-correspondence analysis, and \code{twinspan()} does the same by default.
+Gives a weight to each pseudospecies, so that the rare ones weigh less
+in the ordination.
+The original TWINSPAN downweights them before the correspondence
+analysis, and \code{twinspan()} does the same by default.
 The weights are used only in the ordination:
 the preference of the pseudospecies is counted on the raw occurrences.
+}
+\details{
+Two ways are available.
+"hill" is the \code{WEIGHT} subroutine of the original TWINSPAN:
+a pseudospecies occurring in a smaller proportion of the stands than
+\code{frq_lim} is weighted in proportion to that shortfall, and no weight
+falls below \code{w_min}.
+"decorana" is the downweighting of \code{decorana()} and of
+\code{vegan::downweight()}, where the frequencies are compared with the
+most frequent pseudospecies instead of a fixed proportion.
 }
 \examples{
 \donttest{
 data(dune, package = "vegan")
-w <- tw_downweight(pseudospecies(dune))
-summary(w)
+psp <- pseudospecies(dune)
+summary(tw_downweight(psp))
+summary(tw_downweight(psp, method = "decorana"))
 }
 }

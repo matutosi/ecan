@@ -18,6 +18,7 @@ twinspan(
   n_clusters = NULL,
   use_indicator = FALSE,
   downweight = TRUE,
+  polish = c("hill", "ecan"),
   species = TRUE
 )
 
@@ -65,6 +66,13 @@ downweight the rare pseudospecies in the
 ordination, in the way of \code{decorana()}.
 See \code{tw_downweight()}.}
 
+\item{polish}{A string.
+"hill" (the default): divide in the way of the
+original TWINSPAN.
+"ecan": the earlier way of this package.
+\code{diff_threshold}, \code{refine_iter} and \code{use_indicator}
+are used only by "ecan".}
+
 \item{species}{A logical.
 TRUE: classify pseudospecies as well as stands,
 which is needed for tw_two_way().}
@@ -96,30 +104,38 @@ of pseudospecies, refines the division with differential species,
 and summarises it with a small set of indicator pseudospecies.
 }
 \details{
-This implementation follows the published description of the algorithm.
-It is written in plain R and needs no compiler.
-It is \strong{not} a port of Hill's original FORTRAN program, and
-the results may differ from it in details.
-The known differences are:
+The package is written in plain R and needs no compiler.
+It is not a port of Hill's FORTRAN program, but \code{polish = "hill"}
+(the default) follows the steps of that program:
+the rare pseudospecies are downweighted as \code{WEIGHT} does, the axis is
+polished twice as \code{POLISH} does, the stands are divided at the middle
+of the range of the polished axis, and the stands of the critical zone
+around that point are placed by the indicator pseudospecies, whose
+number and threshold are the ones that misclassify fewest stands.
+The constants of the original are in \code{tw_hill_const()}.
+
+On the \code{dune}, \code{varespec}, \code{mite}, \code{sipoo} and \code{BCI} data of \code{vegan}
+this reproduces the classification of the original program exactly,
+at every level of the hierarchy and with the same eigenvalues.
+On \code{pyrifos} the first division is the same, and the deeper ones
+differ; that data is transformed so that most pseudospecies are of the
+lowest cut level, which leaves many ties for the division to break.
+Two things are still not reproduced:
 \itemize{
-\item stands close to the boundary of a division are not swapped between
-the groups, and the size of the groups is not balanced;
-only \code{min_size} keeps small groups from being divided,
-\item all pseudospecies whose preference reaches \code{diff_threshold} are
-eligible as indicators, and the \code{max_indicators} best of them are
-used, while the original chooses fewer of them,
+\item which of the two groups of a division is called the first one
+(the original compares them with the group next to their parent),
+so the numbering of the groups can differ although the grouping
+itself is the same,
 \item the pseudospecies are classified without weighting them by the
-groups of the stands,
-\item the reciprocal averaging is iterated until it converges.
+groups of the stands.
 }
 
-On the \code{dune}, \code{varespec} and \code{mite} data of \code{vegan} the first division
-agrees with the original for 95\%, 96\% and 83\% of the stands, and the
-adjusted Rand index of the final groups is 0.87, 0.52 and 0.40:
-the two agree on the coarse structure and drift apart as the divisions
-go deeper.
-The eigenvalue of the first division is within 0.005 of the original
-(0.5151 against 0.5106, 0.1785 against 0.1789, 0.3638 against 0.3629).
+\code{polish = "ecan"} keeps the earlier way of this package, which was
+written from the published description alone: the division is refined
+with the pseudospecies whose preference reaches \code{diff_threshold}, and
+the stands are divided at the centroid of the axis.
+It is kept because it needs no zone or indicator to place a stand,
+but it does not follow the original as closely.
 
 If the results of the original program are needed,
 the \code{twinspan} package of Oksanen

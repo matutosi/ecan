@@ -7,29 +7,37 @@
 #' of pseudospecies, refines the division with differential species,
 #' and summarises it with a small set of indicator pseudospecies.
 #'
-#' This implementation follows the published description of the algorithm.
-#' It is written in plain R and needs no compiler.
-#' It is **not** a port of Hill's original FORTRAN program, and
-#' the results may differ from it in details.
-#' The known differences are:
+#' The package is written in plain R and needs no compiler.
+#' It is not a port of Hill's FORTRAN program, but `polish = "hill"`
+#' (the default) follows the steps of that program:
+#' the rare pseudospecies are downweighted as `WEIGHT` does, the axis is
+#' polished twice as `POLISH` does, the stands are divided at the middle
+#' of the range of the polished axis, and the stands of the critical zone
+#' around that point are placed by the indicator pseudospecies, whose
+#' number and threshold are the ones that misclassify fewest stands.
+#' The constants of the original are in `tw_hill_const()`.
 #'
-#' * stands close to the boundary of a division are not swapped between
-#'   the groups, and the size of the groups is not balanced;
-#'   only `min_size` keeps small groups from being divided,
-#' * all pseudospecies whose preference reaches `diff_threshold` are
-#'   eligible as indicators, and the `max_indicators` best of them are
-#'   used, while the original chooses fewer of them,
+#' On the `dune`, `varespec`, `mite`, `sipoo` and `BCI` data of `vegan`
+#' this reproduces the classification of the original program exactly,
+#' at every level of the hierarchy and with the same eigenvalues.
+#' On `pyrifos` the first division is the same, and the deeper ones
+#' differ; that data is transformed so that most pseudospecies are of the
+#' lowest cut level, which leaves many ties for the division to break.
+#' Two things are still not reproduced:
+#'
+#' * which of the two groups of a division is called the first one
+#'   (the original compares them with the group next to their parent),
+#'   so the numbering of the groups can differ although the grouping
+#'   itself is the same,
 #' * the pseudospecies are classified without weighting them by the
-#'   groups of the stands,
-#' * the reciprocal averaging is iterated until it converges.
+#'   groups of the stands.
 #'
-#' On the `dune`, `varespec` and `mite` data of `vegan` the first division
-#' agrees with the original for 95%, 96% and 83% of the stands, and the
-#' adjusted Rand index of the final groups is 0.87, 0.52 and 0.40:
-#' the two agree on the coarse structure and drift apart as the divisions
-#' go deeper.
-#' The eigenvalue of the first division is within 0.005 of the original
-#' (0.5151 against 0.5106, 0.1785 against 0.1789, 0.3638 against 0.3629).
+#' `polish = "ecan"` keeps the earlier way of this package, which was
+#' written from the published description alone: the division is refined
+#' with the pseudospecies whose preference reaches `diff_threshold`, and
+#' the stands are divided at the centroid of the axis.
+#' It is kept because it needs no zone or indicator to place a stand,
+#' but it does not follow the original as closely.
 #'
 #' If the results of the original program are needed,
 #' the `twinspan` package of Oksanen
@@ -68,6 +76,12 @@
 #'                    downweight the rare pseudospecies in the
 #'                    ordination, in the way of `decorana()`.
 #'                    See `tw_downweight()`.
+#' @param polish      A string.
+#'                    "hill" (the default): divide in the way of the
+#'                    original TWINSPAN.
+#'                    "ecan": the earlier way of this package.
+#'                    `diff_threshold`, `refine_iter` and `use_indicator`
+#'                    are used only by "ecan".
 #' @param species     A logical.
 #'                    TRUE: classify pseudospecies as well as stands,
 #'                    which is needed for tw_two_way().
@@ -118,7 +132,9 @@ twinspan <- function(x,
                      n_clusters     = NULL,
                      use_indicator  = FALSE,
                      downweight     = TRUE,
+                     polish         = c("hill", "ecan"),
                      species        = TRUE){
+  polish <- match.arg(polish)
   cl <- match.call()
   x <- as.matrix(x)
   if(!is.numeric(x)) stop("x needs to be numeric.")
@@ -135,7 +151,9 @@ twinspan <- function(x,
               diff_threshold = diff_threshold,
               refine_iter    = refine_iter,
               use_indicator  = use_indicator,
-              downweight     = downweight)
+              downweight     = downweight,
+              polish         = polish)
+  if(polish == "hill") opt <- c(opt, tw_hill_const())
 
   tree <- tw_tree(psp, opt, modified = modified, n_clusters = n_clusters)
   cls  <- tw_leaf_table(tree, rownames(x), unit = "stand")
@@ -163,6 +181,7 @@ twinspan <- function(x,
               labels         = rownames(x),
               cut_levels     = sort(unique(cut_levels)),
               modified       = modified,
+              polish         = polish,
               call           = cl)
   res <- c(res, opt)
   class(res) <- "twinspan"
@@ -363,32 +382,54 @@ tw_ra <- function(y, w = NULL, max_iter = 999, tol = 1e-10){
 
 #' Downweighting of rare pseudospecies
 #'
-#' Gives a weight to each pseudospecies in the way of Hill's
-#' `decorana()`: a pseudospecies whose frequency is less than
-#' `1 / fraction` of the most frequent one is weighted in proportion to
-#' its frequency, and the others are weighted 1.
-#' The original TWINSPAN downweights the rare pseudospecies before the
-#' correspondence analysis, and `twinspan()` does the same by default.
+#' Gives a weight to each pseudospecies, so that the rare ones weigh less
+#' in the ordination.
+#' The original TWINSPAN downweights them before the correspondence
+#' analysis, and `twinspan()` does the same by default.
 #' The weights are used only in the ordination:
 #' the preference of the pseudospecies is counted on the raw occurrences.
 #'
+#' Two ways are available.
+#' "hill" is the `WEIGHT` subroutine of the original TWINSPAN:
+#' a pseudospecies occurring in a smaller proportion of the stands than
+#' `frq_lim` is weighted in proportion to that shortfall, and no weight
+#' falls below `w_min`.
+#' "decorana" is the downweighting of `decorana()` and of
+#' `vegan::downweight()`, where the frequencies are compared with the
+#' most frequent pseudospecies instead of a fixed proportion.
+#'
 #' @inheritParams tw_ra
-#' @param fraction A numeric of the downweighting fraction.
+#' @param method   A string, "hill" or "decorana".
+#' @param fraction A numeric of the downweighting fraction of "decorana".
+#' @param frq_lim  A numeric of the frequency above which "hill" does not
+#'                 downweight.
+#' @param w_min    A numeric of the smallest weight of "hill".
 #' @return  A numeric vector of the weight of each pseudospecies.
 #' @examples
 #' \donttest{
 #' data(dune, package = "vegan")
-#' w <- tw_downweight(pseudospecies(dune))
-#' summary(w)
+#' psp <- pseudospecies(dune)
+#' summary(tw_downweight(psp))
+#' summary(tw_downweight(psp, method = "decorana"))
 #' }
 #' @export
-tw_downweight <- function(y, fraction = 5){
+tw_downweight <- function(y,
+                          method   = c("hill", "decorana"),
+                          fraction = 5,
+                          frq_lim  = 0.2,
+                          w_min    = 0.01){
+  method <- match.arg(method)
   y   <- as.matrix(y) * 1
   tot <- colSums(y)
-  mx  <- max(tot, 0)
-  if(!is.finite(mx) || mx <= 0) return(stats::setNames(rep(1, ncol(y)), colnames(y)))
-  lim <- mx / fraction
-  w   <- ifelse(tot < lim, tot / lim, 1)
+  one <- stats::setNames(rep(1, ncol(y)), colnames(y))
+  if(!nrow(y) || !any(tot > 0)) return(one)
+  if(method == "hill"){
+    f <- pmin(tot / nrow(y), frq_lim)
+    w <- (f / frq_lim) * (1 - w_min) + w_min
+  } else {
+    lim <- max(tot) / fraction
+    w   <- ifelse(tot < lim, tot / lim, 1)
+  }
   return(stats::setNames(as.vector(w), colnames(y)))
 }
 
@@ -447,7 +488,9 @@ tw_preference <- function(y, positive){
 
 # Heterogeneity of a group, downweighted in the same way as the ordination
 tw_het <- function(y, opt){
-  w <- if(isTRUE(opt$downweight)) tw_downweight(y) else NULL
+  w <- if(isTRUE(opt$downweight))
+         tw_downweight(y, method = if(identical(opt$polish, "hill")) "hill" else "decorana")
+       else NULL
   tw_inertia(y, w = w)
 }
 
@@ -670,7 +713,8 @@ print.tw_two_way <- function(x, ...){
 
 # One dichotomy: primary -> refined -> indicator ordination
 tw_divide <- function(y, opt){
-  w   <- if(isTRUE(opt$downweight)) tw_downweight(y) else NULL
+  if(identical(opt$polish, "hill")) return(tw_divide_hill(y, opt))
+  w   <- if(isTRUE(opt$downweight)) tw_downweight(y, method = "decorana") else NULL
   ra  <- tw_ra(y, w = w)
   pos <- ra$sample > 0
   if(all(pos) || !any(pos)) return(NULL)
