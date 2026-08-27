@@ -352,6 +352,103 @@ plot(cls)
 
 <img src="man/figures/README-cluster-3.png" alt="" width="60%" />
 
+### TWINSPAN
+
+`twinspan()` is a native R implementation of TWINSPAN (Hill 1979) and of
+the modified TWINSPAN of Roleček et al. (2009). It needs no compiler,
+but it is not a port of Hill’s original FORTRAN program: see `?twinspan`
+for the known differences.
+
+``` r
+tw <- twinspan(dune)
+tw
+#> TWINSPAN
+#>   stands:       20
+#>   pseudospecies: 75 
+#>   cut levels:   0 2 5 10 20
+#>   divisions:    4
+#>   groups:       5
+#> 
+#> division 1 at level 0 (n = 20, eig = 0.54)
+#>   indicators: Lolipere_3(-) Achimill_1(-) Planlanc_1(-) Planlanc_2(-) Achimill_2(-) Anthodor_1(-) Anthodor_2(-)
+#> division 2 at level 1 (n = 12, eig = 0.441)
+#>   indicators: Poatriv_1(-) Poatriv_2(-) Bromhord_1(-) Bromhord_2(-) Elymrepe_1(-) Elymrepe_2(-) Poatriv_3(-)
+#> division 3 at level 1 (n = 8, eig = 0.442)
+#>   indicators: Sagiproc_1(-) Sagiproc_2(-) Alopgeni_3(-) Callcusp_1(+) Callcusp_2(+) Juncbufo_1(-) Juncbufo_2(-)
+#> division 4 at level 2 (n = 8, eig = 0.367)
+#>   indicators: Anthodor_1(-) Anthodor_2(-) Planlanc_1(-) Planlanc_2(-) Alopgeni_1(+) Alopgeni_2(+) Planlanc_3(-)
+
+head(tw$classification)
+#> # A tibble: 6 × 4
+#>   stand group path  depth
+#>   <chr> <int> <chr> <int>
+#> 1 5         1 000       3
+#> 2 6         1 000       3
+#> 3 7         1 000       3
+#> 4 10        1 000       3
+#> 5 1         2 001       3
+#> 6 2         2 001       3
+
+# the division tree works with the clustering helpers of ecan
+ggdendro::ggdendrogram(stats::as.hclust(tw))
+```
+
+<img src="man/figures/README-twinspan-1.png" alt="" width="60%" />
+
+The modified TWINSPAN divides the most heterogeneous group first, so
+that the number of groups can be chosen directly.
+
+``` r
+tw_mod <- twinspan(dune, modified = TRUE, n_clusters = 4)
+table(tw_mod$classification$group)
+#> 
+#> 1 2 3 4 
+#> 8 4 4 4
+```
+
+`tw_two_way()` arranges the stands and the species by their divisions.
+The digits below the table show the dichotomy of each stand.
+
+``` r
+tw_two_way(tw)
+#>          56711234111189111112
+#>             0    1789  234560
+#> Anthodor 2222-----2-2--------  0000
+#> Planlanc 3332----222---------  0001
+#> Vicilath ---1----2-1---------  0001
+#> Airaprae ---------2-2--------  00100
+#> Hyporadi --------22-3--------  00100
+#> Empenigr -----------2--------  00101
+#> Achimill 222212---2----------  0100
+#> Trifprat 232-----------------  0101
+#> Bromhord 2-22-2-2------------  0110
+#> Cirsarve -------2------------  0111
+#> Lolipere 233333333-2-22------  10000
+#> Elymrepe 2---2222-----3------  10010
+#> Poatriv  32322333----2323--2-  10010
+#> Alopgeni -----232----3233--2-  10100
+#> Juncbufo --2----------222----  10101
+#> Bellpere 2--2-222--2---------  1011000
+#> Poaprat  22222232212-22-2----  1011000
+#> Rumeacet 332----------22-----  1011001
+#> Bracruta 2322--222-32222--222  1011010
+#> Scorautu 2222-3223233222222-2  1011010
+#> Trifrepe 2323-3212-22222231--  1011010
+#> Salirepe ----------22-------3  1011011
+#> Agrostol ------23----22232233  10111
+#> Sagiproc -------32--22222----  10111
+#> Juncarti ------------22---222  1100
+#> Callcusp ----------------2-22  110100
+#> Eleopalu ------------2---2332  110101
+#> Comapalu ----------------22--  11011
+#> Ranuflam ------------2--22222  1110
+#> Chenalbu ---------------1----  1111
+#> 
+#>          00000000000011111111
+#>          00000000111100001111
+#>          00001111
+```
+
 ### Ordination
 
 ``` r
