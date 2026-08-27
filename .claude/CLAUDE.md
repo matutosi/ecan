@@ -59,7 +59,15 @@ CRAN 公開済み (最新リリース 0.2.1)．
 **CRAN 提出の手順・段階ごとの作業ログ・過去のコミット履歴は
 [.claude/notes/history.md](notes/history.md)**．
 
+**TWINSPAN の方針・ライセンス調査・実装の構成・原典との差異は
+[.claude/notes/twinspan.md](notes/twinspan.md)**．
+
 ### 現在の状態
+
+- 更新: 2026-08-27 09:12 (JST，worktree `worktree-twinspan`)
+  **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
+  `tw_ra()` が `vegan::cca()` の第1軸と完全一致することを確認し，新規 49 検査を含む全 185 テストが成功．
+  **原典 FORTRAN のライセンスは MIT と判明** (jarioksa/twinspan)．clean-room は不要になった．
 
 - 更新: 2026-08-23 (JST)
 - **CRAN から 0.2.2 の受理連絡 (auto-check OK) が届いた．積み残しの手順をすべて終えた**．
@@ -88,6 +96,15 @@ CRAN 公開済み (最新リリース 0.2.1)．
 ### 積み残し
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
+
+TWINSPAN (`worktree-twinspan` で作業中．詳細は [notes/twinspan.md](notes/twinspan.md))
+
+- **【決定 2026-08-27】pure R の独立実装のままとし，原典との完全一致は追わない**．
+  この件はこれで終わり (以後は蒸し返さない)．`?twinspan` に既知の差異4点と，
+  原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
+- **【決定 2026-08-27】`max_depth` の既定を原典と同じ 7 にそろえた**．
+1. **【判断待ち】`develop` へ merge する時期**．
+2. README / vignette への記載．
 
 いつか
 
