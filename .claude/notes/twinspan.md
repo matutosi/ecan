@@ -84,6 +84,34 @@ use_indicator = FALSE, species = TRUE
 - 副産物: jarioksa/twinspan の README から，**Roleček の非均質性は「群の全固有値の和 =
   scaled Chi-square」**と確認できた．`tw_inertia()` の総イナーシャと同じ定義．
 
+## 原典 FORTRAN を実際に見て分かったこと (2026-08-27)
+
+`jarioksa/twinspan` の `src/` を確認した (ライセンスは MIT なので参照に支障は無い)．
+
+- **倍精度で書かれている** (`twinsub12.f` の `CLASS` は `IMPLICIT DOUBLE PRECISION (A-H,O-Z)`
+  と `REAL(8)`)．**単精度の再現という最大の懸念は消えた**．R の double でそのまま合う．
+- **文献では決まらなかった定数が `COMMON` にそのまま並んでいる**．
+  `COMMON/LIMS/RARE,FEEBLE,FRQLIM,TOL,RATLIM,REPLIM,PRECIS`，
+  `COMMON/ARBS/CWTMIN,CRLONG,CRCUT`，`COMMON/IARBS/ICWEXP,IEND,MMIN,IPREXP,LEVMAX`．
+  差異種の閾値・平衡化の規則・borderline の扱いは読めば分かる．
+- **それでも手数は残る**．`CLASS` だけで約 425 行，`GOTO` が 30 箇所近い F77．
+  `ISORT` は **heap sort (不安定ソート)** なので，同点の並び順が分割に効く箇所があると
+  R の `order()` (安定) と食い違う．
+- 一致の検証には原典を走らせる必要があり，Windows では Rtools (C と Fortran のコンパイラ) が要る．
+
+### 完全一致の道は3つ
+
+| | 方法 | 期間 | 得るもの / 代償 |
+|---|---|---|---|
+| a | **FORTRAN を ecan に同梱してラッパを書く** | 1-2 日 | 完全一致が構造的に保証．CRAN から原典どおりの TWINSPAN が使える / **ecan に初のコンパイル依存** |
+| b | FORTRAN を読んで R に翻訳する | 3-5 日 | pure R を保てる / 同点処理などで完全一致に届かない可能性 |
+| c | **今の独立実装のままにする** | 0 | pure R で軽い / 完全一致はしない．必要な人には jarioksa/twinspan を案内 |
+
+**b は費用対効果が最も低い** (完全一致なら a が確実で安く，pure R なら c で足りる)．
+b が意味を持つのは「pure R のまま完全一致も欲しい」ときだけ．
+判断は「**pure R を守るか，完全一致を取るか**」の1点に集約される．
+推奨は **c を既定に保ち，必要になった時点で a を別関数として足す**．
+
 ## 次に決めること
 
 1. **【判断待ち】原典を参照して完全一致に進むか** (見積り 3-5 日．参照元は jarioksa/twinspan)．
