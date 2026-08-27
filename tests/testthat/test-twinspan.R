@@ -92,6 +92,34 @@ test_that("polish = 'ecan' keeps the earlier way", {
   expect_error(twinspan(dune, polish = "no_such_way"))
 })
 
+test_that("the species are classified on their fidelity to the groups", {
+  skip_if_not_installed("vegan")
+  data(dune, package = "vegan")
+  tw <- twinspan(dune)
+  sd <- tw_species_data(tw)
+  # three pseudo-quadrats for every group of stands
+  expect_equal(nrow(sd$y), ncol(dune))
+  expect_equal(ncol(sd$y) %% 3, 0)
+  expect_true(all(sd$y %in% c(0L, 1L)))
+  # a species present at the lower cut level is present at the upper ones
+  i <- seq(1, ncol(sd$y), by = 3)
+  expect_true(all(sd$y[, i] >= sd$y[, i + 1]))
+  expect_true(all(sd$y[, i + 1] >= sd$y[, i + 2]))
+  # weights: a species weighs as much as it occurs
+  expect_equal(sd$rw, unname(colSums(dune > 0)))
+  # the two upper cut levels of a group weigh double
+  expect_equal(sd$cw[2], 2 * sd$cw[1])
+  expect_equal(sd$cw[3], 2 * sd$cw[1])
+  # every species is classified once
+  sc <- tw$species_classification
+  expect_setequal(sc$species, colnames(dune))
+  expect_equal(nrow(sc), ncol(dune))
+  expect_false(is.unsorted(sc$group))
+  # tw_two_way() works with it
+  expect_silent(tab <- tw_two_way(tw))
+  expect_setequal(rownames(tab), colnames(dune))
+})
+
 test_that("tw_hill_const() gives the constants of the original", {
   cn <- tw_hill_const()
   expect_equal(cn$rat_lim, 3)
