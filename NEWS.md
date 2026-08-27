@@ -10,9 +10,10 @@
   which also points to the `twinspan` package of Oksanen for those 
   who need the results of the original program.
     * `polish = "hill"` (the default) follows the steps of Hill's 
-      program, and reproduces it exactly on the `dune`, `varespec`, 
-      `mite`, `sipoo` and `BCI` data of 'vegan': the same groups with 
-      the same numbers, divisions and eigenvalues. 
+      program, and reproduces it exactly on the `dune`, `sipoo`, 
+      `varespec`, `mite`, `BCI` and `pyrifos` data of 'vegan': the same 
+      groups of stands and of species, with the same numbers, divisions 
+      and eigenvalues. 
       `polish = "ecan"` keeps the earlier way, written from the 
       published description alone.
     * Rare pseudospecies are downweighted in the ordination as the 

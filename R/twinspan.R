@@ -21,20 +21,15 @@
 #' well: the half that resembles the group next to the one being divided
 #' comes first, so that neighbouring groups stay together.
 #'
-#' On the `dune`, `varespec`, `mite`, `sipoo` and `BCI` data of `vegan`
+#' On the `dune`, `sipoo`, `varespec`, `mite`, `BCI` and `pyrifos` data
+#' of `vegan`
 #' this reproduces the original program exactly: the same groups with the
 #' same numbers, the same divisions and the same eigenvalues.
-#' On `pyrifos` the first division is the same, and the deeper ones
-#' differ; that data is transformed so that most pseudospecies are of the
-#' lowest cut level, which leaves many ties for the division to break.
-#' The species are classified in the way of the original too, that is on
-#' how faithful each of them is to the groups of stands rather than on
-#' the pseudospecies table itself: see `tw_species_data()`.
-#' This gives the species groups of the original for `dune` and `sipoo`,
-#' but not for `varespec`, `mite` and `BCI`, where the groups are close
-#' to the original without being the same.
-#' Only the order of the species in `tw_two_way()` depends on this;
-#' the classification of the stands does not.
+#' The species are classified in the way of the original as well, that is
+#' on how faithful each of them is to the groups of stands rather than on
+#' the pseudospecies table itself, and without indicators:
+#' see `tw_species_data()`.
+#' The species groups are those of the original too.
 #'
 #' `polish = "ecan"` keeps the earlier way of this package, which was
 #' written from the published description alone: the division is refined
@@ -170,7 +165,10 @@ twinspan <- function(x,
       sd <- tw_species_data(list(nodes = tree$nodes), psp = psp,
                             sp_map = attr(psp, "species"), levmax = max_depth)
       if(ncol(sd$y) >= 2 && nrow(sd$y) >= 2){
-        sp_tree <- tw_tree(sd$y, opt, modified = modified, n_clusters = NULL,
+        # the original classifies the species without indicators (MIND = 0)
+        sp_opt <- opt
+        sp_opt$max_indicators <- 0L
+        sp_tree <- tw_tree(sd$y, sp_opt, modified = modified, n_clusters = NULL,
                            rw = sd$rw, cw = sd$cw)
         sp_cls  <- tw_leaf_table(sp_tree, rownames(sd$y), unit = "species")
       }

@@ -366,9 +366,19 @@ tw_divide_hill <- function(y, opt, ctx = NULL){
     mid <- -mid
     pos <- !pos
   }
-  ind <- tw_indicator_hill(y, x, opt, rw, ctx$sp)
-  if(!is.null(ind) && any(ind$positive) && !all(ind$positive))
-    pos <- ind$positive
+  ind <- NULL
+  if(opt$max_indicators > 0){
+    ind <- tw_indicator_hill(y, x, opt, rw, ctx$sp)
+    if(!is.null(ind) && any(ind$positive) && !all(ind$positive))
+      pos <- ind$positive
+  } else {
+    # no indicators (the species classification of the original): the zone
+    # of the division is the middle one, so the stands are simply divided
+    # at the middle of the range of the polished axis
+    hlf  <- 0.5 * opt$cr_long * (rng[2] - rng[1])
+    zone <- tw_zone(x, mid - hlf, mid + hlf, opt$mz_out, opt$mz_crit)
+    pos  <- zone > (1 + opt$mz_crit + 2 * opt$mz_out) %/% 2
+  }
   return(list(positive   = pos,
               eig        = ra$eig,
               primary    = ra$sample,

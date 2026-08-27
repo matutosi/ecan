@@ -118,20 +118,15 @@ The two halves of a division are put in the order of the original as
 well: the half that resembles the group next to the one being divided
 comes first, so that neighbouring groups stay together.
 
-On the \code{dune}, \code{varespec}, \code{mite}, \code{sipoo} and \code{BCI} data of \code{vegan}
+On the \code{dune}, \code{sipoo}, \code{varespec}, \code{mite}, \code{BCI} and \code{pyrifos} data
+of \code{vegan}
 this reproduces the original program exactly: the same groups with the
 same numbers, the same divisions and the same eigenvalues.
-On \code{pyrifos} the first division is the same, and the deeper ones
-differ; that data is transformed so that most pseudospecies are of the
-lowest cut level, which leaves many ties for the division to break.
-The species are classified in the way of the original too, that is on
-how faithful each of them is to the groups of stands rather than on
-the pseudospecies table itself: see \code{tw_species_data()}.
-This gives the species groups of the original for \code{dune} and \code{sipoo},
-but not for \code{varespec}, \code{mite} and \code{BCI}, where the groups are close
-to the original without being the same.
-Only the order of the species in \code{tw_two_way()} depends on this;
-the classification of the stands does not.
+The species are classified in the way of the original as well, that is
+on how faithful each of them is to the groups of stands rather than on
+the pseudospecies table itself, and without indicators:
+see \code{tw_species_data()}.
+The species groups are those of the original too.
 
 \code{polish = "ecan"} keeps the earlier way of this package, which was
 written from the published description alone: the division is refined
