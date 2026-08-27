@@ -4,10 +4,12 @@
 \alias{tw_inertia}
 \title{Total inertia of a pseudospecies matrix}
 \usage{
-tw_inertia(y)
+tw_inertia(y, w = NULL)
 }
 \arguments{
 \item{y}{A binary matrix of stands by pseudospecies.}
+
+\item{w}{A numeric vector of pseudospecies weights, or NULL.}
 }
 \value{
 A numeric of the total inertia (0 when it cannot be computed).

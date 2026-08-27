@@ -17,6 +17,7 @@ twinspan(
   modified = FALSE,
   n_clusters = NULL,
   use_indicator = FALSE,
+  downweight = TRUE,
   species = TRUE
 )
 
@@ -58,6 +59,12 @@ TRUE: use the indicator ordination for the final
 division (as in the original TWINSPAN).
 FALSE: use the refined ordination.}
 
+\item{downweight}{A logical.
+TRUE (the default, as in the original TWINSPAN):
+downweight the rare pseudospecies in the
+ordination, in the way of \code{decorana()}.
+See \code{tw_downweight()}.}
+
 \item{species}{A logical.
 TRUE: classify pseudospecies as well as stands,
 which is needed for tw_two_way().}
@@ -95,11 +102,6 @@ It is \strong{not} a port of Hill's original FORTRAN program, and
 the results may differ from it in details.
 The known differences are:
 \itemize{
-\item \strong{rare pseudospecies are not downweighted} before the correspondence
-analysis, while the original downweights them as \code{decorana()} does.
-This is the largest difference: the eigenvalues of the original are
-reproduced within 0.001 by a correspondence analysis of
-\code{vegan::downweight()}ed pseudospecies,
 \item stands close to the boundary of a division are not swapped between
 the groups, and the size of the groups is not balanced;
 only \code{min_size} keeps small groups from being divided,
@@ -112,10 +114,12 @@ groups of the stands,
 }
 
 On the \code{dune}, \code{varespec} and \code{mite} data of \code{vegan} the first division
-agrees with the original for 95\%, 100\% and 83\% of the stands, and the
-adjusted Rand index of the final groups is 0.87, 0.52 and 0.29:
+agrees with the original for 95\%, 96\% and 83\% of the stands, and the
+adjusted Rand index of the final groups is 0.87, 0.52 and 0.40:
 the two agree on the coarse structure and drift apart as the divisions
 go deeper.
+The eigenvalue of the first division is within 0.005 of the original
+(0.5151 against 0.5106, 0.1785 against 0.1789, 0.3638 against 0.3629).
 
 If the results of the original program are needed,
 the \code{twinspan} package of Oksanen

@@ -13,11 +13,6 @@
 #' the results may differ from it in details.
 #' The known differences are:
 #'
-#' * **rare pseudospecies are not downweighted** before the correspondence
-#'   analysis, while the original downweights them as `decorana()` does.
-#'   This is the largest difference: the eigenvalues of the original are
-#'   reproduced within 0.001 by a correspondence analysis of
-#'   `vegan::downweight()`ed pseudospecies,
 #' * stands close to the boundary of a division are not swapped between
 #'   the groups, and the size of the groups is not balanced;
 #'   only `min_size` keeps small groups from being divided,
@@ -29,10 +24,12 @@
 #' * the reciprocal averaging is iterated until it converges.
 #'
 #' On the `dune`, `varespec` and `mite` data of `vegan` the first division
-#' agrees with the original for 95%, 100% and 83% of the stands, and the
-#' adjusted Rand index of the final groups is 0.87, 0.52 and 0.29:
+#' agrees with the original for 95%, 96% and 83% of the stands, and the
+#' adjusted Rand index of the final groups is 0.87, 0.52 and 0.40:
 #' the two agree on the coarse structure and drift apart as the divisions
 #' go deeper.
+#' The eigenvalue of the first division is within 0.005 of the original
+#' (0.5151 against 0.5106, 0.1785 against 0.1789, 0.3638 against 0.3629).
 #'
 #' If the results of the original program are needed,
 #' the `twinspan` package of Oksanen
@@ -66,6 +63,11 @@
 #'                    TRUE: use the indicator ordination for the final
 #'                    division (as in the original TWINSPAN).
 #'                    FALSE: use the refined ordination.
+#' @param downweight  A logical.
+#'                    TRUE (the default, as in the original TWINSPAN):
+#'                    downweight the rare pseudospecies in the
+#'                    ordination, in the way of `decorana()`.
+#'                    See `tw_downweight()`.
 #' @param species     A logical.
 #'                    TRUE: classify pseudospecies as well as stands,
 #'                    which is needed for tw_two_way().
@@ -115,6 +117,7 @@ twinspan <- function(x,
                      modified       = FALSE,
                      n_clusters     = NULL,
                      use_indicator  = FALSE,
+                     downweight     = TRUE,
                      species        = TRUE){
   cl <- match.call()
   x <- as.matrix(x)
@@ -131,7 +134,8 @@ twinspan <- function(x,
               max_indicators = max_indicators,
               diff_threshold = diff_threshold,
               refine_iter    = refine_iter,
-              use_indicator  = use_indicator)
+              use_indicator  = use_indicator,
+              downweight     = downweight)
 
   tree <- tw_tree(psp, opt, modified = modified, n_clusters = n_clusters)
   cls  <- tw_leaf_table(tree, rownames(x), unit = "stand")
@@ -357,6 +361,37 @@ tw_ra <- function(y, w = NULL, max_iter = 999, tol = 1e-10){
   return(list(sample = smp, species = spc, eig = eig, converged = conv))
 }
 
+#' Downweighting of rare pseudospecies
+#'
+#' Gives a weight to each pseudospecies in the way of Hill's
+#' `decorana()`: a pseudospecies whose frequency is less than
+#' `1 / fraction` of the most frequent one is weighted in proportion to
+#' its frequency, and the others are weighted 1.
+#' The original TWINSPAN downweights the rare pseudospecies before the
+#' correspondence analysis, and `twinspan()` does the same by default.
+#' The weights are used only in the ordination:
+#' the preference of the pseudospecies is counted on the raw occurrences.
+#'
+#' @inheritParams tw_ra
+#' @param fraction A numeric of the downweighting fraction.
+#' @return  A numeric vector of the weight of each pseudospecies.
+#' @examples
+#' \donttest{
+#' data(dune, package = "vegan")
+#' w <- tw_downweight(pseudospecies(dune))
+#' summary(w)
+#' }
+#' @export
+tw_downweight <- function(y, fraction = 5){
+  y   <- as.matrix(y) * 1
+  tot <- colSums(y)
+  mx  <- max(tot, 0)
+  if(!is.finite(mx) || mx <= 0) return(stats::setNames(rep(1, ncol(y)), colnames(y)))
+  lim <- mx / fraction
+  w   <- ifelse(tot < lim, tot / lim, 1)
+  return(stats::setNames(as.vector(w), colnames(y)))
+}
+
 #' Total inertia of a pseudospecies matrix
 #'
 #' Used as the heterogeneity of a group in modified TWINSPAN.
@@ -369,8 +404,9 @@ tw_ra <- function(y, w = NULL, max_iter = 999, tol = 1e-10){
 #' tw_inertia(pseudospecies(dune))
 #' }
 #' @export
-tw_inertia <- function(y){
+tw_inertia <- function(y, w = NULL){
   y <- as.matrix(y) * 1
+  if(!is.null(w)) y <- sweep(y, 2, w, "*")
   y <- y[rowSums(y) > 0, , drop = FALSE]
   y <- y[, colSums(y) > 0, drop = FALSE]
   if(nrow(y) < 2 || ncol(y) < 2) return(0)
@@ -409,6 +445,12 @@ tw_preference <- function(y, positive){
   return(stats::setNames(as.vector(d), colnames(y)))
 }
 
+# Heterogeneity of a group, downweighted in the same way as the ordination
+tw_het <- function(y, opt){
+  w <- if(isTRUE(opt$downweight)) tw_downweight(y) else NULL
+  tw_inertia(y, w = w)
+}
+
 # Build the division tree of a binary matrix (rows are the units to divide)
 tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL){
   nodes <- list(list(id       = 1L,
@@ -420,7 +462,7 @@ tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL){
                      order    = NA_integer_,
                      terminal = FALSE,
                      tried    = FALSE,
-                     heterogeneity = tw_inertia(y),
+                     heterogeneity = tw_het(y, opt),
                      division = NULL))
   n_div <- 0L
   repeat{
@@ -458,7 +500,7 @@ tw_tree <- function(y, opt, modified = FALSE, n_clusters = NULL){
                           order    = NA_integer_,
                           terminal = FALSE,
                           tried    = FALSE,
-                          heterogeneity = tw_inertia(y[idx, , drop = FALSE]),
+                          heterogeneity = tw_het(y[idx, , drop = FALSE], opt),
                           division = NULL)
       kids[k] <- id
     }
@@ -628,7 +670,8 @@ print.tw_two_way <- function(x, ...){
 
 # One dichotomy: primary -> refined -> indicator ordination
 tw_divide <- function(y, opt){
-  ra  <- tw_ra(y)
+  w   <- if(isTRUE(opt$downweight)) tw_downweight(y) else NULL
+  ra  <- tw_ra(y, w = w)
   pos <- ra$sample > 0
   if(all(pos) || !any(pos)) return(NULL)
   rf  <- tw_refine(y, pos, opt$diff_threshold, opt$refine_iter)

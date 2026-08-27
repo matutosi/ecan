@@ -38,6 +38,38 @@ test_that("tw_ra() and tw_inertia() are safe for degenerate data", {
   expect_equal(tw_inertia(y1), 0, tolerance = 1e-12)
 })
 
+test_that("tw_downweight() reproduces the downweighting of vegan", {
+  skip_if_not_installed("vegan")
+  data(dune, package = "vegan")
+  psp <- pseudospecies(dune)
+  w   <- tw_downweight(psp)
+  expect_equal(length(w), ncol(psp))
+  expect_true(all(w > 0 & w <= 1))
+  expect_equal(as.vector(sweep(psp, 2, w, "*")),
+               as.vector(as.matrix(vegan::downweight(psp))),
+               tolerance = 1e-8)
+  # the most frequent pseudospecies keeps the weight of 1
+  expect_equal(unname(w[which.max(colSums(psp))]), 1)
+  # no downweighting when every pseudospecies is equally frequent
+  y <- matrix(1L, 4, 3, dimnames = list(letters[1:4], paste0("s", 1:3)))
+  expect_equal(unname(tw_downweight(y)), rep(1, 3))
+  expect_equal(unname(tw_downweight(matrix(0L, 2, 2))), rep(1, 2))
+})
+
+test_that("downweighting changes the ordination but not the preference", {
+  skip_if_not_installed("vegan")
+  data(dune, package = "vegan")
+  psp <- pseudospecies(dune)
+  w   <- tw_downweight(psp)
+  expect_lt(tw_ra(psp, w = w)$eig, tw_ra(psp)$eig)
+  expect_lt(tw_inertia(psp, w = w), tw_inertia(psp))
+  # twinspan() runs both ways and keeps every stand
+  for(dw in c(TRUE, FALSE)){
+    tw <- twinspan(dune, downweight = dw)
+    expect_setequal(tw$classification$stand, rownames(dune))
+  }
+})
+
 test_that("tw_preference() ranges from -1 to 1", {
   y <- matrix(c(1, 1, 0, 0,
                 0, 0, 1, 1,

@@ -9,8 +9,10 @@
   The known differences from the original are listed in `?twinspan`, 
   which also points to the `twinspan` package of Oksanen for those 
   who need the results of the original program.
-    * Helpers: `pseudospecies()`, `tw_ra()`, `tw_inertia()`, 
-      `tw_preference()` and `tw_two_way()`.
+    * Rare pseudospecies are downweighted in the ordination as the 
+      original does, which can be turned off with `downweight = FALSE`.
+    * Helpers: `pseudospecies()`, `tw_ra()`, `tw_downweight()`, 
+      `tw_inertia()`, `tw_preference()` and `tw_two_way()`.
     * `stats::as.hclust()` converts the result so that `cls_color()`, 
       `cls_add_group()` and `ggdendro::ggdendrogram()` can be used.
 
