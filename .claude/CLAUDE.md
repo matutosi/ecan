@@ -16,7 +16,8 @@ CRAN 公開済み (最新リリース 0.2.1)．
 | `R/` | 関数の本体 (`ordination.R`, `cluster.R`, `diversity.R`, `ind_val.R`, `one2multi.R`, `convert.R`, `layer_construction.R`, `gen_example_layer.R`, `read_biss.R`, `utils*.R`) |
 | `man/` | roxygen2 が生成する `.Rd`．**手で編集しない** |
 | `man/figures/` | README 用の PNG (`README.Rmd` の knit で生成) |
-| `tests/testthat/` | テスト (現状 3 本のみ) |
+| `tests/testthat/` | テスト |
+| `vignettes/` | vignette (`twinspan.Rmd`．2026-08-27 に新設) |
 | `docs/` | pkgdown の出力．`.gitignore` 済みで，GitHub Actions が `gh-pages` へデプロイ |
 | `.github/workflows/pkgdown.yaml` | pkgdown のビルドとデプロイ |
 | `inst/`, `tools/` | 付随データ・補助ファイル |
@@ -28,6 +29,8 @@ CRAN 公開済み (最新リリース 0.2.1)．
 - 距離: `distance()`, `dist2df()`
 - 多様度: `shdi()` (種数・Shannon・Simpson など)
 - 指標種分析: `ind_val()`
+- TWINSPAN: `twinspan()`, `pseudospecies()`, `tw_ra()`, `tw_inertia()`,
+  `tw_preference()`, `tw_two_way()` (Modified TWINSPAN も `twinspan(modified = TRUE)` で)
 - データ変換: `df2table()`, `table2df()`, `one2multi` 系 (`is_one2multi()` など)
 - その他: `gen_example()`, `read_biss()`, `draw_layer_construction()`, `pad2longest()`
 
@@ -64,7 +67,12 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-08-27 09:12 (JST，worktree `worktree-twinspan`)
+- 更新: 2026-08-27 11:13 (JST)
+  **TWINSPAN の一式を `develop` へ merge した**．README に節を足して `build_readme()` で再生成し，
+  **ecan で初めての vignette** (`vignettes/twinspan.Rmd`) を新設．merge 前の `R CMD check` で
+  `as.hclust` の総称関数を import していない不具合が見つかり修正 (**0 errors / 0 warnings**)．
+
+- 更新: 2026-08-27 09:12 (JST)
   **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
   `tw_ra()` が `vegan::cca()` の第1軸と完全一致することを確認し，新規 49 検査を含む全 185 テストが成功．
   **原典 FORTRAN のライセンスは MIT と判明** (jarioksa/twinspan)．clean-room は不要になった．
@@ -97,14 +105,16 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
 
-TWINSPAN (`worktree-twinspan` で作業中．詳細は [notes/twinspan.md](notes/twinspan.md))
+TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twinspan.md))
 
 - **【決定 2026-08-27】pure R の独立実装のままとし，原典との完全一致は追わない**．
   この件はこれで終わり (以後は蒸し返さない)．`?twinspan` に既知の差異4点と，
   原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
 - **【決定 2026-08-27】`max_depth` の既定を原典と同じ 7 にそろえた**．
-1. **【判断待ち】`develop` へ merge する時期**．
-2. README / vignette への記載．
+- **【完了 2026-08-27】README への記載，vignette の新設，`develop` への merge**．
+1. **次のリリースの前に `devtools::check(--as-cran)` を通す** (vignette を足したため)．
+2. pkgdown サイトに vignette が載ることを確かめる．
+3. **push は未実施**．
 
 いつか
 
