@@ -71,6 +71,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
   **TWINSPAN の一式を `develop` へ merge した**．README に節を足して `build_readme()` で再生成し，
   **ecan で初めての vignette** (`vignettes/twinspan.Rmd`) を新設．merge 前の `R CMD check` で
   `as.hclust` の総称関数を import していない不具合が見つかり修正 (**0 errors / 0 warnings**)．
+  `develop` を push 済み．
 
 - 更新: 2026-08-27 09:12 (JST)
   **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
@@ -107,14 +108,14 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twinspan.md))
 
-- **【決定 2026-08-27】pure R の独立実装のままとし，原典との完全一致は追わない**．
-  この件はこれで終わり (以後は蒸し返さない)．`?twinspan` に既知の差異4点と，
-  原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
+- **【決定 2026-08-27】pure R の独立実装のままとし，現時点では原典との完全一致は追わない**．
+  `?twinspan` に既知の差異と，原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
 - **【決定 2026-08-27】`max_depth` の既定を原典と同じ 7 にそろえた**．
 - **【完了 2026-08-27】README への記載，vignette の新設，`develop` への merge**．
 1. **次のリリースの前に `devtools::check(--as-cran)` を通す** (vignette を足したため)．
-2. pkgdown サイトに vignette が載ることを確かめる．
-3. **push は未実施**．
+2. **pkgdown サイトへの vignette の掲載は，`main` へ merge するまで起きない**．
+   `.github/workflows/pkgdown.yaml` の trigger は `main`/`master` への push だけで，
+   `develop` への push では走らない (手で回すなら `workflow_dispatch`)．
 
 いつか
 
