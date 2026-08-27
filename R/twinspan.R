@@ -8,10 +8,25 @@
 #' and summarises it with a small set of indicator pseudospecies.
 #'
 #' This implementation follows the published description of the algorithm.
-#' It is not a port of Hill's original FORTRAN program and
-#' the results may differ from it in details
-#' (see the note on borderline stands below).
+#' It is written in plain R and needs no compiler.
+#' It is **not** a port of Hill's original FORTRAN program, and
+#' the results may differ from it in details.
+#' The known differences are:
 #'
+#' * the default `max_depth` is 6, while the original uses 7,
+#' * stands close to the boundary of a division are not swapped between
+#'   the groups, and the size of the groups is not balanced;
+#'   only `min_size` keeps small groups from being divided,
+#' * the pseudospecies are classified without weighting them by the
+#'   groups of the stands,
+#' * the reciprocal averaging is iterated until it converges.
+#'
+#' If the results of the original program are needed,
+#' the `twinspan` package of Oksanen
+#' (<https://github.com/jarioksa/twinspan>, MIT licensed)
+#' calls Hill's FORTRAN code itself.
+#'
+
 #' @param x           A community data matrix or data.frame.
 #'                    rownames: stands, colnames: species.
 #' @param cut_levels  A numeric vector of pseudospecies cut levels.

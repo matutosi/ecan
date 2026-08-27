@@ -4,8 +4,11 @@
 
 * Added `twinspan()`, a native R implementation of TWINSPAN (Hill 1979) 
   and modified TWINSPAN (Roleček et al. 2009). 
-  It is written from the published description of the algorithm and 
-  is not a port of the original FORTRAN program.
+  It is written in plain R from the published description of the 
+  algorithm, and is not a port of the original FORTRAN program. 
+  The known differences from the original are listed in `?twinspan`, 
+  which also points to the `twinspan` package of Oksanen for those 
+  who need the results of the original program.
     * Helpers: `pseudospecies()`, `tw_ra()`, `tw_inertia()`, 
       `tw_preference()` and `tw_two_way()`.
     * `stats::as.hclust()` converts the result so that `cls_color()`, 

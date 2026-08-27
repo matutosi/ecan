@@ -99,12 +99,12 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 TWINSPAN (`worktree-twinspan` で作業中．詳細は [notes/twinspan.md](notes/twinspan.md))
 
-1. **【判断待ち】原典 FORTRAN を参照して完全一致を目指すか** (見積り 3-5 日)．
-   参照元は **jarioksa/twinspan (MIT)**．**GPL-2 の zdealveindy/twinspanR は使わない**．
-2. **【判断待ち】`max_depth` の既定を 6 から 7 (原典と同じ) に合わせるか**．
-3. **【判断待ち】`develop` へ merge する時期**．
-4. 検証用に jarioksa/twinspan の出力を fixture として置く．
-5. README / vignette への記載．
+- **【決定 2026-08-27】pure R の独立実装のままとし，原典との完全一致は追わない**．
+  この件はこれで終わり (以後は蒸し返さない)．`?twinspan` に既知の差異4点と，
+  原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
+1. **【判断待ち】`max_depth` の既定を 6 のままにするか，原典と同じ 7 にするか**．
+2. **【判断待ち】`develop` へ merge する時期**．
+3. README / vignette への記載．
 
 いつか
 
