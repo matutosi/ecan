@@ -67,8 +67,10 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 **TWINSPAN の方針・ライセンス調査・実装の構成・原典との差異は
 [.claude/notes/twinspan.md](notes/twinspan.md)**．
-**原典 FORTRAN を読んで分かった仕様と，一致に向けた段階の計画は
-[.claude/notes/twinspan_fortran.md](notes/twinspan_fortran.md)** (2026-08-27．実装は未着手)．
+**原典 FORTRAN を読んで分かった仕様と，一致に至るまでの詰めは
+[.claude/notes/twinspan_fortran.md](notes/twinspan_fortran.md)**．
+**実装の際にユーザが入力したプロンプトは
+[.claude/notes/twinspan_prompts.md](notes/twinspan_prompts.md)** (2026-08-27 の1セッション分)．
 
 ### 現在の状態
 
