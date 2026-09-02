@@ -36,6 +36,26 @@
   which do not use a distance, as it already was for "pca".
 * Added tests for `cluster()`, `df2table()`, `table2df()`, `dist2df()`, 
   `ind_val()` and the one-to-multi helpers.
+* Bug fixes
+    * `shdi()` gave `NaN` for `h` when an abundance was zero. 
+      A zero is now read as an absent species, as `s` already did.
+    * `ind_val()` did not order its result at all. The species of a 
+      group are now given in decreasing order of `ind.val`.
+    * `cls_add_group()` turned every label into `NA` when a single 
+      stand was missing from `df`. Only the labels of the missing 
+      stands are `NA` now: `pad2longest()` no longer lets an `NA` 
+      decide the width.
+    * `dist2df()` dropped a distance of zero between two different 
+      plots. It now drops the diagonal only.
+    * `ordination()` raised an unrelated error for an unknown 
+      `o_method`. It now names the method and lists the valid ones.
+* `ord_add_group()` keeps the column named by `group`, even when that 
+  column is not one-to-multi to `indiv`.
+* `cols_one2multi()` and `select_one2multi()` spell their argument 
+  `include_self`. The misspelt `inculde_self` is still accepted.
+* `twinspan(polish = "hill")` takes the downweighting limits from 
+  `tw_hill_const()` instead of the defaults of `tw_downweight()`. 
+  The values are the same, so the results do not change.
 
 #  ecan 0.2.1
 
