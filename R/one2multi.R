@@ -2,8 +2,10 @@
 #' 
 #' @param df                A data.frame
 #' @param col,col_1,col_2   A string to specify a colname.
-#' @param inculde_self      A logical. 
+#' @param include_self      A logical. 
 #'                          If TRUE, return value including input col.
+#' @param inculde_self      Deprecated: the misspelt name of include_self,
+#'                          kept so that older code keeps working.
 #' 
 #' @return is_one2multi(), is_one2one(), is_multi2multi()  return a logical.
 #'         cols_one2multi() returns strings of colnames 
@@ -54,12 +56,13 @@ is_multi2multi <- function(df, col_1, col_2){
 
 #' @rdname is_one2multi
 #' @export
-cols_one2multi <- function(df, col, inculde_self = TRUE){
+cols_one2multi <- function(df, col, include_self = TRUE, inculde_self){
+  if(!missing(inculde_self)) include_self <- inculde_self
   cols <- try({
     cols <- setdiff(colnames(df), col)
     vars <- tibble::tibble(col_1 = col, col_2 = cols)
     cols <- cols[purrr::pmap_lgl(vars, is_one2multi, df = df)]
-    if(inculde_self) cols <- c(col, cols)
+    if(include_self) cols <- c(col, cols)
     cols
   })
   if(inherits(cols, "try-error"))
@@ -69,8 +72,9 @@ cols_one2multi <- function(df, col, inculde_self = TRUE){
 
 #' @rdname is_one2multi
 #' @export
-select_one2multi <- function(df, col, inculde_self = TRUE){
-  cols <- cols_one2multi(df, col, inculde_self)
+select_one2multi <- function(df, col, include_self = TRUE, inculde_self){
+  if(!missing(inculde_self)) include_self <- inculde_self
+  cols <- cols_one2multi(df, col, include_self)
   df %>%
     dplyr::select(dplyr::all_of(cols)) %>%
     dplyr::distinct()

@@ -34,7 +34,11 @@ test_that("cols_one2multi keeps only the one-to-multi columns", {
   # x is one-to-multi to z; x_grp, y and y_grp are one-to-one,
   # and z_grp is multi-to-multi, so all four are dropped
   expect_equal(cols_one2multi(df, "z"), c("z", "x"))
+  expect_equal(cols_one2multi(df, "z", include_self = FALSE), "x")
+  # the misspelt name of the argument is still accepted
   expect_equal(cols_one2multi(df, "z", inculde_self = FALSE), "x")
+  expect_equal(select_one2multi(df, "z", inculde_self = FALSE),
+               select_one2multi(df, "z", include_self = FALSE))
 })
 
 test_that("select_one2multi keeps distinct rows of the selected cols", {
