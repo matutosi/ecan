@@ -31,6 +31,8 @@
 #'          ord_extract_score() extracts stand or species scores 
 #'          from ordination result. 
 #'          ord_add_group() adds group data.frame into ordination scores.
+#'          The columns that are one-to-multi to indiv are added,
+#'          and the column named by group is always among them.
 #' @examples
 #' \donttest{
 #' library(ggplot2)
@@ -71,7 +73,6 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$st_scores  <- ord$scores                                         # "pca", "scores", "loadings", "sdev", NULL
       res$sp_scores  <- ord$loadings
       res$eig_val <- ord$sdev
-      res$d_method <- NULL
       res$results_raw <- ord
     },
     "ca" = {
@@ -80,7 +81,6 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$st_scores  <- ord$CA$u
       res$sp_scores  <- ord$CA$v
       res$eig_val <- ord$CA$eig
-      res$d_method <- NULL
       res$results_raw <- ord
     },
     "dca" = {
@@ -89,7 +89,6 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
       res$st_scores  <- ord$rproj                                         # "rproj", "cproj", "evals", NULL
       res$sp_scores  <- ord$cproj
       res$eig_val <- ord$evals
-      res$d_method <- NULL
       res$results_raw <- ord
     },
     "pcoa" = {
@@ -124,6 +123,8 @@ ordination <- function(tbl, o_method, d_method = NULL, ...){
   #       res$sp_scores  <- ord$newpoints
   #       res$results_raw[[2]] <- ord
   #     }
+    stop('Unknown o_method: "', o_method, '". ',
+         'Use "pca", "ca", "dca", "pcoa" or "nmds".')
   )
   res$ordination_method <- o_method
   res$distance_method <- d_method
@@ -146,6 +147,8 @@ ord_plot <- function(ord, score = "st_scores", x = 1, y = 2){
 #' @export
 ord_add_group <- function(ord, score = "st_scores", df, indiv, group){
   cols_add <- cols_one2multi(df, indiv)
+  # the column named by group is kept even when it is not one-to-multi
+  if(!missing(group) && !is.null(group)) cols_add <- union(cols_add, group)
   df_add <- 
     df %>%
     dplyr::select(dplyr::any_of(cols_add)) %>%
