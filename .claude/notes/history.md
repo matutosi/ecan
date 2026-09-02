@@ -124,3 +124,34 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit
 - `3db5453` Merge branch 'main' into develop
 - `79ba137` add .claude/CLAUDE.md with project notes
 - `b00f309` Merge branch 'develop' (main の先端)
+
+## 進捗の記録 (2026-08-22 〜 08-27，CLAUDE.md から移動)
+
+- 更新: 2026-08-27 09:12 (JST)
+  **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
+  `tw_ra()` が `vegan::cca()` の第1軸と完全一致することを確認し，新規 49 検査を含む全 185 テストが成功．
+  **原典 FORTRAN のライセンスは MIT と判明** (jarioksa/twinspan)．clean-room は不要になった．
+
+- 更新: 2026-08-23 (JST)
+- **CRAN から 0.2.2 の受理連絡 (auto-check OK) が届いた．積み残しの手順をすべて終えた**．
+  `develop` を `main` へマージし (`CRAN-SUBMISSION` の食い違いを解消)，
+  `main` の `DESCRIPTION` を `0.2.2.9000` に上げてこの運用の作法どおり開発版へ戻した．
+  `develop` も `main` に追随させて版数をそろえた．**push は未実施 (次の一手)**．
+
+- 更新: 2026-08-22 19:05 (JST)
+- **CLAUDE.md の書き方ルール (todo 直下で確定) をこのプロジェクトにも適用した**．
+  段階ごとの作業ログ (08-18 〜 08-21) と直近のコミット履歴を `.claude/notes/history.md` へ移し，
+  本体には現在の状態・積み残しだけを残した．CRAN 提出まわりの現在の状況・積み残しは変更なし．
+
+- 更新: 2026-08-22 18:09 (JST)
+- **0.2.2 を Web フォームから手動で提出し，確認メールのリンクも踏んで完了した**．
+  疎通確認 (同日) で受付が開いていることを確かめたうえでの提出．
+  `CRAN-SUBMISSION` は 0.2.2 (2026-08-22 09:06:50 UTC) に自動更新されていた
+  (手動提出でも更新されると分かった．前回の記述は誤り)．
+
+- 更新: 2026-08-22 (JST)
+- **CRAN 提出サーバへの疎通を再確認した．提出可能な状態**．
+  `https://xmpalantir.wu.ac.at/cransubmit/` は HTTP 200，フォームの入力欄も通常どおり表示．
+  ページ内の「受付停止」の文言は `<!-- -->` でコメントアウトされた 2017/2018 年の古い告知で，
+  現在アクティブな告知は無い．
+  準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．

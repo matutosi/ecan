@@ -74,6 +74,11 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
+- 更新: 2026-09-02 09:05 (このセッション，MATUTOSI_DP)
+  **黙って結果が壊れるバグ 6 件を直し，テストを 216 → 257 に増やした** (0 失敗)．
+  shdi の NaN・ind_val の並べ替え無効・cls_add_group の全 NA・dist2df の 0 距離消失・
+  ordination の不明メソッド・ord_add_group の未使用引数．README も再生成．
+
 - 更新: 2026-08-27 (JST)
   **原典 TWINSPAN と完全一致に到達した**．dune・sipoo・varespec・mite・BCI・pyrifos の
   6 データで，**標本の分類も種の分類も，群・番号・固有値まで原典と一致**する．
@@ -90,35 +95,6 @@ CRAN 公開済み (最新リリース 0.2.1)．
   `as.hclust` の総称関数を import していない不具合が見つかり修正 (**0 errors / 0 warnings**)．
   `develop` を push 済み．
 
-- 更新: 2026-08-27 09:12 (JST)
-  **TWINSPAN と Modified TWINSPAN を R で実装した** (公表された記述からの実装．原典 FORTRAN は未参照)．
-  `tw_ra()` が `vegan::cca()` の第1軸と完全一致することを確認し，新規 49 検査を含む全 185 テストが成功．
-  **原典 FORTRAN のライセンスは MIT と判明** (jarioksa/twinspan)．clean-room は不要になった．
-
-- 更新: 2026-08-23 (JST)
-- **CRAN から 0.2.2 の受理連絡 (auto-check OK) が届いた．積み残しの手順をすべて終えた**．
-  `develop` を `main` へマージし (`CRAN-SUBMISSION` の食い違いを解消)，
-  `main` の `DESCRIPTION` を `0.2.2.9000` に上げてこの運用の作法どおり開発版へ戻した．
-  `develop` も `main` に追随させて版数をそろえた．**push は未実施 (次の一手)**．
-
-- 更新: 2026-08-22 19:05 (JST)
-- **CLAUDE.md の書き方ルール (todo 直下で確定) をこのプロジェクトにも適用した**．
-  段階ごとの作業ログ (08-18 〜 08-21) と直近のコミット履歴を `.claude/notes/history.md` へ移し，
-  本体には現在の状態・積み残しだけを残した．CRAN 提出まわりの現在の状況・積み残しは変更なし．
-
-- 更新: 2026-08-22 18:09 (JST)
-- **0.2.2 を Web フォームから手動で提出し，確認メールのリンクも踏んで完了した**．
-  疎通確認 (同日) で受付が開いていることを確かめたうえでの提出．
-  `CRAN-SUBMISSION` は 0.2.2 (2026-08-22 09:06:50 UTC) に自動更新されていた
-  (手動提出でも更新されると分かった．前回の記述は誤り)．
-
-- 更新: 2026-08-22 (JST)
-- **CRAN 提出サーバへの疎通を再確認した．提出可能な状態**．
-  `https://xmpalantir.wu.ac.at/cransubmit/` は HTTP 200，フォームの入力欄も通常どおり表示．
-  ページ内の「受付停止」の文言は `<!-- -->` でコメントアウトされた 2017/2018 年の古い告知で，
-  現在アクティブな告知は無い．
-  準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
-
 ### 積み残し
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
@@ -127,17 +103,41 @@ TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twins
 
 - **【決定 2026-08-27】pure R の独立実装のままとし，現時点では原典との完全一致は追わない**．
   `?twinspan` に既知の差異と，原典どおりの結果が要る場合の案内 (jarioksa/twinspan) を明記済み．
-- **【決定 2026-08-27】`max_depth` の既定を原典と同じ 7 にそろえた**．
+- **【訂正 2026-09-02】`max_depth` の既定は 6** (原典の `levmax`)．
+  2026-08-27 にいったん 7 にしたが，実測に合わせて 6 に戻してある．
 - **【完了 2026-08-27】README への記載，vignette の新設，`develop` への merge**．
-1. **次のリリースの前に `devtools::check(--as-cran)` を通す** (vignette を足したため)．
+1. **【完了 2026-09-02】`devtools::check(--as-cran)` を通した**．
+   **Status: OK (0 errors / 0 warnings / 0 notes)**．vignette を足した後も問題なし．
 2. **pkgdown サイトへの vignette の掲載は，`main` へ merge するまで起きない**．
    `.github/workflows/pkgdown.yaml` の trigger は `main`/`master` への push だけで，
    `develop` への push では走らない (手で回すなら `workflow_dispatch`)．
 
+### 2026-09-02 の点検で直したもの
+
+**バグ** (いずれも実測で再現を確認してから直した．テストを先に足して落ちることを見た)
+
+- `shdi()`: abundance に 0 があると `h` が NaN になっていた (`0 * log(0)`)．
+- `ind_val()`: 並べ替えが効いていなかった．`res$ind.val` が代入前の labdsv の結果を
+  指し，成分名 (`indval`/`pval`) に部分一致しないので `NULL` になっていた．
+- `cls_add_group()`: 標本が1つでも `df` に無いと**全ラベルが NA** になっていた
+  (`pad2longest()` の `max()` が NA を返すため)．
+- `dist2df()`: 対角を外す `filter(dist != 0)` が，別プロット間の距離 0 も落としていた．
+- `ordination()`: 未知の `o_method` で `switch` の末尾のカンマ (`fspa` の名残) により
+  無関係なエラーが出ていた．
+- `ord_add_group()`: `group` 引数が完全に未使用だった (今は必ず残す)．
+
+**その他**: `tw_hill_const()` の `@return` に `mz_out` を追加，`polish = "hill"` が
+定数 (`frq_lim`・`cwt_min`) を実際に使うようにした (値は同じで結果は不変)，
+`ordination()` の無操作な `res$d_method <- NULL` 3 か所を削除，
+`inculde_self` を `include_self` に改名 (旧名も受ける)．
+
+**テスト**: 216 → 257 検査．重複していた検査 (無操作の代入の検査，
+`tw_two_way()` の重複，seed の 2 ブロック，`draw_layer_construction()` の 2 ブロック) を整理．
+
 いつか
 
-1. テストがまだ無いもの: `gen_example()`, `read_biss()`, `draw_layer_construction()`,
-   `pad2longest()`．
+1. `ind_val()` の群の並びは「df に現れた順」で，因子の順ではない
+   (`group_no <- seq_along(unique(...))`)．直すかどうかは未判断．
 2. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
