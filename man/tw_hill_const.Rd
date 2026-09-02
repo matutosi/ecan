@@ -10,7 +10,7 @@ tw_hill_const()
 A named list of the constants.
 \code{rat_lim}, \code{frq_lim}, \code{feeble}, \code{icw_exp}, \code{ipr_exp},
 \code{cwt_min}, \code{cr_long}, \code{cr_cut}, \code{polish_iter},
-\code{mz_crit} and \code{mz_ind}.
+\code{mz_crit}, \code{mz_out} and \code{mz_ind}.
 }
 \description{
 The values that Hill's FORTRAN program sets for one division.

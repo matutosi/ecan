@@ -122,8 +122,7 @@ test_that("the species are classified on their fidelity to the groups", {
   id <- stats::setNames(strtoi(paste0("1", sc$path), base = 2L), sc$species)
   expect_equal(unname(id[names(hill)]), unname(hill))
   # tw_two_way() works with it
-  expect_silent(tab <- tw_two_way(tw))
-  expect_setequal(rownames(tab), colnames(dune))
+  expect_silent(tw_two_way(tw))
 })
 
 test_that("varespec is classified as the original does", {
@@ -249,9 +248,19 @@ test_that("tw_two_way() arranges stands and species", {
   tab <- tw_two_way(tw)
   expect_s3_class(tab, "tw_two_way")
   expect_equal(dim(unclass(tab)), c(ncol(dune), nrow(dune)))
-  expect_setequal(colnames(tab), rownames(dune))
   expect_setequal(rownames(tab), colnames(dune))
   expect_equal(colnames(tab), tw$classification$stand)
   expect_false(is.unsorted(attr(tab, "stand_path")))
   expect_error(tw_two_way(twinspan(dune, species = FALSE)))
+})
+
+test_that("tw_hill_const() names every constant it documents", {
+  expect_named(tw_hill_const(),
+               c("rat_lim", "frq_lim", "feeble", "icw_exp", "ipr_exp",
+                 "cwt_min", "cr_long", "cr_cut", "polish_iter",
+                 "mz_crit", "mz_out", "mz_ind"))
+  expect_equal(tw_hill_const()$icw_exp, 1)
+  expect_equal(tw_hill_const()$cwt_min, 0.01)
+  expect_equal(tw_hill_const()$cr_long, 0.2)
+  expect_equal(tw_hill_const()$cr_cut,  0.2)
 })

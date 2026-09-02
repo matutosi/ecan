@@ -510,9 +510,11 @@ tw_preference <- function(y, positive){
 
 # Heterogeneity of a group, downweighted in the same way as the ordination
 tw_het <- function(y, opt){
-  w <- if(isTRUE(opt$downweight))
-         tw_downweight(y, method = if(identical(opt$polish, "hill")) "hill" else "decorana")
-       else NULL
+  w <- if(!isTRUE(opt$downweight)) NULL
+       else if(identical(opt$polish, "hill"))
+         tw_downweight(y, method = "hill", frq_lim = opt$frq_lim,
+                       w_min = opt$cwt_min)
+       else tw_downweight(y, method = "decorana")
   tw_inertia(y, w = w)
 }
 

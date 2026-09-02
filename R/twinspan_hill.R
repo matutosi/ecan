@@ -7,7 +7,7 @@
 #' @return  A named list of the constants.
 #'          `rat_lim`, `frq_lim`, `feeble`, `icw_exp`, `ipr_exp`,
 #'          `cwt_min`, `cr_long`, `cr_cut`, `polish_iter`,
-#'          `mz_crit` and `mz_ind`.
+#'          `mz_crit`, `mz_out` and `mz_ind`.
 #' @examples
 #' \donttest{
 #' unlist(tw_hill_const())
@@ -346,7 +346,8 @@ tw_swap <- function(ctx, neg, pos){
 tw_divide_hill <- function(y, opt, ctx = NULL){
   rw <- if(is.null(ctx$rw)) NULL else ctx$rw[ctx$members]
   w  <- if(isTRUE(opt$downweight))
-          tw_downweight(y, method = "hill", rw = rw) else NULL
+          tw_downweight(y, method = "hill", frq_lim = opt$frq_lim,
+                        w_min = opt$cwt_min, rw = rw) else NULL
   if(!is.null(ctx$cw)) w <- if(is.null(w)) ctx$cw else w * ctx$cw
   ra <- tw_ra(y, w = w, rw = rw)
   x  <- ra$sample
