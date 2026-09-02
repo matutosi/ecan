@@ -54,7 +54,8 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
         {{indval}}   := res$indcls, 
         {{pvalue}}   := res$pval
       ) %>%
-      dplyr::arrange(.data[[group_no]], dplyr::desc(res$ind.val), dplyr::desc(res$p.value))
+      dplyr::arrange(.data[[group_no]],
+                     dplyr::desc(.data[[indval]]), .data[[pvalue]])
       gr <- 
         gr %>%
         dplyr::select(! dplyr::all_of(stand)) %>%
