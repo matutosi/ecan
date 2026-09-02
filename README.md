@@ -237,32 +237,32 @@ ind_val(df, group = "Management")
 #> # A tibble: 30 × 4
 #>    Management species  ind.val p.value
 #>    <fct>      <chr>      <dbl>   <dbl>
-#>  1 SF         Elymrepe   0.188   0.703
-#>  2 SF         Alopgeni   0.547   0.036
-#>  3 SF         Agrostol   0.472   0.063
-#>  4 SF         Cirsarve   0.167   1    
-#>  5 SF         Sagiproc   0.241   0.525
+#>  1 SF         Alopgeni   0.547   0.036
+#>  2 SF         Agrostol   0.472   0.063
+#>  3 SF         Sagiproc   0.241   0.525
+#>  4 SF         Elymrepe   0.188   0.703
+#>  5 SF         Cirsarve   0.167   1    
 #>  6 SF         Chenalbu   0.167   1    
-#>  7 BF         Achimill   0.386   0.119
+#>  7 BF         Vicilath   0.571   0.034
 #>  8 BF         Lolipere   0.45    0.071
-#>  9 BF         Poaprat    0.379   0.211
-#> 10 BF         Bellpere   0.362   0.144
+#>  9 BF         Bromhord   0.448   0.046
+#> 10 BF         Trifrepe   0.439   0.065
 #> # ℹ 20 more rows
 ind_val(df, group = "Use")
 #> Joining with `by = join_by(numeric_Use)`
 #> # A tibble: 30 × 4
 #>    Use      species  ind.val p.value
 #>    <ord>    <chr>      <dbl>   <dbl>
-#>  1 Haypastu Elymrepe   0.292   0.314
-#>  2 Haypastu Lolipere   0.259   0.801
-#>  3 Haypastu Poaprat    0.288   0.819
-#>  4 Haypastu Poatriv    0.451   0.116
-#>  5 Haypastu Alopgeni   0.359   0.201
-#>  6 Haypastu Agrostol   0.269   0.587
-#>  7 Haypastu Cirsarve   0.125   1    
-#>  8 Haypastu Sagiproc   0.178   0.799
-#>  9 Haypastu Juncbufo   0.118   0.834
-#> 10 Haypastu Chenalbu   0.125   1    
+#>  1 Haypastu Poatriv    0.451   0.116
+#>  2 Haypastu Alopgeni   0.359   0.201
+#>  3 Haypastu Elymrepe   0.292   0.314
+#>  4 Haypastu Poaprat    0.288   0.819
+#>  5 Haypastu Agrostol   0.269   0.587
+#>  6 Haypastu Lolipere   0.259   0.801
+#>  7 Haypastu Sagiproc   0.178   0.799
+#>  8 Haypastu Cirsarve   0.125   1    
+#>  9 Haypastu Chenalbu   0.125   1    
+#> 10 Haypastu Juncbufo   0.118   0.834
 #> # ℹ 20 more rows
 ind_val(df, group = "Manure")
 #> Joining with `by = join_by(numeric_Manure)`
@@ -271,14 +271,14 @@ ind_val(df, group = "Manure")
 #>    <ord>  <chr>      <dbl>   <dbl>
 #>  1 4      Elymrepe   0.5     0.039
 #>  2 4      Lolipere   0.351   0.194
-#>  3 4      Poaprat    0.315   0.279
-#>  4 4      Bellpere   0.248   0.474
-#>  5 4      Cirsarve   0.333   0.294
-#>  6 2      Achimill   0.309   0.278
-#>  7 2      Poatriv    0.299   0.432
-#>  8 2      Bromhord   0.173   0.713
-#>  9 2      Anthodor   0.178   0.761
-#> 10 2      Rumeacet   0.522   0.038
+#>  3 4      Cirsarve   0.333   0.294
+#>  4 4      Poaprat    0.315   0.279
+#>  5 4      Bellpere   0.248   0.474
+#>  6 2      Rumeacet   0.522   0.038
+#>  7 2      Trifprat   0.389   0.165
+#>  8 2      Achimill   0.309   0.278
+#>  9 2      Poatriv    0.299   0.432
+#> 10 2      Anthodor   0.178   0.761
 #> # ℹ 20 more rows
 ```
 
