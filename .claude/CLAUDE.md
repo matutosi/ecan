@@ -99,6 +99,23 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
 
+**【決定 2026-09-02】次の CRAN 提出は 2026年10月下旬 (10-23 以降)，版数は 0.3.0**．
+
+- CRAN の方針は「**1〜2ヶ月に1回より頻繁にはしない**」
+  ("no more than every 1-2 months" seems appropriate．
+  <https://cran.r-project.org/web/packages/policies.html>)．
+  **0.2.2 の提出は 2026-08-22 (受理 08-23)** なので，1ヶ月なら 09-22，2ヶ月なら 10-23．
+- **2ヶ月側を採る**．急ぐ理由が無く，TWINSPAN は公開前で実利用を経ていない．
+  急いで 0.3.0 を出して数週間後に 0.3.1 を出すのが，CRAN が最も嫌う形になる．
+  今回のバグ6件も読み直しで見つかったもので，詰める余地がまだある．
+- **版数は 0.2.3 ではなく 0.3.0**．TWINSPAN 一式・vignette の新設・
+  引数名の変更 (`include_self`) を含み，パッチ番号では実態を表さない．
+- **例外**: CRAN から check の失敗や依存の変更で連絡が来たら，
+  **期間を待たずに直ちに出す**．この目安の対象外．
+- 提出直前にやること: `DESCRIPTION` を 0.3.0 に上げる →
+  `NEWS.md` に日付を入れる → `cran-comments.md` を更新 →
+  `check(--as-cran)` を回し直す．
+
 TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twinspan.md))
 
 - **【決定 2026-08-27】pure R の独立実装のままとし，現時点では原典との完全一致は追わない**．
@@ -137,7 +154,7 @@ TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twins
 いつか
 
 1. `ind_val()` の群の並びは「df に現れた順」で，因子の順ではない
-   (`group_no <- seq_along(unique(...))`)．直すかどうかは未判断．
+   (`group_no <- seq_along(unique(...))`)．**0.3.0 を出す前に直すかどうかを決める**．
 2. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
