@@ -15,15 +15,9 @@ test_that("add_mid_p_bin_w attaches mid_point and bin_width to df", {
   expect_equal(nrow(out), nrow(df))
 })
 
-test_that("draw_layer_construction returns a ggplot object", {
-  df <- tibble::tibble(stand = "A", height = c(2, 4, 8, 20), cover = c(1, 2, 3, 4))
-  gg <- draw_layer_construction(df)
-  expect_s3_class(gg, "ggplot")
-})
-
-test_that("draw_layer_construction groups by the given column", {
+test_that("draw_layer_construction returns a ggplot, with or without a group", {
   df <- tibble::tibble(stand = "A", height = c(2, 4, 8, 20),
                         cover = c(1, 2, 3, 4), sp_group = c("g1", "g1", "g2", "g2"))
-  gg <- draw_layer_construction(df, group = "sp_group")
-  expect_s3_class(gg, "ggplot")
+  expect_s3_class(draw_layer_construction(df), "ggplot")
+  expect_s3_class(draw_layer_construction(df, group = "sp_group"), "ggplot")
 })
