@@ -52,6 +52,5 @@ dist2df <- function(dist){
   tbl %>%
     dplyr::mutate("plot_1" := colnames(tbl)) %>%
     tidyr::pivot_longer(-dplyr::all_of("plot_1"), names_to = "plot_2", values_to = dist_col) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(.data[[dist_col]] != 0)
+    dplyr::filter(.data[["plot_1"]] != .data[["plot_2"]])
 }
