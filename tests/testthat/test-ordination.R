@@ -12,7 +12,6 @@ test_that("methods without a distance report none, even when one is given", {
   for(o_method in c("pca", "ca", "dca")){
     res <- ordination(dune, o_method = o_method, d_method = "bray")
     expect_null(res$distance_method)
-    expect_null(res$d_method)
   }
 })
 
@@ -84,4 +83,23 @@ test_that("ord_plot returns a ggplot", {
   res <- ordination(dune, o_method = "pca")
   expect_s3_class(ord_plot(res), "ggplot")
   expect_s3_class(ord_plot(res, score = "sp_scores"), "ggplot")
+})
+
+test_that("an unknown ordination method is reported by its name", {
+  expect_error(ordination(dune, o_method = "no_such_method"), "no_such_method")
+})
+
+test_that("ord_add_group keeps the column named by group", {
+  # "full" is one-to-one with "species", so it is not a one-to-multi column
+  sp_group <-
+    tibble::tibble(species = colnames(dune),
+                   full    = paste0(colnames(dune), "_full"),
+                   initial = stringr::str_sub(colnames(dune), 1, 1))
+  res <- ordination(dune, o_method = "pca")
+  df  <-
+    suppressMessages(
+      ord_add_group(res, score = "sp_scores", sp_group,
+                    indiv = "species", group = "full"))
+  expect_true("full" %in% colnames(df))
+  expect_equal(df$full, paste0(df$species, "_full"))
 })

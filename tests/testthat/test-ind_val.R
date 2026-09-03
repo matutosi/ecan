@@ -22,23 +22,17 @@ test_that("ind_val returns one row per species", {
   expect_true(all(res$p.value >= 0 & res$p.value <= 1))
 })
 
-test_that("the same seed gives the same p values", {
+test_that("the seed changes p.value but not ind.val", {
   set.seed(1)
   res_1 <- suppressMessages(
     ind_val(df, abundance = "cover", group = "Moisture"))
   set.seed(1)
-  res_2 <- suppressMessages(
-    ind_val(df, abundance = "cover", group = "Moisture"))
-  expect_equal(res_1, res_2)
-})
-
-test_that("ind.val does not depend on the seed, only p.value does", {
-  set.seed(1)
-  res_1 <- suppressMessages(
+  same <- suppressMessages(
     ind_val(df, abundance = "cover", group = "Moisture"))
   set.seed(2)
   res_2 <- suppressMessages(
     ind_val(df, abundance = "cover", group = "Moisture"))
+  expect_equal(res_1, same)              # the same seed gives the same result
   expect_equal(res_1$ind.val, res_2$ind.val)
 })
 
@@ -59,4 +53,16 @@ test_that("columns can be given by position", {
   set.seed(1)
   res_default <- suppressMessages(ind_val(df, group = "Moisture"))
   expect_equal(res_named, res_default)
+})
+
+test_that("the species are ordered by ind.val within a group", {
+  set.seed(1)
+  res <- suppressMessages(
+    ind_val(df, abundance = "cover", group = "Moisture"))
+  # the species of a group are given in decreasing order of ind.val
+  by_group <- split(res$ind.val, res$Moisture)
+  for(v in by_group) expect_false(is.unsorted(rev(v)))
+  # every group is kept together (in the order in which it appears in df)
+  gr <- as.character(res$Moisture)
+  expect_equal(length(rle(gr)$values), length(unique(gr)))
 })

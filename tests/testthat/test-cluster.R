@@ -78,3 +78,15 @@ test_that("cls_color colors the labels of a dendrogram", {
   expect_s3_class(res, "dendrogram")
   expect_length(dendextend::labels_colors(res), length(labels(dend)))
 })
+
+test_that("cls_add_group keeps the labels when a stand is not in df", {
+  cls  <- cluster(dune, c_method = "average", d_method = "bray")
+  less <- env[-1, ]                     # the stand of the 1st row is missing
+  res  <- suppressMessages(
+    cls_add_group(cls, less, indiv = "stand", group = "Use"))
+  expect_false(all(is.na(res$labels)))
+  expect_equal(sum(is.na(res$labels)), 1L)
+  # the stands that are in df keep their group
+  ok <- !is.na(res$labels)
+  expect_true(all(stringr::str_detect(res$labels[ok], "-")))
+})

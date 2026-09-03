@@ -1,0 +1,129 @@
+---
+title: "TWINSPAN with ecan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TWINSPAN with ecan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(ecan)
+```
+
+## What TWINSPAN does
+
+TWINSPAN (Two-Way INdicator SPecies ANalysis, Hill 1979) classifies a
+community data table in the way a vegetation scientist arranges it by
+hand: it splits the stands into two groups again and again, and it names
+the species that best indicate each split. Both the stands and the
+species are classified, hence *two-way*.
+
+`ecan` implements it in plain R, so no compiler is needed.
+It is **not** a port of Hill's original FORTRAN program;
+`?twinspan` lists the known differences.
+
+```{r data}
+data(dune, package = "vegan")
+tw <- twinspan(dune)
+tw
+```
+
+## The steps of one division
+
+Each division is made in three steps.
+
+**1. Pseudospecies.** TWINSPAN works on presence and absence, so a
+quantitative table is first cut into binary pseudospecies at the cut
+levels (by default `0, 2, 5, 10, 20`). A species with a cover of 7
+is present at the levels 1, 2 and 3, but not at 4 and 5.
+
+```{r pseudospecies}
+psp <- pseudospecies(dune)
+dim(psp)
+head(colnames(psp))
+```
+
+**2. Primary ordination.** The first axis of a correspondence analysis
+of the pseudospecies is found by reciprocal averaging, and the stands
+are divided at its centroid.
+
+```{r ra}
+ra <- tw_ra(psp)
+ra$eig
+```
+
+**3. Refined and indicator ordination.** The division is then polished
+using the species that prefer one side of it. The preference runs from
+-1 (only in the negative group) to 1 (only in the positive group), and a
+pseudospecies is *differential* when its absolute preference reaches
+`diff_threshold` (1/3 by default, a frequency ratio of 2:1).
+Finally a few of the most preferential pseudospecies are chosen as
+indicators, which summarise the division without defining it.
+
+```{r preference}
+pos <- ra$sample > 0
+pref <- tw_preference(psp, pos)
+head(sort(pref))
+```
+
+The indicators of every division are shown by `print()`, together with
+the eigenvalue of the axis that made the division (see the output above).
+
+## Classification of the stands
+
+The result gives one row per stand, with the group and the binary path
+of the divisions that led to it.
+
+```{r classification}
+head(tw$classification)
+table(tw$classification$group)
+```
+
+The division tree becomes an `hclust` object, so the clustering helpers
+of `ecan` and the usual plotting functions can be used.
+
+```{r dendrogram, fig.width = 7, fig.height = 4}
+cls <- stats::as.hclust(tw)
+plot(cls, hang = -1, main = "TWINSPAN", xlab = "", sub = "")
+```
+
+## Modified TWINSPAN
+
+The original TWINSPAN divides every group of a level before going
+deeper, so groups of the same level can differ widely in how
+heterogeneous they are. Roleček et al. (2009) instead divide the most
+heterogeneous group first, which makes the resulting groups more
+comparable. `ecan` measures the heterogeneity by the total inertia of
+the group.
+
+```{r modified}
+tw_inertia(psp)
+tw_mod <- twinspan(dune, modified = TRUE, n_clusters = 4)
+table(tw_mod$classification$group)
+```
+
+With `n_clusters` the number of groups is chosen directly,
+which the original hierarchy cannot do.
+
+## The ordered two-way table
+
+`tw_two_way()` arranges the stands and the species by their divisions
+and shows the cut level of each cell. The digits below the table are the
+dichotomy of each stand, and those on the right are the dichotomy of
+each species.
+
+```{r two_way}
+tw_two_way(tw)
+```
+
+## References
+
+Hill, M.O. (1979) *TWINSPAN: a FORTRAN program for arranging
+multivariate data in an ordered two-way table by classification of the
+individuals and attributes*. Cornell University, Ithaca.
+
+Roleček, J., Tichý, L., Zelený, D. and Chytrý, M. (2009) Modified
+TWINSPAN classification in which the hierarchy respects cluster
+heterogeneity. *Journal of Vegetation Science* 20: 596-602.

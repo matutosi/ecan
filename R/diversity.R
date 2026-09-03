@@ -46,5 +46,7 @@ d <- function(x){
 h <- function(x, base = exp(1)){ 
   stopifnot(is.numeric(x))
   stopifnot(is.numeric(base))
+  x <- x[x > 0]   # an abundance of zero is an absent species
+  if(!length(x)) return(0)
  -sum( x / sum(x) * log(x / sum(x), base = base)) 
 }

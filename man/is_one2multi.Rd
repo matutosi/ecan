@@ -15,9 +15,9 @@ is_one2one(df, col_1, col_2)
 
 is_multi2multi(df, col_1, col_2)
 
-cols_one2multi(df, col, inculde_self = TRUE)
+cols_one2multi(df, col, include_self = TRUE, inculde_self)
 
-select_one2multi(df, col, inculde_self = TRUE)
+select_one2multi(df, col, include_self = TRUE, inculde_self)
 
 unique_length(df, col_1, col_2)
 }
@@ -26,8 +26,11 @@ unique_length(df, col_1, col_2)
 
 \item{col, col_1, col_2}{A string to specify a colname.}
 
-\item{inculde_self}{A logical.
+\item{include_self}{A logical.
 If TRUE, return value including input col.}
+
+\item{inculde_self}{Deprecated: the misspelt name of include_self,
+kept so that older code keeps working.}
 }
 \value{
 is_one2multi(), is_one2one(), is_multi2multi()  return a logical.

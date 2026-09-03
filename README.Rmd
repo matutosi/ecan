@@ -20,9 +20,19 @@ The goal of ecan is to support ecological analysis.
 
 ## Installation
 
-```{r install, eval = FALSE}
+The released version is available on CRAN.
+
+```{r install_cran, eval = FALSE}
 install.packages("ecan")
-  # development
+```
+
+The development version on GitHub (branch `main`) is **ahead of the
+version on CRAN**, so the two do not match.
+It already includes features that are not released yet,
+such as `twinspan()` and its helpers.
+Install it if you need them.
+
+```{r install_github, eval = FALSE}
   # install.packages("remotes")
 remotes::install_github("matutosi/ecan")
 ```
@@ -112,6 +122,38 @@ plot(cls)
 dendextend::colored_bars(colors = col, cls, group, y_shift = 0,  y_scale = 3)
 par(new = TRUE)
 plot(cls)
+```
+
+### TWINSPAN
+
+`twinspan()` is a native R implementation of TWINSPAN (Hill 1979) and of
+the modified TWINSPAN of Roleček et al. (2009).
+It needs no compiler, but it is not a port of Hill's original FORTRAN
+program: see `?twinspan` for the known differences.
+
+```{r twinspan}
+tw <- twinspan(dune)
+tw
+
+head(tw$classification)
+
+# the division tree works with the clustering helpers of ecan
+ggdendro::ggdendrogram(stats::as.hclust(tw))
+```
+
+The modified TWINSPAN divides the most heterogeneous group first,
+so that the number of groups can be chosen directly.
+
+```{r twinspan_modified}
+tw_mod <- twinspan(dune, modified = TRUE, n_clusters = 4)
+table(tw_mod$classification$group)
+```
+
+`tw_two_way()` arranges the stands and the species by their divisions.
+The digits below the table show the dichotomy of each stand.
+
+```{r twinspan_table}
+tw_two_way(tw)
 ```
 
 ### Ordination

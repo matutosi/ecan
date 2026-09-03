@@ -11,6 +11,6 @@
 #' 
 #' @export
 pad2longest <- function(string, side = "right", pad = " "){
-  width <- max(stringr::str_length(string))
+  width <- max(stringr::str_length(string), 0, na.rm = TRUE)
   stringr::str_pad(string, width = width, side = side, pad = pad)
 }

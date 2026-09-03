@@ -50,3 +50,15 @@ test_that("dist2df drops the zero diagonal and keeps both directions", {
   expect_true(all(res$dist > 0))
   expect_true(all(res$plot_1 != res$plot_2))
 })
+
+test_that("dist2df keeps a zero distance between two different plots", {
+  m <- matrix(c(0, 0, 2,
+                0, 0, 3,
+                2, 3, 0), nrow = 3,
+              dimnames = list(paste0("p", 1:3), paste0("p", 1:3)))
+  res <- dist2df(stats::as.dist(m))
+  # 3 plots, both directions: 6 rows, the zero diagonal dropped
+  expect_equal(nrow(res), 6L)
+  expect_true(all(res$plot_1 != res$plot_2))
+  expect_equal(sum(res$dist == 0), 2L)
+})

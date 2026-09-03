@@ -56,6 +56,8 @@ ord_plot() returns ggplot2 object.
 ord_extract_score() extracts stand or species scores
 from ordination result.
 ord_add_group() adds group data.frame into ordination scores.
+The columns that are one-to-multi to indiv are added,
+and the column named by group is always among them.
 }
 \description{
 Helper function for ordination methods
