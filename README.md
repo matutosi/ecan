@@ -5,9 +5,18 @@ The goal of ecan is to support ecological analysis.
 
 ## Installation
 
+The released version is available on CRAN.
+
 ``` r
 install.packages("ecan")
-  # development
+```
+
+The development version on GitHub (branch `main`) is **ahead of the
+version on CRAN**, so the two do not match. It already includes features
+that are not released yet, such as `twinspan()` and its helpers. Install
+it if you need them.
+
+``` r
   # install.packages("remotes")
 remotes::install_github("matutosi/ecan")
 ```
