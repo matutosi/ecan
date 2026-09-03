@@ -74,7 +74,13 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-09-02 09:05 (このセッション，MATUTOSI_DP)
+- 更新: 2026-09-03 17:45 (このセッション，x280-home)
+  **`develop` を `main` へ merge し，GitHub の `main` を最新にした**．
+  併せて README の Installation 節に，**GitHub 版は CRAN 版より進んでいて一致しない**ことと，
+  未公開の `twinspan()` を含む旨を明記した (`build_readme()` で再生成)．
+  CRAN 提出は予定どおり 2026年10月下旬・0.3.0 のまま (今回は提出しない)．
+
+- 更新: 2026-09-02 09:05 (MATUTOSI_DP)
   **黙って結果が壊れるバグ 6 件を直し，テストを 216 → 257 に増やした** (0 失敗)．
   shdi の NaN・ind_val の並べ替え無効・cls_add_group の全 NA・dist2df の 0 距離消失・
   ordination の不明メソッド・ord_add_group の未使用引数．README も再生成．
@@ -84,16 +90,7 @@ CRAN 公開済み (最新リリース 0.2.1)．
   6 データで，**標本の分類も種の分類も，群・番号・固有値まで原典と一致**する．
   決め手は「種の分類は指標種を使わない (`MIND = 0`)」ことだった．
 
-- 更新: 2026-08-27 (JST)
-  **原典 FORTRAN を読んで同じ分割手順を実装し，`polish = "hill"` を既定にした**．
-  **dune・varespec・mite・sipoo・BCI の 5 データで，階層のすべてのレベルの分類が
-  原典と完全一致** (ARI = 1.000)．固有値も一致．全 216 テスト成功．
-
-- 更新: 2026-08-27 11:13 (JST)
-  **TWINSPAN の一式を `develop` へ merge した**．README に節を足して `build_readme()` で再生成し，
-  **ecan で初めての vignette** (`vignettes/twinspan.Rmd`) を新設．merge 前の `R CMD check` で
-  `as.hclust` の総称関数を import していない不具合が見つかり修正 (**0 errors / 0 warnings**)．
-  `develop` を push 済み．
+- それ以前は [notes/history.md](notes/history.md) を見る．
 
 ### 積み残し
 
@@ -125,9 +122,9 @@ TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twins
 - **【完了 2026-08-27】README への記載，vignette の新設，`develop` への merge**．
 1. **【完了 2026-09-02】`devtools::check(--as-cran)` を通した**．
    **Status: OK (0 errors / 0 warnings / 0 notes)**．vignette を足した後も問題なし．
-2. **pkgdown サイトへの vignette の掲載は，`main` へ merge するまで起きない**．
-   `.github/workflows/pkgdown.yaml` の trigger は `main`/`master` への push だけで，
-   `develop` への push では走らない (手で回すなら `workflow_dispatch`)．
+2. **【完了 2026-09-03】`main` へ merge して push した**．
+   `.github/workflows/pkgdown.yaml` の trigger は `main`/`master` への push なので，
+   これで pkgdown サイトに vignette が載る (`develop` への push では走らない)．
 
 ### 2026-09-02 の点検で直したもの
 

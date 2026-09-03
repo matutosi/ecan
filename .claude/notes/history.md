@@ -155,3 +155,16 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit
   ページ内の「受付停止」の文言は `<!-- -->` でコメントアウトされた 2017/2018 年の古い告知で，
   現在アクティブな告知は無い．
   準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
+
+## 現在の状態から送ったもの (2026-09-03)
+
+- 更新: 2026-08-27 (JST)
+  **原典 FORTRAN を読んで同じ分割手順を実装し，`polish = "hill"` を既定にした**．
+  **dune・varespec・mite・sipoo・BCI の 5 データで，階層のすべてのレベルの分類が
+  原典と完全一致** (ARI = 1.000)．固有値も一致．全 216 テスト成功．
+
+- 更新: 2026-08-27 11:13 (JST)
+  **TWINSPAN の一式を `develop` へ merge した**．README に節を足して `build_readme()` で再生成し，
+  **ecan で初めての vignette** (`vignettes/twinspan.Rmd`) を新設．merge 前の `R CMD check` で
+  `as.hclust` の総称関数を import していない不具合が見つかり修正 (**0 errors / 0 warnings**)．
+  `develop` を push 済み．
