@@ -37,8 +37,29 @@
   : Helper function for ordination methods
 - [`pad2longest()`](https://matutosi.github.io/ecan/reference/pad2longest.md)
   : Pad a string to the longest width of the strings.
+- [`pseudospecies()`](https://matutosi.github.io/ecan/reference/pseudospecies.md)
+  : Pseudospecies transformation
 - [`read_biss()`](https://matutosi.github.io/ecan/reference/read_biss.md)
   : Read data from BiSS (Biodiversity Investigation Support System) to
   data frame.
 - [`shdi()`](https://matutosi.github.io/ecan/reference/shdi.md) : Helper
   function for calculating diversity
+- [`tw_downweight()`](https://matutosi.github.io/ecan/reference/tw_downweight.md)
+  : Downweighting of rare pseudospecies
+- [`tw_hill_const()`](https://matutosi.github.io/ecan/reference/tw_hill_const.md)
+  : Constants of the original TWINSPAN
+- [`tw_inertia()`](https://matutosi.github.io/ecan/reference/tw_inertia.md)
+  : Total inertia of a pseudospecies matrix
+- [`tw_preference()`](https://matutosi.github.io/ecan/reference/tw_preference.md)
+  : Preference of pseudospecies for one side of a division
+- [`tw_ra()`](https://matutosi.github.io/ecan/reference/tw_ra.md) :
+  Reciprocal averaging (first correspondence analysis axis)
+- [`tw_species_data()`](https://matutosi.github.io/ecan/reference/tw_species_data.md)
+  : Data on which the species of TWINSPAN are classified
+- [`tw_two_way()`](https://matutosi.github.io/ecan/reference/tw_two_way.md)
+  [`print(`*`<tw_two_way>`*`)`](https://matutosi.github.io/ecan/reference/tw_two_way.md)
+  : Ordered two-way table of a TWINSPAN result
+- [`twinspan()`](https://matutosi.github.io/ecan/reference/twinspan.md)
+  [`as.hclust(`*`<twinspan>`*`)`](https://matutosi.github.io/ecan/reference/twinspan.md)
+  [`print(`*`<twinspan>`*`)`](https://matutosi.github.io/ecan/reference/twinspan.md)
+  : Two-way indicator species analysis (TWINSPAN)

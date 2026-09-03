@@ -66,7 +66,8 @@ stand. \$results_raw: results of original ordination function.
 \$ordination_method: o_method. \$distance_method: d_method. ord_plot()
 returns ggplot2 object. ord_extract_score() extracts stand or species
 scores from ordination result. ord_add_group() adds group data.frame
-into ordination scores.
+into ordination scores. The columns that are one-to-multi to indiv are
+added, and the column named by group is always among them.
 
 ## Examples
 

@@ -58,16 +58,16 @@ ind_val(df, abundance = "cover", group = "Moisture")
 #> # A tibble: 30 × 4
 #>    Moisture species  ind.val p.value
 #>    <ord>    <chr>      <dbl>   <dbl>
-#>  1 1        Achimill   0.348   0.208
+#>  1 1        Planlanc   0.504   0.1  
 #>  2 1        Lolipere   0.462   0.062
-#>  3 1        Scorautu   0.291   0.793
-#>  4 1        Planlanc   0.504   0.1  
-#>  5 1        Trifprat   0.429   0.14 
+#>  3 1        Trifprat   0.429   0.14 
+#>  4 1        Achimill   0.348   0.208
+#>  5 1        Scorautu   0.291   0.793
 #>  6 1        Vicilath   0.180   0.674
-#>  7 2        Poaprat    0.358   0.345
-#>  8 2        Bellpere   0.45    0.136
+#>  7 2        Bellpere   0.45    0.136
+#>  8 2        Poaprat    0.358   0.345
 #>  9 2        Bromhord   0.302   0.179
-#> 10 2        Cirsarve   0.25    0.3  
+#> 10 2        Anthodor   0.259   0.326
 #> # ℹ 20 more rows
 # }
 ```

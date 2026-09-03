@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/twinspan.html">TWINSPAN with ecan</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -45,9 +49,9 @@
 <span></span>
 <span><span class="fu">is_multi2multi</span><span class="op">(</span><span class="va">df</span>, <span class="va">col_1</span>, <span class="va">col_2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">cols_one2multi</span><span class="op">(</span><span class="va">df</span>, <span class="va">col</span>, inculde_self <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">cols_one2multi</span><span class="op">(</span><span class="va">df</span>, <span class="va">col</span>, include_self <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">inculde_self</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">select_one2multi</span><span class="op">(</span><span class="va">df</span>, <span class="va">col</span>, inculde_self <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">select_one2multi</span><span class="op">(</span><span class="va">df</span>, <span class="va">col</span>, include_self <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">inculde_self</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">unique_length</span><span class="op">(</span><span class="va">df</span>, <span class="va">col_1</span>, <span class="va">col_2</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -64,9 +68,14 @@
 <dd><p>A string to specify a colname.</p></dd>
 
 
-<dt id="arg-inculde-self">inculde_self<a class="anchor" aria-label="anchor" href="#arg-inculde-self"></a></dt>
+<dt id="arg-include-self">include_self<a class="anchor" aria-label="anchor" href="#arg-include-self"></a></dt>
 <dd><p>A logical.
 If TRUE, return value including input col.</p></dd>
+
+
+<dt id="arg-inculde-self">inculde_self<a class="anchor" aria-label="anchor" href="#arg-inculde-self"></a></dt>
+<dd><p>Deprecated: the misspelt name of include_self,
+kept so that older code keeps working.</p></dd>
 
 </dl></div>
     <div class="section level2">

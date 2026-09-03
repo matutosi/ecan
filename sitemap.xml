@@ -2,6 +2,8 @@
 <url><loc>https://matutosi.github.io/ecan/404.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/LICENSE-text.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/LICENSE.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/articles/index.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/articles/twinspan.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/authors.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/index.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/news/index.html</loc></url>
@@ -16,7 +18,16 @@
 <url><loc>https://matutosi.github.io/ecan/reference/ordination.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/reference/pad2longest.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/reference/pipe.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/pseudospecies.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/reference/read_biss.html</loc></url>
 <url><loc>https://matutosi.github.io/ecan/reference/shdi.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_downweight.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_hill_const.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_inertia.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_preference.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_ra.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_species_data.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/tw_two_way.html</loc></url>
+<url><loc>https://matutosi.github.io/ecan/reference/twinspan.html</loc></url>
 </urlset>
 

@@ -32,6 +32,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/twinspan.html">TWINSPAN with ecan</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -53,10 +59,12 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>The released version is available on CRAN.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ecan"</span><span class="op">)</span></span>
-<span>  <span class="co"># development</span></span>
-<span>  <span class="co"># install.packages("remotes")</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ecan"</span><span class="op">)</span></span></code></pre></div>
+<p>The development version on GitHub (branch <code>main</code>) is <strong>ahead of the version on CRAN</strong>, so the two do not match. It already includes features that are not released yet, such as <code><a href="reference/twinspan.html">twinspan()</a></code> and its helpers. Install it if you need them.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span>  <span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"matutosi/ecan"</span><span class="op">)</span></span></code></pre></div>
 <p>You can use almost the same functionality in shiny.</p>
 <p><a href="https://matutosi.shinyapps.io/ecanvis/" class="external-link uri">https://matutosi.shinyapps.io/ecanvis/</a> .</p>
@@ -68,7 +76,7 @@
 <div class="section level3">
 <h3 id="prepare-and-convert-data">Prepare and convert data<a class="anchor" aria-label="anchor" href="#prepare-and-convert-data"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/matutosi/ecan" class="external-link">ecan</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vegandevs.github.io/vegan/" class="external-link">vegan</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: permute</span></span>
@@ -122,7 +130,7 @@
 <div class="section level3">
 <h3 id="diversity-index">Diversity index<a class="anchor" aria-label="anchor" href="#diversity-index"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">div</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="reference/shdi.html">shdi</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="reference/is_one2multi.html">select_one2multi</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"stand"</span><span class="op">)</span><span class="op">)</span></span>
@@ -139,7 +147,7 @@
 <div class="section level3">
 <h3 id="indicator-species-analysis-isa-ind-val">Indicator Species Analysis (ISA, ind val)<a class="anchor" aria-label="anchor" href="#indicator-species-analysis-isa-ind-val"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ind_val.html">ind_val</a></span><span class="op">(</span><span class="va">df</span>, group <span class="op">=</span> <span class="st">"Moisture"</span>, row_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $relfrq</span></span>
 <span><span class="co">#&gt;                  1    2         3   4</span></span>
@@ -282,32 +290,32 @@
 <span><span class="co">#&gt; # A tibble: 30 × 4</span></span>
 <span><span class="co">#&gt;    Management species  ind.val p.value</span></span>
 <span><span class="co">#&gt;    &lt;fct&gt;      &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 SF         Elymrepe   0.188   0.703</span></span>
-<span><span class="co">#&gt;  2 SF         Alopgeni   0.547   0.036</span></span>
-<span><span class="co">#&gt;  3 SF         Agrostol   0.472   0.063</span></span>
-<span><span class="co">#&gt;  4 SF         Cirsarve   0.167   1    </span></span>
-<span><span class="co">#&gt;  5 SF         Sagiproc   0.241   0.525</span></span>
+<span><span class="co">#&gt;  1 SF         Alopgeni   0.547   0.036</span></span>
+<span><span class="co">#&gt;  2 SF         Agrostol   0.472   0.063</span></span>
+<span><span class="co">#&gt;  3 SF         Sagiproc   0.241   0.525</span></span>
+<span><span class="co">#&gt;  4 SF         Elymrepe   0.188   0.703</span></span>
+<span><span class="co">#&gt;  5 SF         Cirsarve   0.167   1    </span></span>
 <span><span class="co">#&gt;  6 SF         Chenalbu   0.167   1    </span></span>
-<span><span class="co">#&gt;  7 BF         Achimill   0.386   0.119</span></span>
+<span><span class="co">#&gt;  7 BF         Vicilath   0.571   0.034</span></span>
 <span><span class="co">#&gt;  8 BF         Lolipere   0.45    0.071</span></span>
-<span><span class="co">#&gt;  9 BF         Poaprat    0.379   0.211</span></span>
-<span><span class="co">#&gt; 10 BF         Bellpere   0.362   0.144</span></span>
+<span><span class="co">#&gt;  9 BF         Bromhord   0.448   0.046</span></span>
+<span><span class="co">#&gt; 10 BF         Trifrepe   0.439   0.065</span></span>
 <span><span class="co">#&gt; # ℹ 20 more rows</span></span>
 <span><span class="fu"><a href="reference/ind_val.html">ind_val</a></span><span class="op">(</span><span class="va">df</span>, group <span class="op">=</span> <span class="st">"Use"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(numeric_Use)`</span></span>
 <span><span class="co">#&gt; # A tibble: 30 × 4</span></span>
 <span><span class="co">#&gt;    Use      species  ind.val p.value</span></span>
 <span><span class="co">#&gt;    &lt;ord&gt;    &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Haypastu Elymrepe   0.292   0.314</span></span>
-<span><span class="co">#&gt;  2 Haypastu Lolipere   0.259   0.801</span></span>
-<span><span class="co">#&gt;  3 Haypastu Poaprat    0.288   0.819</span></span>
-<span><span class="co">#&gt;  4 Haypastu Poatriv    0.451   0.116</span></span>
-<span><span class="co">#&gt;  5 Haypastu Alopgeni   0.359   0.201</span></span>
-<span><span class="co">#&gt;  6 Haypastu Agrostol   0.269   0.587</span></span>
-<span><span class="co">#&gt;  7 Haypastu Cirsarve   0.125   1    </span></span>
-<span><span class="co">#&gt;  8 Haypastu Sagiproc   0.178   0.799</span></span>
-<span><span class="co">#&gt;  9 Haypastu Juncbufo   0.118   0.834</span></span>
-<span><span class="co">#&gt; 10 Haypastu Chenalbu   0.125   1    </span></span>
+<span><span class="co">#&gt;  1 Haypastu Poatriv    0.451   0.116</span></span>
+<span><span class="co">#&gt;  2 Haypastu Alopgeni   0.359   0.201</span></span>
+<span><span class="co">#&gt;  3 Haypastu Elymrepe   0.292   0.314</span></span>
+<span><span class="co">#&gt;  4 Haypastu Poaprat    0.288   0.819</span></span>
+<span><span class="co">#&gt;  5 Haypastu Agrostol   0.269   0.587</span></span>
+<span><span class="co">#&gt;  6 Haypastu Lolipere   0.259   0.801</span></span>
+<span><span class="co">#&gt;  7 Haypastu Sagiproc   0.178   0.799</span></span>
+<span><span class="co">#&gt;  8 Haypastu Cirsarve   0.125   1    </span></span>
+<span><span class="co">#&gt;  9 Haypastu Chenalbu   0.125   1    </span></span>
+<span><span class="co">#&gt; 10 Haypastu Juncbufo   0.118   0.834</span></span>
 <span><span class="co">#&gt; # ℹ 20 more rows</span></span>
 <span><span class="fu"><a href="reference/ind_val.html">ind_val</a></span><span class="op">(</span><span class="va">df</span>, group <span class="op">=</span> <span class="st">"Manure"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(numeric_Manure)`</span></span>
@@ -316,20 +324,20 @@
 <span><span class="co">#&gt;    &lt;ord&gt;  &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;</span></span>
 <span><span class="co">#&gt;  1 4      Elymrepe   0.5     0.039</span></span>
 <span><span class="co">#&gt;  2 4      Lolipere   0.351   0.194</span></span>
-<span><span class="co">#&gt;  3 4      Poaprat    0.315   0.279</span></span>
-<span><span class="co">#&gt;  4 4      Bellpere   0.248   0.474</span></span>
-<span><span class="co">#&gt;  5 4      Cirsarve   0.333   0.294</span></span>
-<span><span class="co">#&gt;  6 2      Achimill   0.309   0.278</span></span>
-<span><span class="co">#&gt;  7 2      Poatriv    0.299   0.432</span></span>
-<span><span class="co">#&gt;  8 2      Bromhord   0.173   0.713</span></span>
-<span><span class="co">#&gt;  9 2      Anthodor   0.178   0.761</span></span>
-<span><span class="co">#&gt; 10 2      Rumeacet   0.522   0.038</span></span>
+<span><span class="co">#&gt;  3 4      Cirsarve   0.333   0.294</span></span>
+<span><span class="co">#&gt;  4 4      Poaprat    0.315   0.279</span></span>
+<span><span class="co">#&gt;  5 4      Bellpere   0.248   0.474</span></span>
+<span><span class="co">#&gt;  6 2      Rumeacet   0.522   0.038</span></span>
+<span><span class="co">#&gt;  7 2      Trifprat   0.389   0.165</span></span>
+<span><span class="co">#&gt;  8 2      Achimill   0.309   0.278</span></span>
+<span><span class="co">#&gt;  9 2      Poatriv    0.299   0.432</span></span>
+<span><span class="co">#&gt; 10 2      Anthodor   0.178   0.761</span></span>
 <span><span class="co">#&gt; # ℹ 20 more rows</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cluster-analysis">Cluster analysis<a class="anchor" aria-label="anchor" href="#cluster-analysis"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://andrie.github.io/ggdendro/" class="external-link">ggdendro</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://talgalili.github.io/dendextend/" class="external-link">dendextend</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Registered S3 method overwritten by 'dendextend':</span></span>
@@ -364,7 +372,7 @@
 <span><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cluster.html">cluster</a></span><span class="op">(</span><span class="va">dune</span>, c_method <span class="op">=</span> <span class="st">"average"</span>, d_method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span>
 <span><span class="fu">ggdendro</span><span class="fu">::</span><span class="fu"><a href="https://andrie.github.io/ggdendro/reference/ggdendrogram.html" class="external-link">ggdendrogram</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-cluster-1.png" alt="" width="60%"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">indiv</span> <span class="op">&lt;-</span> <span class="st">"stand"</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="st">"Use"</span></span>
@@ -372,7 +380,7 @@
 <span><span class="fu">ggdendro</span><span class="fu">::</span><span class="fu"><a href="https://andrie.github.io/ggdendro/reference/ggdendrogram.html" class="external-link">ggdendrogram</a></span><span class="op">(</span><span class="fu"><a href="reference/cluster.html">cls_add_group</a></span><span class="op">(</span><span class="va">cls</span>, <span class="va">df</span>, <span class="va">indiv</span>, <span class="va">group</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(stand)`</span></span></code></pre></div>
 <p><img src="reference/figures/README-cluster-2.png" alt="" width="60%"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">col</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cluster.html">cls_color</a></span><span class="op">(</span><span class="va">cls</span>, <span class="va">df</span>, <span class="va">indiv</span>, <span class="va">group</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(stand)`</span></span>
@@ -390,9 +398,98 @@
 <p><img src="reference/figures/README-cluster-3.png" alt="" width="60%"></p>
 </div>
 <div class="section level3">
+<h3 id="twinspan">TWINSPAN<a class="anchor" aria-label="anchor" href="#twinspan"></a>
+</h3>
+<p><code><a href="reference/twinspan.html">twinspan()</a></code> is a native R implementation of TWINSPAN (Hill 1979) and of the modified TWINSPAN of Roleček et al. (2009). It needs no compiler, but it is not a port of Hill’s original FORTRAN program: see <code><a href="reference/twinspan.html">?twinspan</a></code> for the known differences.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/twinspan.html">twinspan</a></span><span class="op">(</span><span class="va">dune</span><span class="op">)</span></span>
+<span><span class="va">tw</span></span>
+<span><span class="co">#&gt; TWINSPAN</span></span>
+<span><span class="co">#&gt;   stands:       20</span></span>
+<span><span class="co">#&gt;   pseudospecies: 75 </span></span>
+<span><span class="co">#&gt;   cut levels:   0 2 5 10 20</span></span>
+<span><span class="co">#&gt;   divisions:    6</span></span>
+<span><span class="co">#&gt;   groups:       7</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; division 1 at level 0 (n = 20, eig = 0.511)</span></span>
+<span><span class="co">#&gt;   indicators: Ranuflam_1(+) Agrostol_1(+) Eleopalu_1(+) Lolipere_1(-)</span></span>
+<span><span class="co">#&gt; division 2 at level 1 (n = 13, eig = 0.384)</span></span>
+<span><span class="co">#&gt;   indicators: Hyporadi_1(-)</span></span>
+<span><span class="co">#&gt; division 3 at level 1 (n = 7, eig = 0.411)</span></span>
+<span><span class="co">#&gt;   indicators: Sagiproc_1(-)</span></span>
+<span><span class="co">#&gt; division 4 at level 2 (n = 10, eig = 0.317)</span></span>
+<span><span class="co">#&gt;   indicators: Planlanc_1(-)</span></span>
+<span><span class="co">#&gt; division 5 at level 3 (n = 5, eig = 0.284)</span></span>
+<span><span class="co">#&gt;   indicators: Achimill_1(+)</span></span>
+<span><span class="co">#&gt; division 6 at level 3 (n = 5, eig = 0.301)</span></span>
+<span><span class="co">#&gt;   indicators: Juncarti_1(+)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tw</span><span class="op">$</span><span class="va">classification</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt;   stand group path  depth</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;int&gt; &lt;chr&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 11        1 00        2</span></span>
+<span><span class="co">#&gt; 2 17        1 00        2</span></span>
+<span><span class="co">#&gt; 3 19        1 00        2</span></span>
+<span><span class="co">#&gt; 4 18        2 0100      4</span></span>
+<span><span class="co">#&gt; 5 5         3 0101      4</span></span>
+<span><span class="co">#&gt; 6 6         3 0101      4</span></span>
+<span></span>
+<span><span class="co"># the division tree works with the clustering helpers of ecan</span></span>
+<span><span class="fu">ggdendro</span><span class="fu">::</span><span class="fu"><a href="https://andrie.github.io/ggdendro/reference/ggdendrogram.html" class="external-link">ggdendrogram</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/as.hclust.html" class="external-link">as.hclust</a></span><span class="op">(</span><span class="va">tw</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-twinspan-1.png" alt="" width="60%"></p>
+<p>The modified TWINSPAN divides the most heterogeneous group first, so that the number of groups can be chosen directly.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tw_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/twinspan.html">twinspan</a></span><span class="op">(</span><span class="va">dune</span>, modified <span class="op">=</span> <span class="cn">TRUE</span>, n_clusters <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tw_mod</span><span class="op">$</span><span class="va">classification</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  1  2  3  4 </span></span>
+<span><span class="co">#&gt;  3 10  3  4</span></span></code></pre></div>
+<p><code><a href="reference/tw_two_way.html">tw_two_way()</a></code> arranges the stands and the species by their divisions. The digits below the table show the dichotomy of each stand.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/tw_two_way.html">tw_two_way</a></span><span class="op">(</span><span class="va">tw</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          11115671123498111112</span></span>
+<span><span class="co">#&gt;          1798   0      234560</span></span>
+<span><span class="co">#&gt; Cirsarve -----------2--------  0000</span></span>
+<span><span class="co">#&gt; Elymrepe ----2---22223-------  0000</span></span>
+<span><span class="co">#&gt; Bellpere ---22--2-222--------  0001</span></span>
+<span><span class="co">#&gt; Bromhord ----2-22-2-2--------  0001</span></span>
+<span><span class="co">#&gt; Trifprat ----232-------------  0001</span></span>
+<span><span class="co">#&gt; Airaprae -22-----------------  00100</span></span>
+<span><span class="co">#&gt; Empenigr --2-----------------  00100</span></span>
+<span><span class="co">#&gt; Hyporadi 223-----------------  00100</span></span>
+<span><span class="co">#&gt; Vicilath 2--1---1------------  00100</span></span>
+<span><span class="co">#&gt; Achimill -2--222212----------  00101</span></span>
+<span><span class="co">#&gt; Anthodor -22-2222------------  00101</span></span>
+<span><span class="co">#&gt; Planlanc 22-23332------------  00101</span></span>
+<span><span class="co">#&gt; Lolipere 3--22333333322------  0011</span></span>
+<span><span class="co">#&gt; Poaprat  21-22222223222-2----  0011</span></span>
+<span><span class="co">#&gt; Rumeacet ----332-----2-2-----  0011</span></span>
+<span><span class="co">#&gt; Bracruta 2-232322--22222--222  01</span></span>
+<span><span class="co">#&gt; Poatriv  ----323223333223--2-  01</span></span>
+<span><span class="co">#&gt; Scorautu 32332222-322222222-2  01</span></span>
+<span><span class="co">#&gt; Trifrepe 2-222323-321222231--  01</span></span>
+<span><span class="co">#&gt; Sagiproc 2-2--------32222----  100</span></span>
+<span><span class="co">#&gt; Salirepe --22---------------3  100</span></span>
+<span><span class="co">#&gt; Agrostol ----------2322232233  101</span></span>
+<span><span class="co">#&gt; Alopgeni ---------2322333--2-  101</span></span>
+<span><span class="co">#&gt; Juncbufo ------2-----2-22----  101</span></span>
+<span><span class="co">#&gt; Ranuflam -------------2-22222  1100</span></span>
+<span><span class="co">#&gt; Callcusp ----------------2-22  1101</span></span>
+<span><span class="co">#&gt; Comapalu ----------------22--  1101</span></span>
+<span><span class="co">#&gt; Eleopalu -------------2--2332  1101</span></span>
+<span><span class="co">#&gt; Juncarti ------------22---222  1101</span></span>
+<span><span class="co">#&gt; Chenalbu ---------------1----  111</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;          00000000000001111111</span></span>
+<span><span class="co">#&gt;          00011111111110001111</span></span>
+<span><span class="co">#&gt;             0000011111       </span></span>
+<span><span class="co">#&gt;             0111100001</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="ordination">Ordination<a class="anchor" aria-label="anchor" href="#ordination"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ord_dca</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ordination.html">ordination</a></span><span class="op">(</span><span class="va">dune</span>, o_method <span class="op">=</span> <span class="st">"dca"</span><span class="op">)</span></span>
 <span><span class="va">ord_pca</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">df</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
@@ -406,7 +503,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">DCA1</span>, <span class="va">DCA2</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-ordination-1.png" alt="" width="60%"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span></span>
 <span><span class="va">indiv</span> <span class="op">&lt;-</span> <span class="st">"species"</span></span>
