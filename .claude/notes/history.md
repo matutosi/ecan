@@ -156,6 +156,13 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit
   現在アクティブな告知は無い．
   準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
 
+## 現在の状態から送ったもの (2026-09-26)
+
+- 更新: 2026-08-27 (JST)
+  **原典 TWINSPAN と完全一致に到達した**．dune・sipoo・varespec・mite・BCI・pyrifos の
+  6 データで，**標本の分類も種の分類も，群・番号・固有値まで原典と一致**する．
+  決め手は「種の分類は指標種を使わない (`MIND = 0`)」ことだった．
+
 ## 現在の状態から送ったもの (2026-09-03)
 
 - 更新: 2026-08-27 (JST)
