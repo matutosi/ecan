@@ -2,6 +2,8 @@
 #' 
 #' @inherit      shdi
 #' @param     group    A text to specify group column.
+#'                     The groups are given in the order of the levels 
+#'                     when it is a factor, otherwise in the order of sort().
 #' @param     row_data A logical. 
 #'                     TRUE: return row result data of labdsv::indval(). 
 #' @return    A data.frame.
@@ -37,13 +39,18 @@ ind_val <- function(df, stand = NULL, species = NULL, abundance = NULL, group = 
   tbl <- df2table(df, st = stand, sp = species, ab = abundance)
   # group
   group_no <- paste0("numeric_", group)
+  # number the groups in the order of the levels (factor) or of sort()
+  x <- df[[group]]
+  lev <- if(is.factor(x)) levels(droplevels(x)) else sort(unique(x))
+  gr_no <- tibble::tibble({{group}} := lev, {{group_no}} := seq_along(lev))
+  gr_no[[group]] <- x[match(lev, as.character(x))]  # keep the class of x
   gr <- 
     tibble::tibble(`:=`({{stand}}, rownames(tbl))) %>%
     dplyr::left_join(
       dplyr::distinct(df, {{stand}} := as.character(.data[[stand]]), .data[[group]]), by = stand
     ) %>%
     dplyr::left_join(
-      tibble::tibble({{group}} := unique(df[[group]]), {{group_no}} := seq_along(unique(df[[group]]))), by = group
+      gr_no, by = group
     )
   res <- labdsv::indval(tbl, gr[[group_no]])  # Species Indicator Analysis
   if(!row_data){

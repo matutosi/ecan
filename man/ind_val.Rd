@@ -20,7 +20,9 @@ Community matrix should be converted using table2df().}
 \item{stand, species, abundance}{A text to specify each column.
 If NULL, 1st, 2nd, 3rd column will be used.}
 
-\item{group}{A text to specify group column.}
+\item{group}{A text to specify group column.
+The groups are given in the order of the levels
+when it is a factor, otherwise in the order of sort().}
 
 \item{row_data}{A logical.
 TRUE: return row result data of labdsv::indval().}

@@ -1,6 +1,8 @@
 # ecan release news
 
-#  ecan 0.2.2.9000 (development)
+#  ecan 0.3.0
+
+* 2026-10-05
 
 * Added `twinspan()`, a native R implementation of TWINSPAN (Hill 1979) 
   and modified TWINSPAN (Roleček et al. 2009). 
@@ -24,18 +26,6 @@
     * `stats::as.hclust()` converts the result so that `cls_color()`, 
       `cls_add_group()` and `ggdendro::ggdendrogram()` can be used.
 
-#  ecan 0.2.2
-
-* 2026-08-18
-
-* Bug fix in `ordination()`
-    * `o_method = "pcoa"` returned eigen values in `$st_scores` and 
-      nothing in `$eig_val`. It now returns the stand coordinates in 
-      `$st_scores` and the eigen values in `$eig_val`.
-* `$distance_method` is `NULL` for "ca" and "dca", 
-  which do not use a distance, as it already was for "pca".
-* Added tests for `cluster()`, `df2table()`, `table2df()`, `dist2df()`, 
-  `ind_val()` and the one-to-multi helpers.
 * Bug fixes
     * `shdi()` gave `NaN` for `h` when an abundance was zero. 
       A zero is now read as an absent species, as `s` already did.
@@ -49,13 +39,31 @@
       plots. It now drops the diagonal only.
     * `ordination()` raised an unrelated error for an unknown 
       `o_method`. It now names the method and lists the valid ones.
+    * `ind_val()` numbered the groups in the order in which they 
+      appeared in `df`. They now follow the levels of a factor, or 
+      the order of `sort()` otherwise.
 * `ord_add_group()` keeps the column named by `group`, even when that 
   column is not one-to-multi to `indiv`.
 * `cols_one2multi()` and `select_one2multi()` spell their argument 
   `include_self`. The misspelt `inculde_self` is still accepted.
+* `read_biss()` joins the tables quietly, and its example reads a 
+  file bundled in `inst/extdata` instead of a file on GitHub.
 * `twinspan(polish = "hill")` takes the downweighting limits from 
   `tw_hill_const()` instead of the defaults of `tw_downweight()`. 
   The values are the same, so the results do not change.
+
+#  ecan 0.2.2
+
+* 2026-08-18
+
+* Bug fix in `ordination()`
+    * `o_method = "pcoa"` returned eigen values in `$st_scores` and 
+      nothing in `$eig_val`. It now returns the stand coordinates in 
+      `$st_scores` and the eigen values in `$eig_val`.
+* `$distance_method` is `NULL` for "ca" and "dca", 
+  which do not use a distance, as it already was for "pca".
+* Added tests for `cluster()`, `df2table()`, `table2df()`, `dist2df()`, 
+  `ind_val()` and the one-to-multi helpers.
 
 #  ecan 0.2.1
 

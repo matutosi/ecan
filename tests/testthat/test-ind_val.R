@@ -62,7 +62,42 @@ test_that("the species are ordered by ind.val within a group", {
   # the species of a group are given in decreasing order of ind.val
   by_group <- split(res$ind.val, res$Moisture)
   for(v in by_group) expect_false(is.unsorted(rev(v)))
-  # every group is kept together (in the order in which it appears in df)
+  # every group is kept together
   gr <- as.character(res$Moisture)
   expect_equal(length(rle(gr)$values), length(unique(gr)))
+})
+
+test_that("the groups are ordered by the levels of a factor", {
+  rev_lev <- rev(levels(dune.env$Moisture))
+  df_rev <- dplyr::mutate(df, Moisture = factor(Moisture, levels = rev_lev))
+  set.seed(1)
+  res <- suppressMessages(
+    ind_val(df_rev, abundance = "cover", group = "Moisture"))
+  expect_equal(as.character(unique(res$Moisture)), rev_lev)
+})
+
+test_that("the groups of a character are ordered by sort()", {
+  # put the stands of the last group first, so that the order in which
+  # the groups appear in df differs from the sorted one
+  df_chr <- dplyr::mutate(df, Moisture = as.character(Moisture))
+  df_chr <- dplyr::arrange(df_chr, dplyr::desc(Moisture))
+  set.seed(1)
+  res <- suppressMessages(
+    ind_val(df_chr, abundance = "cover", group = "Moisture"))
+  expect_equal(unique(res$Moisture), sort(unique(df_chr$Moisture)))
+})
+
+test_that("the order of the groups does not change ind.val of a species", {
+  rev_lev <- rev(levels(dune.env$Moisture))
+  df_rev <- dplyr::mutate(df, Moisture = factor(Moisture, levels = rev_lev))
+  set.seed(1)
+  res_1 <- suppressMessages(
+    ind_val(df,     abundance = "cover", group = "Moisture"))
+  set.seed(1)
+  res_2 <- suppressMessages(
+    ind_val(df_rev, abundance = "cover", group = "Moisture"))
+  res_1 <- res_1[order(res_1$species), ]
+  res_2 <- res_2[order(res_2$species), ]
+  expect_equal(as.character(res_1$Moisture), as.character(res_2$Moisture))
+  expect_equal(res_1$ind.val, res_2$ind.val)
 })
