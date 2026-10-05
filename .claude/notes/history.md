@@ -156,6 +156,13 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://xmpalantir.wu.ac.at/cransubmit
   現在アクティブな告知は無い．
   準備 (版数 0.2.2，`cran-comments.md` 4環境 0/0/0，タグ `v0.2.2` push 済み) は整っている．
 
+## 現在の状態から送ったもの (2026-10-05)
+
+- 更新: 2026-09-02 09:05 (MATUTOSI_DP)
+  **黙って結果が壊れるバグ 6 件を直し，テストを 216 → 257 に増やした** (0 失敗)．
+  shdi の NaN・ind_val の並べ替え無効・cls_add_group の全 NA・dist2df の 0 距離消失・
+  ordination の不明メソッド・ord_add_group の未使用引数．README も再生成．
+
 ## 現在の状態から送ったもの (2026-09-26)
 
 - 更新: 2026-08-27 (JST)

@@ -2,7 +2,7 @@
 
 生態学の解析 (序列化・クラスタリング・多様度・指標種分析) を支援する R パッケージ．
 `stats`・`vegan`・`labdsv` などのラッパを揃え，一貫した書き方で使えるようにしている．
-CRAN 公開済み (最新リリース 0.2.1)．
+CRAN 公開済み (最新リリース 0.2.2．0.3.0 は 2026-10-05 に提出)．
 
 - CRAN: <https://CRAN.R-project.org/package=ecan>
 - GitHub: <https://github.com/matutosi/ecan>
@@ -74,7 +74,11 @@ CRAN 公開済み (最新リリース 0.2.1)．
 
 ### 現在の状態
 
-- 更新: 2026-09-26 09:24 (このセッション，MATUTOSI_DP)
+- 更新: 2026-10-05 10:46 (このセッション，MATUTOSI_DP)
+  **0.3.0 を CRAN へ提出した** (確認メールのリンクを押せば確定)．提出前に `ind_val()` の群を因子の水準順に直し，
+  `read_biss()` の例を同梱の JSON (`inst/extdata`) に替えた．check は手元・win-builder・R-hub (3 OS) とも 0/0/0．
+
+- 更新: 2026-09-26 09:24 (MATUTOSI_DP)
   **CRAN への 0.3.0 の提出日を 10-05 に変更した** (ユーザ指示．旧予定は 10-23 以降)．
 
 - 更新: 2026-09-03 17:45 (x280-home)
@@ -83,14 +87,15 @@ CRAN 公開済み (最新リリース 0.2.1)．
   未公開の `twinspan()` を含む旨を明記した (`build_readme()` で再生成)．
   CRAN 提出は予定どおり 2026年10月下旬・0.3.0 のまま (今回は提出しない)．
 
-- 更新: 2026-09-02 09:05 (MATUTOSI_DP)
-  **黙って結果が壊れるバグ 6 件を直し，テストを 216 → 257 に増やした** (0 失敗)．
-  shdi の NaN・ind_val の並べ替え無効・cls_add_group の全 NA・dist2df の 0 距離消失・
-  ordination の不明メソッド・ord_add_group の未使用引数．README も再生成．
-
 - それ以前は [notes/history.md](notes/history.md) を見る．
 
 ### 積み残し
+
+**【提出 2026-10-05】0.3.0 を CRAN へ提出した** (`develop` を `main` へ merge 済み)．受理後にやること:
+
+1. CRAN の確認メールのリンクを押す (ユーザ．押すまで提出は確定しない)
+2. 受理されたら `main` にタグ `v0.3.0` を打って push
+3. `main` で版数を `0.3.0.9000` に上げ，`develop` へ merge
 
 0.2.2 の CRAN 対応はすべて完了 (受理・main マージ・版数上げ・push まで済み)．
 
@@ -150,8 +155,8 @@ TWINSPAN (`develop` へ merge 済み．詳細は [notes/twinspan.md](notes/twins
 
 いつか
 
-1. `ind_val()` の群の並びは「df に現れた順」で，因子の順ではない
-   (`group_no <- seq_along(unique(...))`)．**0.3.0 を出す前に直すかどうかを決める**．
+1. ~~`ind_val()` の群の並びは「df に現れた順」で，因子の順ではない~~
+   → **【完了 2026-10-05】因子なら水準の順，それ以外は `sort()` の順にした** (0.3.0 に入れた)．
 2. 段階 3 の修正の後に `build_readme()` を回し，`README.md` に差分が出ないことは確認済み
    (README は `pcoa` を載せていないため)．
 
