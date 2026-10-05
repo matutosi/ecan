@@ -18,9 +18,7 @@ A data frame.
 BiSS data is formatted as JSON.
 }
 \examples{
-library(dplyr)
-# path <- "set file path"
-path <- "https://raw.githubusercontent.com/matutosi/biodiv/main/man/example.json"
+path <- system.file("extdata", "biss_example.json", package = "ecan")
 read_biss(path)
 
 }

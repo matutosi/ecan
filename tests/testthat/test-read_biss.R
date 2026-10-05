@@ -18,3 +18,11 @@ test_that("read_biss returns separate tables when join is FALSE", {
   expect_equal(nrow(out$plot), 2L)
   expect_equal(nrow(out$occ),  3L)
 })
+
+test_that("read_biss reads the bundled example quietly", {
+  path <- system.file("extdata", "biss_example.json", package = "ecan")
+  expect_true(file.exists(path))
+  expect_silent(df <- read_biss(path))
+  expect_equal(nrow(df), 6)
+  expect_equal(unique(df$Location), "Kobe, Japan")
+})

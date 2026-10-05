@@ -46,6 +46,8 @@
   column is not one-to-multi to `indiv`.
 * `cols_one2multi()` and `select_one2multi()` spell their argument 
   `include_self`. The misspelt `inculde_self` is still accepted.
+* `read_biss()` joins the tables quietly, and its example reads a 
+  file bundled in `inst/extdata` instead of a file on GitHub.
 * `twinspan(polish = "hill")` takes the downweighting limits from 
   `tw_hill_const()` instead of the defaults of `tw_downweight()`. 
   The values are the same, so the results do not change.
