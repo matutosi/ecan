@@ -25,19 +25,15 @@ A data frame.
 ## Examples
 
 ``` r
-library(dplyr)
-# path <- "set file path"
-path <- "https://raw.githubusercontent.com/matutosi/biodiv/main/man/example.json"
+path <- system.file("extdata", "biss_example.json", package = "ecan")
 read_biss(path)
-#> Warning: JSON string contains (illegal) UTF8 byte-order-mark!
-#> Joining with `by = join_by(PLOT, Photo, Memo)`
 #>     PLOT NO Investigator    Location Altitude Aspect Inclination T1_height
-#> 1 biss01  1              Kobe, Jaoan       50      N          15        15
-#> 2 biss01  1              Kobe, Jaoan       50      N          15        15
-#> 3 biss01  1              Kobe, Jaoan       50      N          15        15
-#> 4 biss02  2              Kobe, Jaoan      100      S          10        12
-#> 5 biss02  2              Kobe, Jaoan      100      S          10        12
-#> 6 biss02  2              Kobe, Jaoan      100      S          10        12
+#> 1 biss01  1              Kobe, Japan       50      N          15        15
+#> 2 biss01  1              Kobe, Japan       50      N          15        15
+#> 3 biss01  1              Kobe, Japan       50      N          15        15
+#> 4 biss02  2              Kobe, Japan      100      S          10        12
+#> 5 biss02  2              Kobe, Japan      100      S          10        12
+#> 6 biss02  2              Kobe, Japan      100      S          10        12
 #>   T2_height S1_height S2_height H_height T1_cover T2_cover S1_cover S2_cover
 #> 1        12         8         2      0.5       90       30       40       10
 #> 2        12         8         2      0.5       90       30       40       10

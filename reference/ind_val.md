@@ -30,7 +30,8 @@ ind_val(
 
 - group:
 
-  A text to specify group column.
+  A text to specify group column. The groups are given in the order of
+  the levels when it is a factor, otherwise in the order of sort().
 
 - row_data:
 

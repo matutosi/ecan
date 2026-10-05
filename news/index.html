@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ecan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,8 +37,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2.9000" id="ecan-0229000-development">ecan 0.2.2.9000 (development)<a class="anchor" aria-label="anchor" href="#ecan-0229000-development"></a></h2>
-<ul><li>Added <code><a href="../reference/twinspan.html">twinspan()</a></code>, a native R implementation of TWINSPAN (Hill 1979) and modified TWINSPAN (Roleček et al. 2009). It is written in plain R from the published description of the algorithm, and is not a port of the original FORTRAN program. The known differences from the original are listed in <code><a href="../reference/twinspan.html">?twinspan</a></code>, which also points to the <code>twinspan</code> package of Oksanen for those who need the results of the original program.
+<h2 class="pkg-version" data-toc-text="0.3.0" id="ecan-030">ecan 0.3.0<a class="anchor" aria-label="anchor" href="#ecan-030"></a></h2>
+<ul><li><p>2026-10-05</p></li>
+<li>
+<p>Added <code><a href="../reference/twinspan.html">twinspan()</a></code>, a native R implementation of TWINSPAN (Hill 1979) and modified TWINSPAN (Roleček et al. 2009). It is written in plain R from the published description of the algorithm, and is not a port of the original FORTRAN program. The known differences from the original are listed in <code><a href="../reference/twinspan.html">?twinspan</a></code>, which also points to the <code>twinspan</code> package of Oksanen for those who need the results of the original program.</p>
 <ul><li>
 <code>polish = "hill"</code> (the default) follows the steps of Hill’s program, and reproduces it exactly on the <code>dune</code>, <code>sipoo</code>, <code>varespec</code>, <code>mite</code>, <code>BCI</code> and <code>pyrifos</code> data of ‘vegan’: the same groups of stands and of species, with the same numbers, divisions and eigenvalues, and on twenty randomly generated data sets. <code>polish = "ecan"</code> keeps the earlier way, written from the published description alone.</li>
 <li>Rare pseudospecies are downweighted in the ordination as the original does, which can be turned off with <code>downweight = FALSE</code>.</li>
@@ -46,17 +48,6 @@
 <li>
 <code><a href="https://rdrr.io/r/stats/as.hclust.html" class="external-link">stats::as.hclust()</a></code> converts the result so that <code><a href="../reference/cluster.html">cls_color()</a></code>, <code><a href="../reference/cluster.html">cls_add_group()</a></code> and <code><a href="https://andrie.github.io/ggdendro/reference/ggdendrogram.html" class="external-link">ggdendro::ggdendrogram()</a></code> can be used.</li>
 </ul></li>
-</ul></div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2" id="ecan-022">ecan 0.2.2<a class="anchor" aria-label="anchor" href="#ecan-022"></a></h2><p class="text-muted">CRAN release: 2026-08-22</p>
-<ul><li><p>2026-08-18</p></li>
-<li>
-<p>Bug fix in <code><a href="../reference/ordination.html">ordination()</a></code></p>
-<ul><li>
-<code>o_method = "pcoa"</code> returned eigen values in <code>$st_scores</code> and nothing in <code>$eig_val</code>. It now returns the stand coordinates in <code>$st_scores</code> and the eigen values in <code>$eig_val</code>.</li>
-</ul></li>
-<li><p><code>$distance_method</code> is <code>NULL</code> for “ca” and “dca”, which do not use a distance, as it already was for “pca”.</p></li>
-<li><p>Added tests for <code><a href="../reference/cluster.html">cluster()</a></code>, <code><a href="../reference/df2table.html">df2table()</a></code>, <code><a href="../reference/df2table.html">table2df()</a></code>, <code><a href="../reference/df2table.html">dist2df()</a></code>, <code><a href="../reference/ind_val.html">ind_val()</a></code> and the one-to-multi helpers.</p></li>
 <li>
 <p>Bug fixes</p>
 <ul><li>
@@ -69,10 +60,24 @@
 <code><a href="../reference/df2table.html">dist2df()</a></code> dropped a distance of zero between two different plots. It now drops the diagonal only.</li>
 <li>
 <code><a href="../reference/ordination.html">ordination()</a></code> raised an unrelated error for an unknown <code>o_method</code>. It now names the method and lists the valid ones.</li>
+<li>
+<code><a href="../reference/ind_val.html">ind_val()</a></code> numbered the groups in the order in which they appeared in <code>df</code>. They now follow the levels of a factor, or the order of <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> otherwise.</li>
 </ul></li>
 <li><p><code><a href="../reference/ordination.html">ord_add_group()</a></code> keeps the column named by <code>group</code>, even when that column is not one-to-multi to <code>indiv</code>.</p></li>
 <li><p><code><a href="../reference/is_one2multi.html">cols_one2multi()</a></code> and <code><a href="../reference/is_one2multi.html">select_one2multi()</a></code> spell their argument <code>include_self</code>. The misspelt <code>inculde_self</code> is still accepted.</p></li>
+<li><p><code><a href="../reference/read_biss.html">read_biss()</a></code> joins the tables quietly, and its example reads a file bundled in <code>inst/extdata</code> instead of a file on GitHub.</p></li>
 <li><p><code>twinspan(polish = "hill")</code> takes the downweighting limits from <code><a href="../reference/tw_hill_const.html">tw_hill_const()</a></code> instead of the defaults of <code><a href="../reference/tw_downweight.html">tw_downweight()</a></code>. The values are the same, so the results do not change.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.2" id="ecan-022">ecan 0.2.2<a class="anchor" aria-label="anchor" href="#ecan-022"></a></h2><p class="text-muted">CRAN release: 2026-08-22</p>
+<ul><li><p>2026-08-18</p></li>
+<li>
+<p>Bug fix in <code><a href="../reference/ordination.html">ordination()</a></code></p>
+<ul><li>
+<code>o_method = "pcoa"</code> returned eigen values in <code>$st_scores</code> and nothing in <code>$eig_val</code>. It now returns the stand coordinates in <code>$st_scores</code> and the eigen values in <code>$eig_val</code>.</li>
+</ul></li>
+<li><p><code>$distance_method</code> is <code>NULL</code> for “ca” and “dca”, which do not use a distance, as it already was for “pca”.</p></li>
+<li><p>Added tests for <code><a href="../reference/cluster.html">cluster()</a></code>, <code><a href="../reference/df2table.html">df2table()</a></code>, <code><a href="../reference/df2table.html">table2df()</a></code>, <code><a href="../reference/df2table.html">dist2df()</a></code>, <code><a href="../reference/ind_val.html">ind_val()</a></code> and the one-to-multi helpers.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.1" id="ecan-021">ecan 0.2.1<a class="anchor" aria-label="anchor" href="#ecan-021"></a></h2><p class="text-muted">CRAN release: 2023-07-07</p>

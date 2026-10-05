@@ -1,6 +1,8 @@
 # Changelog
 
-## ecan 0.2.2.9000 (development)
+## ecan 0.3.0
+
+- 2026-10-05
 
 - Added
   [`twinspan()`](https://matutosi.github.io/ecan/reference/twinspan.md),
@@ -12,6 +14,7 @@
   [`?twinspan`](https://matutosi.github.io/ecan/reference/twinspan.md),
   which also points to the `twinspan` package of Oksanen for those who
   need the results of the original program.
+
   - `polish = "hill"` (the default) follows the steps of Hill’s program,
     and reproduces it exactly on the `dune`, `sipoo`, `varespec`,
     `mite`, `BCI` and `pyrifos` data of ‘vegan’: the same groups of
@@ -38,6 +41,50 @@
     [`ggdendro::ggdendrogram()`](https://andrie.github.io/ggdendro/reference/ggdendrogram.html)
     can be used.
 
+- Bug fixes
+
+  - [`shdi()`](https://matutosi.github.io/ecan/reference/shdi.md) gave
+    `NaN` for `h` when an abundance was zero. A zero is now read as an
+    absent species, as `s` already did.
+  - [`ind_val()`](https://matutosi.github.io/ecan/reference/ind_val.md)
+    did not order its result at all. The species of a group are now
+    given in decreasing order of `ind.val`.
+  - [`cls_add_group()`](https://matutosi.github.io/ecan/reference/cluster.md)
+    turned every label into `NA` when a single stand was missing from
+    `df`. Only the labels of the missing stands are `NA` now:
+    [`pad2longest()`](https://matutosi.github.io/ecan/reference/pad2longest.md)
+    no longer lets an `NA` decide the width.
+  - [`dist2df()`](https://matutosi.github.io/ecan/reference/df2table.md)
+    dropped a distance of zero between two different plots. It now drops
+    the diagonal only.
+  - [`ordination()`](https://matutosi.github.io/ecan/reference/ordination.md)
+    raised an unrelated error for an unknown `o_method`. It now names
+    the method and lists the valid ones.
+  - [`ind_val()`](https://matutosi.github.io/ecan/reference/ind_val.md)
+    numbered the groups in the order in which they appeared in `df`.
+    They now follow the levels of a factor, or the order of
+    [`sort()`](https://rdrr.io/r/base/sort.html) otherwise.
+
+- [`ord_add_group()`](https://matutosi.github.io/ecan/reference/ordination.md)
+  keeps the column named by `group`, even when that column is not
+  one-to-multi to `indiv`.
+
+- [`cols_one2multi()`](https://matutosi.github.io/ecan/reference/is_one2multi.md)
+  and
+  [`select_one2multi()`](https://matutosi.github.io/ecan/reference/is_one2multi.md)
+  spell their argument `include_self`. The misspelt `inculde_self` is
+  still accepted.
+
+- [`read_biss()`](https://matutosi.github.io/ecan/reference/read_biss.md)
+  joins the tables quietly, and its example reads a file bundled in
+  `inst/extdata` instead of a file on GitHub.
+
+- `twinspan(polish = "hill")` takes the downweighting limits from
+  [`tw_hill_const()`](https://matutosi.github.io/ecan/reference/tw_hill_const.md)
+  instead of the defaults of
+  [`tw_downweight()`](https://matutosi.github.io/ecan/reference/tw_downweight.md).
+  The values are the same, so the results do not change.
+
 ## ecan 0.2.2
 
 CRAN release: 2026-08-22
@@ -61,42 +108,6 @@ CRAN release: 2026-08-22
   [`dist2df()`](https://matutosi.github.io/ecan/reference/df2table.md),
   [`ind_val()`](https://matutosi.github.io/ecan/reference/ind_val.md)
   and the one-to-multi helpers.
-
-- Bug fixes
-
-  - [`shdi()`](https://matutosi.github.io/ecan/reference/shdi.md) gave
-    `NaN` for `h` when an abundance was zero. A zero is now read as an
-    absent species, as `s` already did.
-  - [`ind_val()`](https://matutosi.github.io/ecan/reference/ind_val.md)
-    did not order its result at all. The species of a group are now
-    given in decreasing order of `ind.val`.
-  - [`cls_add_group()`](https://matutosi.github.io/ecan/reference/cluster.md)
-    turned every label into `NA` when a single stand was missing from
-    `df`. Only the labels of the missing stands are `NA` now:
-    [`pad2longest()`](https://matutosi.github.io/ecan/reference/pad2longest.md)
-    no longer lets an `NA` decide the width.
-  - [`dist2df()`](https://matutosi.github.io/ecan/reference/df2table.md)
-    dropped a distance of zero between two different plots. It now drops
-    the diagonal only.
-  - [`ordination()`](https://matutosi.github.io/ecan/reference/ordination.md)
-    raised an unrelated error for an unknown `o_method`. It now names
-    the method and lists the valid ones.
-
-- [`ord_add_group()`](https://matutosi.github.io/ecan/reference/ordination.md)
-  keeps the column named by `group`, even when that column is not
-  one-to-multi to `indiv`.
-
-- [`cols_one2multi()`](https://matutosi.github.io/ecan/reference/is_one2multi.md)
-  and
-  [`select_one2multi()`](https://matutosi.github.io/ecan/reference/is_one2multi.md)
-  spell their argument `include_self`. The misspelt `inculde_self` is
-  still accepted.
-
-- `twinspan(polish = "hill")` takes the downweighting limits from
-  [`tw_hill_const()`](https://matutosi.github.io/ecan/reference/tw_hill_const.md)
-  instead of the defaults of
-  [`tw_downweight()`](https://matutosi.github.io/ecan/reference/tw_downweight.md).
-  The values are the same, so the results do not change.
 
 ## ecan 0.2.1
 
